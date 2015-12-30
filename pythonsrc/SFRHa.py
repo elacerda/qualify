@@ -134,11 +134,11 @@ if __name__ == '__main__':
             ax3.xaxis.grid(which='minor')
             ax3.yaxis.grid(which='minor')
     
-            ax1.set_xlabel(r'$\log\ t\ [yr]$')
+            ax1.set_xlabel(r'$\log\ t\ [anos]$')
             ax1.set_ylabel(r'$\mathcal{N}_H(t)\ [10^{60}\ \gamma\ M_\odot{}^{-1}]$')
-            ax2.set_xlabel(r'$\log\ t\ [yr]$')
+            ax2.set_xlabel(r'$\log\ t\ [anos]$')
             ax2.set_ylabel(r'$\mathcal{N}_H(t)/\mathcal{N}_H$')
-            ax3.set_xlabel(r'$\log\ t\ [yr]$')
+            ax3.set_xlabel(r'$\log\ t\ [anos]$')
             ax3.set_ylabel(r'$\log\ q_H [s^{-1} M_\odot{}^{-1}]$')
                 
             f.tight_layout()
