@@ -32,11 +32,12 @@ recombinações nos níveis energéticos dos átomos dos elementos encontrados n
 
 Dentre os diversos produtos indiretos da síntese de populações estelares, as medidas dos fluxos
 integrados das linhas de emissão é peça fundamental em nosso projeto. Rubén García Benito, nosso
-colaborador e membro do Projeto CALIFA {\em Survey}, desenvolveu um programa que, utilizando dos
-espectros residuais, ajustas perfis para as linhas e assim executa as medidas dos fluxos integrados
-das linhas de emissão e estima os erros envolvidos neste processo. Acreditamos que essas medidas
-sejam liberadas para a comunidade científica assim que o último lançamento público de dados do
-CALIFA for feito (DR3). 
+colaborador e membro do Projeto CALIFA {\em Survey}, desenvolveu um programa que, utilizando-se dos
+espectros residuais (obtidos pela subtração dos espectros modelados dos observados), ajusta perfis
+gaussianos para as linhas possibilitando então a medida dos fluxos integrados das linhas de emissão
+além de estimar os erros envolvidos neste processo \myojo{red}{REF Figura prog RGB?}. Acreditamos
+que essas medidas sejam liberadas para a comunidade científica assim que o último lançamento público
+de dados do CALIFA for feito (DR3).
 
 Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Para tal,
 escrevi um objeto em \textsc{p}y\textsc{thon} que além de organizar os resultados provenientes do
@@ -133,12 +134,11 @@ autores para a calibração do $\log$ (O3N2) foi:
 Com a criação do objeto \emldc e adição ao \pycasso torna o processo de análise e produção de
 gráficos extremamente simples. Podemos apreciar um exemplo de como produzir um gráfico BPT
 \citep{Baldwin.Phillips.Terlevich.1981a} que utiliza fluxos de quatro linhas de emissão (\Halpha,
-\Hbeta, \OIII e \NII) no código da Fig. \ref{fig:BPTprog} que resulta na Fig.
-\ref{fig:BPTfig}. Primeiro carregam-se os arquivos de dados utilizando o \pycasso e o \emldc então
-todas as informações já estão prontas para serem utilizadas. Neste caso estamos usando os dados da
-galáxia NGC2916 (objeto CALIFA 277). Calculam-se então as razões entre as linhas e, por último, o
-gráfico é feito utilizando a biblioteca gráfica M\textsc{atplotlib}
-\footnote{
+\Hbeta, \OIII e \NII) no código da Fig. \ref{fig:BPTprog} que resulta na Fig. \ref{fig:BPTfig}.
+Primeiro carregam-se os arquivos de dados utilizando o \pycasso e o \emldc então todas as
+informações já estão prontas para serem utilizadas. Neste caso estamos usando os dados da galáxia
+NGC2916 (objeto CALIFA 277). Calculam-se então as razões entre as linhas e, por último, o gráfico é
+feito utilizando a biblioteca gráfica M\textsc{atplotlib} \footnote{
 	\href{http://matplotlib.org/}{http://matplotlib.org/}
 }.
 
