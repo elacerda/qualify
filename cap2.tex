@@ -24,8 +24,8 @@ espectros de energias proveniente das estrelas de diferentes idades e composiç�
 (metalicidade), além da correção pela aplicação de alguma lei de extinção por poeira. Subtraindo os
 espectros observados dos espectros modelados obtêm-se os espectros residuais, compostos basicamente
 pelas linhas de emissão. Essas linhas são geradas principalmente através das ionizações e
-recombinações nos níveis energéticos dos átomos dos elementos encontrados no meio galático
-\myojo{blue}{meio interestelar? espaço?} , e mais densamente, nas núvens de gás. 
+recombinações dos fótons nos átomos dos elementos encontrados no meio interestelar, e mais
+densamente, nas núvens de gás.
 
 \section{EmLinesDataCube}
 \label{sec:emline:datacube}
@@ -62,8 +62,17 @@ propagados.
 
 Em um modelo que assume que entre o observador e a fonte de energia existe uma camada difusa, como
 uma cortina, que extingue a luz diferentemente em cada comprimento de onda, temos:
+\begin{equation}
+	F_\lambda^{obs} = F_\lambda^{int} e^{-\tau_\lambda}
+    \label{eq:extin}
+\end{equation}
+\noindent onde $F_\lambda^{int}$ é o fluxo intrínseco ($F_\lambda^{obs}$, o observado) em cada
+comprimento de onda, $\tau_\lambda$ é o coeficiente de profundidade óptica para o comprimento de
+onda $\lambda$. O modelo de extinção de \citet{CCM1989a} nos dá uma calibração empírica da razão
+entre os coeficientes de extinção em um comprimento de onda e na banda V ($\tau_\lambda / \tau_V$),
+com isso podemos desenvolver \eqref{eq:extin} de maneira que possamos escrever uma equação para
+$\tau_V$:
 \begin{eqnarray}
-   F_\lambda^{obs} &=& F_\lambda^{int} e^{-\tau_\lambda} \\
    F_\lambda^{obs} &=& F_\lambda^{int} e^{-(\frac{\tau_\lambda}{\tauV}) \tauV} \\
    \frac{\tau_\lambda}{\tauV} &=& q_\lambda \\
    F_\lambda^{obs} &=& F_\lambda^{int} e^{-q_\lambda \tauV} \\
@@ -74,23 +83,20 @@ uma cortina, que extingue a luz diferentemente em cada comprimento de onda, temo
    \tauV &=& \frac{1}{(q_{\lambda^\prime} - q_\lambda)} \left[\ln \ 
  \left(\frac{F_\lambda^{obs}}{F_{\lambda^\prime}^{obs}}\right) - \
  \ln \left(\frac{F_\lambda^{int}}{F_{\lambda^\prime}^{int}}\right)\right] 
+ \label{eq:tauV}
 \end{eqnarray}
-\noindent onde $F_\lambda^{int}$ é o fluxo intrínseco ($F_\lambda^{obs}$, o observado) em cada
-comprimento de onda, $\tau_\lambda$ é o coeficiente de profundidade óptica para o comprimento de
-onda $\lambda$ e $\tauV$ é o coeficiente de profundidade óptica na banda V.
+\noindent Nessa equação, os $q_\lambda$ são provenientes do modelo adotado.
 
-A poeira existente ao redor das regiões de formação estelar é criada principalmente pela própria
-formação estelar. Assumindo um modelo de extinção \citep[neste trabalho assumimos][]{CCM1989a},
-podemos calcular qual o coeficiente de extinção para essas regiões nebulares. Para este cálculo
-utilizamos o fato de que, apesar da extinção do espectro observado, a razão entre os fluxos
-intrínsecos das linhas de \Halpha e de \Hbeta varia muito um pouco com a metalicidade, a densidade
-e a temperatura. Usamos aqui esse valor como constante e igual a $2,86$
-\citep{Osterbrock.Ferland.2006a}. Com isso temos:
+A poeira existente ao redor de regiões de formação estelar é criada principalmente pela própria
+formação estelar. Utilizando \eqref{eq:tauV} podemos calcular qual o coeficiente de extinção para
+essas regiões nebulares. Para este cálculo utilizamos o fato de que, apesar da extinção do espectro
+observado, a razão entre os fluxos intrínsecos das duas primeiras linhas da série de Balmer, \Halpha
+e \Hbeta, varia muito um pouco com a metalicidade, a densidade e a temperatura. Usamos aqui esse
+valor como constante e igual a $2.86$ \citep{Osterbrock.Ferland.2006a}. Com isso temos:
 \begin{equation}
-	\tauVN = \frac{1}{(q_{\Hbeta} - q_{\Halpha})} \ln \left( \frac{F_{\Halpha}^{obs}/F_{\Hbeta}^{obs}}{2,86} \right).
+	\tauVN = 2.886\ \ln \left( \frac{F_{\Halpha}^{obs}/F_{\Hbeta}^{obs}}{2.86} \right).
 \end{equation}
-\noindent Nessa equação, os $q_\lambda$ são provenientes do modelo adotado. O erro propagado para
-$\tauVN$ é:
+O erro propagado para $\tauVN$ é:
 \begin{eqnarray}
 	\tauVN &\equiv& \tauVN(F_{\Halpha}^{obs}, F_{\Hbeta}^{obs}) \\
 	\epsilon (\tauVN) &=& \sqrt{\left(\del{\tauVN}{F_{\Halpha}^{obs}}\right)^2 \
@@ -210,10 +216,10 @@ por diante usarei a sigla SFR - {\em Star Formation Rate}} recente utiliza a lin
 estrelas massivas ionizantes, que produzem basicamente todos os fótons que geram a linha de emissão
 de \Halpha.
 
-Nós queremos calibrar a luminosidade da linha de \Halpha ($\mathrm{L}_{\Halpha}$) como um indicador
+Nós queremos calibrar a luminosidade da linha de \Halpha ($\LHalpha$) como um indicador
 de SFR ($\psi$) \citep[e.g., ][]{Kennicutt.1998a} usando uma relação linear:
 \begin{equation}
-	\psi_{\Halpha} = k \times \mathrm{L}_{\Halpha}.
+	\psi_{\Halpha} = k \times \LHalpha.
 	\label{eq:SFRHa}
 \end{equation}
 \noindent Portanto, nosso trabalho é encontrar $k$. Faremos isso investigando a natureza dos 
@@ -242,7 +248,7 @@ ionizantes produzem um fóton de \Halpha \citep{Osterbrock.Ferland.2006a}. Esse 
 muito em função da temperatura e da densidade nas regiões nebulares. Por fim a luminosidade
 intrísica de \Halpha pode ser teoricamente calculada como:
 \begin{equation}
-	\mathrm{L}(\Halpha) = h \nu_{\Halpha} \frac{\mathrm{Q}_H}{2.226},
+	\LHalpha = h \nu_{\Halpha} \frac{\mathrm{Q}_H}{2.226},
 	\label{eq:LHa_recomb_theory}
 \end{equation}
 \noindent aonde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo
@@ -297,17 +303,22 @@ temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge para
 \end{equation}
 \noindent Substituindo \eqref{eq:QH_converge} em \eqref{eq:LHa_recomb_theory} podemos escrever:
 \begin{equation}
-	\psi_{\Halpha} = \frac{2.226}{\mathcal{N}_H\ h \nu_{\Halpha}} \times \mathrm{L}(\Halpha)
+	\psi_{\Halpha} = \frac{2.226}{\mathcal{N}_H\ h \nu_{\Halpha}} \times \LHalpha
 	\label{eq:SFR_theoric}
 \end{equation}
 \noindent Este método nos dá uma SFR recente, em termos de que usamos o valor de $\mathcal{N}_H$
 para $t = 10^7$ anos. Finalmente, resolvendo \eqref{eq:SFR_theoric} encontramos o valor para $k$ em
 \eqref{eq:SFRHa} ($\psi \equiv \mathrm{SFR}$):
 \begin{equation}
+	\mathrm{SFR}_{\Halpha} = 3.13\ \mathrm{M}_\odot\ yr^{-1}\ \times
+\left(\frac{\LHalpha}{10^8\ \mathrm{L}_\odot}\right)
 	\label{eq:SFRNeb}
-	\mathrm{SFR}_{\Halpha} = 3.13\ \mathrm{M}_\odot\ yr^{-1}
-	\left(\frac{\mathrm{L}(\Halpha)}{10^8\mathrm{L}_\odot}\right)
 \end{equation}
+
+Em \citet{Kennicutt.1998a} esse coeficiente é calculado utilizando diferentes modelos estelares mas
+utilizando a mesma IMF. Convertendo o valor de nossa calibração para as unidades utilizdas neste
+artigo, temos $8.1 \times 10^{-42}\ ergs\ s^{-1}$, o qual é bem próximo ao valor obtido
+anteriormente ($7.9 \times 10^{-42}\ ergs\ s^{-1}$).
 
 \begin{figure}
 	\centering
