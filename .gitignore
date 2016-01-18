@@ -12,3 +12,5 @@ pythonsrc/*.p[nd][fg]
 *.synctex.gz
 *.toc
 tmp/
+pythonsrc/compareSFR
+pythonsrc/SKperGal
