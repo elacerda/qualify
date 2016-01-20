@@ -14,3 +14,4 @@ pythonsrc/*.p[nd][fg]
 tmp/
 pythonsrc/compareSFR
 pythonsrc/SKperGal
+/main.pdf

@@ -138,6 +138,8 @@ if __name__ == '__main__':
     NgalsOkZones = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]))  
     NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
     
+    print NgalsOkZones, NgalsOkRbins, H.N_zones__g.sum() - mask__g.astype(int).sum(), (H.N_gals * H.NRbins) - mask__rg.astype(int).sum() 
+    
     axial_ratio = 0.13
     axial_ratio_sq = axial_ratio ** 2.0
     
@@ -245,6 +247,8 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
     ax.set_ylim(yran)
@@ -284,6 +288,8 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
     ax.set_ylim(yran)
