@@ -378,6 +378,6 @@ if __name__ == '__main__':
     print zones_tot
     f.subplots_adjust(bottom = 0.05, top = 0.95, hspace = 0.2, wspace = 0.28, right = 0.98, left = 0.1)
     plt.close(f)
-    f.savefig(fname)
     fname = 'sample%s' % fnamesuffix
+    f.savefig(fname)
     

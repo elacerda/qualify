@@ -21,14 +21,31 @@
 \section{Amostra de galáxias}
 \label{sec:synvsneb:amostra}
 
+\subsection{Artigo - CALIFA, the Calar Alto Legacy Field Area survey III. Second public data
+release.}
+
+Este artigo (em anexo, \ref{apendice:GBetal2015a}) descreve uma amostra de 200 galáxias que tiveram
+seus dados liberados para o público, no segundo lançamento público de dados ({\em data-release} -
+DR2). Enveredando por todos as configurações de observação, procedimentos de redução dos dados,
+avaliação de erros e controle de qualidade. Nesse artigo nosso grupo de populações estelares me
+encarregou de escrever os programas de análise e gerar as imagens que usamos para avaliar a
+qualidade da síntese de populações estelares com o \starlight em 170670 espectros para distintas
+posições em cada galáxia, além de comparar com os resultados para a amostra do primeiro {\em
+data-release} (DR1). Durante a análise dos resíduos vimos que os mesmos reduziram sensivelmente
+desde a última versão, além de nos ajudar a melhorar a máscara de remoção de linhas telúricas dos
+espectros. Também verificamos que os erros relacionados aos espectros observados possuem uma
+distribuição muito próxima a uma gaussiana, ou seja, resíduos resultam praticamente ruído.
+
+\subsection{Definição da amostra deste trabalho}
+\label{sec:synvsneb:amostra:defin}
+
 Neste trabalho estamos interessados em estudar a formação estelar recente em discos de galáxias.
-Nossa amostra começa conténdo todas as 226176 regiões (zonas) das 305 galáxias espirais do CALIFA
-{\em Survey}. Cada uma dessas zonas dessa é composta por um ou mais píxels, com um espectro
-resultante da soma dos espectros destes, para que tenhamos relação sinal-ruído maior ou igual a 20
-na janela de normalização do espectro resultante. Esse procedimento, conhecido como {\em Voronoi
-binning}, está detalhado, juntamente com o procedimento de derivação das propriedades estelares
-através do código \starlight para cada uma das regiões destas galáxias, em
-\citet{CidFernandes.etal.2013a}.
+Nossa amostra começa contendo todas as 226176 regiões (zonas) das 305 galáxias espirais do \CAL.
+Cada uma dessas zonas dessa é composta por um ou mais pixels, com um espectro resultante da soma dos
+espectros destes, para que tenhamos relação sinal-ruído maior ou igual a 20 na janela de
+normalização do espectro resultante. Esse procedimento, conhecido como {\em Voronoi binning}, está
+detalhado, juntamente com o procedimento de derivação das propriedades estelares através do código
+\starlight para cada uma das regiões destas galáxias, em \citet{CidFernandes.etal.2013a}.
 
 \subsection{Classificação Morfológica}
 \label{sec:synvsneb:amostra:morf}
@@ -36,8 +53,8 @@ através do código \starlight para cada uma das regiões destas galáxias, em
 Com tipos morfológicos variando entre Sa e Sd, massas estelares entre $10^9$ e $10^{11.5}\ M_\odot$
 e populações estelares com idades médias entre $10^8$ e $10^{10}$ anos, podemos ver na Fig.
 \ref{fig:amostraMorf} que as galáxias se ordenam de forma interessante quando agrupadas por tipo
-morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e $t_\star$)
-e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star <
+morfológico, anti-correlacionando com a idade média estelar e a massa estelar ($M_\star$ e
+$t_\star$) e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star <
 t_{SF})$). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja, são
 propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem no
 quando analisamos as classes morfológicas por idade média. O resultado parece ser muito interessante
@@ -45,7 +62,7 @@ visto que a classificação morfológica foi feita por colaboradores do CALIFA t
 inspeção visual das imagens na banda-r do \SDSS das mesmas galáxias. Vemos também que as galáxias
 tipo Sd possuem as populações estelares mais jovens e menos massivas na média. Por ser um fenômeno
 apenas de posição do referencial de observação não deveríamos ver preferência por valor de relação
-de semi-exios (b/a) quando dividimos em classes morfológicas, o que realmente acontece.
+de semi-eixos (b/a) quando dividimos em classes morfológicas, o que realmente acontece.
 
 \begin{figure}
 	\centering
@@ -101,7 +118,7 @@ estes cortes.
 	{Mesma ideia da Fig \ref{fig:amostraMorf} no entanto para todas as zonas restantes após a
 	aplicação da máscara discutida em \ref{sec:synvsneb:amostra:mask}. No painel superior esquerdo
 	temos a densidade superficial de massa, diferentemente da Fig. \ref{fig:amostraMorf} pois as zonas
-	possuem números diferentes de píxeis, portanto, áreas diferentes. Também podemos ver acima deste
+	possuem números diferentes de pixels, portanto, áreas diferentes. Também podemos ver acima deste
 	painel o número de zonas contidas em cada classe morfológica. Vemos que as tendências notáveis para
 	os valores integrados se mantém quando analisamos os resultados por zona.}
 	\label{fig:amostraRealMorf}
@@ -128,13 +145,15 @@ do que em luz. Também mostram que algumas propriedades, como idade estelar méd
 poeira e densidade superficial de massa estelar são bem representados pelo seus valores medidas a 1
 HLR.
 
-Como um exemplo, podemos observar na Fig. \ref{fig:K0140xYRadProf} o perfil radial da fração de luz
-proveniente das populações jovens para a galáxia NGC1667 (objeto CALIFA 140). Nos dois primeiros
-painéis temos a imagem do \SDSS do mesmo objeto e o mapa de $x_Y$ calculado pelo \starlight. No
-últimos vemos o perfil radial juntamente com o valor de $x_Y$ para todas as zonas presentes na
-galáxia e que compõe nossa amostra. Dentro de nosso trabalho utilizamos as medidas em zonas, em
-perfis radiais e quando necessário, integradas (no disco ou na galáxia completa), nos possibilitando
-portanto verificar diferenças nestes tipos de abordagens.
+Neste trabalho, escolhemos utilizar perfis radiais em anéis elípticos, calculando a média dentro de
+todas as zonas não mascaradas em cana anel. Como um exemplo, podemos observar na Fig.
+\ref{fig:K0140xYRadProf} o perfil radial da fração de luz proveniente das populações jovens para a
+galáxia NGC1667 (objeto CALIFA 140). Nos dois primeiros painéis temos a imagem do \SDSS do mesmo
+objeto e o mapa de $x_Y$ calculado pelo \starlight. No últimos vemos o perfil radial juntamente com
+o valor de $x_Y$ para todas as zonas presentes na galáxia e que compõe nossa amostra. Dentro de
+nosso trabalho utilizamos as medidas em zonas, em perfis radiais e quando necessário, integradas (no
+disco ou na galáxia completa), nos possibilitando portanto verificar diferenças nestes tipos de
+abordagens.
 
 \begin{figure}
 	\centering
@@ -144,10 +163,10 @@ portanto verificar diferenças nestes tipos de abordagens.
 	{\emph{Painel esquerdo}: Imagem da galáxia NGC1667 (CALIFA 140) do \SDSS. \emph{Painel central}:
 	Mapa da fração percentual de luz proveniente das populações jovens ($x_Y$). \emph{Painel direito}:
 	$x_Y$ contra a distância radial. Os pontos em cinza ao fundo são os valores para zonas. O perfil radial
-	calculado em bins elipticos com espessura de 0.1 HLR é desenhado com uma linha preta contínua. Já
-	linha tracejada representa o valor da mediana de $x_Y$ em bins de distância radial. Vemos que
-	neste caso o valor do perfil radial de $x_Y$ acompanha o valor da mediana da distribuição dos
-	valores para zonas. }
+	calculado em anéis elípticos com espessura de 0.1 HLR é desenhado com uma linha preta contínua.
+	Já linha tracejada representa o valor da mediana de $x_Y$ nesses anéis. Vemos que neste caso o
+	valor do perfil radial de $x_Y$ acompanha o valor da mediana da distribuição dos valores para
+	zonas.}
 	\label{fig:K0140xYRadProf}
 \end{figure}
  
@@ -221,7 +240,7 @@ Apesar do modelo de extinção ser o mesmo, o coeficiente calculado por cada um 
 diferente, como podemos ver na Fig. \ref{fig:tauVsynvsneb}. Esta figura apresenta a comparação entre
 os coeficientes de extinção para zonas e também para os perfis radiais. O coeficiente que vem do
 \starlight é calculado no processo de ajuste espectral de maneira a evitar degenerescências nos
-resultados, já o do decremento balmer representa melhor as regiões onde existem os observáveis
+resultados, já o do decremento Balmer representa melhor as regiões onde existem os observáveis
 necessários para seu cálculo, ou seja, regiões onde existam linhas de \Halpha e \Hbeta, portanto,
 regiões mais jovens. Verificamos que a medida que vamos sendo mais exigente com fração de luz
 proveniente das populações jovens ($x_Y$), valor mínimo de $\tauVS$ e $\tauVN$, e distância radial
@@ -235,10 +254,10 @@ capítulo e que pode nos ajudar a um melhor entendimento do significado de $\tau
 	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/CompareTauV.pdf}}
 	\caption[Comparação entre os coeficientes de extinção.] 
 	{Comparação entre os coeficientes de extinção por poeira provenientes da síntese ($\tauVS$) e
-	do decremento de Balmer ($\tauVN$). Os contornos azul, amarelo e vermelho representam os intervalos
-	de confiança ($1\sigma$, $2\sigma$ e $3\sigma$). A linha preta representa a mediana e as linhas
-	pontilhadas representam o ajuste utilizando OLS bisector (vermelha) e mínimos quadrados (preta).
-	Este gráfico não possui a máscara da definição da amostra aplicada. }
+do decremento de Balmer ($\tauVN$). Os contornos azul, amarelo e vermelho representam os intervalos
+de confiança ($1\sigma$, $2\sigma$ e $3\sigma$). A linha preta representa a mediana e as linhas
+pontilhadas representam o ajuste utilizando {\em OLS bisector} (vermelha) e mínimos quadrados
+(preta). Este gráfico não possui a máscara da definição da amostra aplicada. }
 	\label{fig:tauVsynvsneb}
 \end{figure}
 
@@ -259,18 +278,19 @@ capítulo e que pode nos ajudar a um melhor entendimento do significado de $\tau
 \section{Comparação entre as metalicidades}
 \label{sec:synvsneb:Z}
 
+\subsection{Artigo - Insights on the Stellar Mass-Metallicity Relation from the CALIFA Survey.}
+
 No artigo de \citet{GonzalezDelgado.etal.2014b}, (GD14 daqui em diante) cuja versão completa está no
-apêndice \ref{apendice:1} e eu tenho participação, analisamos a relação entre massa estelar
-($M_\star$ - efeitos globais) e a densidade superficial de massa estelar ($\mu_\star$ - efeitos
-locais) com a metalicidade estelar ($Z_\star$) de uma amostra de 300 galáxias do CALIFA de todos os
-tipos morfológicos (desde E a Sd). \citet{Tremonti.etal.2004a} investigam a mesma relação, embora
-para a metalicidade do gás ($\ZN$) e apenas para galáxias formadoras de estrelas\footnote{{\em
-Star-forming galaxies}, com ativa formação estelar.}, essa relação é conhecida como relação
-massa-metalicidade ({\em mass-metallicity relation} - MZR). Verificamos em nosso artigo que as
-galáxias seguem uma boa MZR, mas expandindo um intervalo muito maior de metalicidade. A relação
-totalmente estelar é mais inclinada que a relação comparando com a metalicdade do gás pois esta
+apêndice \ref{apendice:GDetal2014b} e eu tenho participação, analisamos a relação entre massa
+estelar ($M_\star$ - efeitos globais) e a densidade superficial de massa estelar ($\mu_\star$ -
+efeitos locais) com a metalicidade estelar ($Z_\star$) de uma amostra de 300 galáxias do CALIFA de
+todos os tipos morfológicos (desde E a Sd). \citet{Tremonti.etal.2004a} investigam a mesma relação,
+embora para a metalicidade do gás ($\ZN$) e apenas para galáxias SF, essa relação é conhecida como
+relação massa-metalicidade ({\em mass-metallicity relation} - MZR). Verificamos em nosso artigo que
+as galáxias seguem uma MZR, mas expandindo um intervalo muito maior de metalicidade. A relação
+totalmente estelar é mais inclinada que a relação comparando com a metalicidade do gás pois esta
 última nos fornece informações sobre o estado atual do gás e a primeira, sobre toda a história de
-formação estelar da galáxia. A metalicidade estelar para cada píxel (par $x,y$) é calculada segundo
+formação estelar da galáxia. A metalicidade estelar para cada pixel (par $x,y$) é calculada segundo
 a equação:
 \begin{equation}
  	\label{eq:logZmass}
@@ -285,11 +305,14 @@ galáxias do CALIFA. Comparando nossos resultados com os obtidos por \citeauthor
 Após calculamos a metalicidade estelar considerando apenas populações jovens ($t_\star\ \leq$ 2
 bilhões de anos) vemos que o resultado se aproxima melhor da tendência para as regiões \Hii.
 
+\subsection{$\meanM{\log Z_\star}$ vs $\log\ (O/H)$}
+\label{sec:synvsneb:ZemuZR}
+
 Como citado em \ref{sec:emline:datacube:Zneb}, com a calibração de \citet{Marino.etal.2013a} temos
 metalicidade nebular para aquelas regiões aonde temos medidas para todas as linhas envolvidas no
 processo (\Hbeta, \oIII, \Halpha e \nII). Na Fig. \ref{fig:ZstarvsZneb} podemos ver a a relação
-entre a densidade superficial de massa estelar e a metalicidade nos três painés de cima (zonas,
-anéis elipticos e galáxias integradas) e, na mesma sequência, temos a comparação entre a
+entre a densidade superficial de massa estelar e a metalicidade nos três painéis de cima (zonas,
+anéis elípticos e galáxias integradas) e, na mesma sequência, temos a comparação entre a
 metalicidade nebular e estelar. Em cada gráfico aparecem as medianas para as metalicidades estelares
 calculadas para diferentes intervalos de idades. A Figura nos mostra que para mesmos valores de
 $\mu_\star$ a metalicidade estelar é mais alta para as estrelas mais jovens, o que parece ser um
@@ -323,6 +346,24 @@ cores para as medianas, abaixo de cada gráfico vemos o coeficiente de correlaç
 $\meanM{\log Z_\star}$ e $\ZN$.}
 	\label{fig:ZstarvsZneb}
 \end{figure}
+
+\subsection{Artigo - The CALIFA Survey acress the Hubble sequence.}
+
+Durante o tempo que estive no IAA tive participação em dois artigos. O segundo deles \citep[][GD15
+daqui em diante]{GonzalezDelgado.etal.2015a} (em anexo, \ref{apendice:GDetal2015a}) é um artigo
+onde resolvemos espacialmente as propriedes estelares baseados na síntese com o \starlight para 300
+galáxias do \CAL entre todos os tipos morfológicos. Verificamos que as galáxias mais massivas são
+mais compactas, velha, mais rica em metais e menos extinguída por poeira. Discutimos algumas como as
+propriedades se comportam em partes distintas da galáxia (bojo e disco) e o quanto essas
+propriedades variam quando dividimos em classes de massa, idade e tipo morfológico. Encontramos
+gradientes negativos de \meanM{\log Z_\star} menos inclinados que os previstos por modelos de
+crescimento isolado. Galáxias do tipo Sb-Sbc possuem gradientes de \meanM{\log Z_\star} compatíveis
+com aqueles medidos para a Via Láctea. Galáxias tipo Sc possuem com gradientes mais planos, nos
+mostrando que a evolução química do disco contribui bastante com a evolução química das galáxias
+desta classe morfológica. Em uma visão geral, concluímos que o processo de cessão de formação
+estelar\footnote{Geralmente conhecido como {\em quenching}.} é geralmente independente da massa
+total da galáxia, enquanto metalicidade e a estrutura física da galáxia são influenciadas por
+processos que são dependentes da massa.
 
 %Estudos recentes apontam valores similares para o tempo de depleção do gás \citep[e.g., ][ver tabela 5 e
 %referências.]{Leroy.etal.2013a}. As galáxias mais massivas completaram seu enriquecimento químico a

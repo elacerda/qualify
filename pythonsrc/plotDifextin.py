@@ -94,9 +94,11 @@ if __name__ == '__main__':
     minR = args.maskradius
 
     if minR is None:
+        ticks_r = [0, 1.5, 3]
         maskRadiusOk__g = np.ones_like(H.zone_dist_HLR__g, dtype = np.bool)
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
+        ticks_r = [0.7, 1.85, 3]
         maxR = H.Rbin__r[-1]
         maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
         maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
@@ -121,7 +123,6 @@ if __name__ == '__main__':
     ba_max = args.bamin
     mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, ba_max))
     mask_GAL__g = np.bitwise_or(mask_GAL__g, ~gals_slice__integr)
-
     
     mask__g = np.bitwise_or(np.ma.log10(H.SFRSD__Tg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Tg[iT]).mask)
     mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
@@ -139,7 +140,7 @@ if __name__ == '__main__':
     NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
 
     default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.1, gs_prc = True)
-    default_sc_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', alpha = 0.6, label = '')
+    default_sc_kwargs = dict(s = 10, marker = 'o', edgecolor = 'none')
     default_plot_rs_kwargs = dict(c = 'k', lw = 2, label = 'Median (run. stats)', alpha = 0.9)
     default_figure_kwargs = dict(figsize = (10, 8), dpi = 100)
     default_scatter_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', alpha = 0.45, label = '')

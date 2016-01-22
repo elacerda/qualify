@@ -95,9 +95,11 @@ if __name__ == '__main__':
     fnamesuffix = '.pdf'
     
     if minR is None:
+        ticks_r = [0, 1.5, 3]
         maskRadiusOk__g = np.ones_like(H.zone_dist_HLR__g, dtype = np.bool)
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
+        ticks_r = [0.7, 1.85, 3]
         maxR = H.Rbin__r[-1]
         maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
         maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
@@ -145,6 +147,7 @@ if __name__ == '__main__':
     
     # There is 2 galaxies with ba < 0.14. Those galaxies will assume mu = 0
     mu_GAL = np.ma.where(H.ba_GAL__g < 0.14, 0.05, ((H.ba_GAL__g ** 2.0 - axial_ratio_sq) / (1 - axial_ratio_sq)) ** 0.5)
+    mu_GAL = np.ma.where(H.ba_GAL__g < 0.13, 0.0, ((H.ba_GAL__g ** 2.0 - axial_ratio_sq) / (1 - axial_ratio_sq)) ** 0.5)
     
     alpha = 1.
     
@@ -216,9 +219,9 @@ if __name__ == '__main__':
 
     #with PdfPages('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix)) as pdf:
     NCols = 2
-    NRows = 1
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [10, 5]
+    page_size_inches = [10,10]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -308,7 +311,94 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    f.subplots_adjust(bottom = 0.15, top = 0.95, hspace = 0, wspace = 0.25, right = 0.95, left = 0.1)
+
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 15, 
+        rms = True, 
+        text = True, 
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+    )
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    xran = [0, 1.5]
+    yran = [0, 3]
+    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = H.integrated_tau_V_neb__g, mask = mask_GAL__g) 
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    # X, Y = np.meshgrid(xedges, yedges)
+    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title('GAL')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    #for i in xrange(len(rs.xPrcS)):
+    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(r'$\tau_V^\star$') 
+    ax.set_ylabel(r'$\tau_V^{neb}$')
+    rs.poly1d()
+    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    sum_Ha__g = H.sum_prop_gal(H.F_obs_Ha__g, mask_zones = mask__g)
+    sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
+    tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
+
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 15, 
+        rms = True, 
+        text = True, 
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+    )
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    xran = [0, 1.5]
+    yran = [0, 3]
+    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = tau_V_neb_resolved__g, mask = mask_GAL__g) 
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    # X, Y = np.meshgrid(xedges, yedges)
+    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title('GAL RES.')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    #for i in xrange(len(rs.xPrcS)):
+    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(r'$\tau_V^\star$') 
+    ax.set_ylabel(r'$\tau_V^{neb}$')
+    rs.poly1d()
+    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.3, wspace = 0.25, right = 0.95, left = 0.1)
     #pdf.savefig(f)
     f.savefig('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)

@@ -24,26 +24,25 @@ espectros de energias proveniente das estrelas de diferentes idades e composiç�
 (metalicidade), além da correção pela aplicação de alguma lei de extinção por poeira. Subtraindo os
 espectros observados dos espectros modelados obtêm-se os espectros residuais, compostos basicamente
 pelas linhas de emissão. Essas linhas são geradas principalmente através das ionizações e
-recombinações dos fótons nos átomos dos elementos encontrados no meio interestelar, e mais
-densamente, nas núvens de gás.
+recombinações de fótons nos átomos dos elementos encontrados no meio interestelar, e mais
+densamente, nas nuvens de gás.
 
 \section{EmLinesDataCube}
 \label{sec:emline:datacube}
 
 Dentre os diversos produtos indiretos da síntese de populações estelares, as medidas dos fluxos
 integrados das linhas de emissão é peça fundamental em nosso projeto. Rubén García Benito, nosso
-colaborador e membro do Projeto CALIFA {\em Survey}, desenvolveu um programa que, utilizando-se dos
-espectros residuais (obtidos pela subtração dos espectros modelados dos observados), ajusta perfis
-gaussianos para as linhas possibilitando então a medida dos fluxos integrados das linhas de emissão
-além de estimar os erros envolvidos neste processo \myojo{red}{REF Figura prog RGB?}. Acreditamos
-que essas medidas sejam liberadas para a comunidade científica assim que o último lançamento público
-de dados do CALIFA for feito (DR3).
+colaborador e membro do \PCAL, desenvolveu um programa que, utilizando-se dos espectros residuais
+(obtidos pela subtração dos espectros modelados dos observados), ajusta perfis gaussianos para as
+linhas possibilitando então a medida dos fluxos integrados das linhas de emissão além de estimar os
+erros envolvidos neste processo. Acreditamos que essas medidas sejam liberadas para a comunidade
+científica assim que o último lançamento público de dados do CALIFA for feito (DR3).
 
 Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Para tal,
 escrevi um objeto em \textsc{p}y\textsc{thon} que além de organizar os resultados provenientes do
 programa do Rubén também calcula a abundância de oxigênio, um dos índices usados como metalicidade
 nebular ($\log$ (O/H)), o coeficiente de extinção por decremento de Balmer para as regiões
-nebublares ($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada
+nebulares ($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada
 cálculo, etc. Esse objeto foi adicionado ao \pycasso\footnote{
 	{\em Python CALIFA Stellar Synthesys Organizer} -
 \href{
@@ -228,7 +227,7 @@ fótons H-ionizantes.
 A quantidade total de luz $l$\footnote{$l(t)$ pode ser qualquer função que descreve a evolução
 temporal de qualquer fonte radiativa genérica \emph{por unidade de massa formada} (portanto,
 dependente da {\em Initial Mass Function} - IMF) de uma população estelar simples ({\em Simple
-Stellar Population} - SSP)} que recebmos de estrelas que se formaram $t$ anos atrás é:
+Stellar Population} - SSP)} que recebemos de estrelas que se formaram $t$ anos atrás é:
 \begin{equation}
 	\mathrm{d}\Lambda = l(t)\ \mathrm{d}\mathrm{M}(t).
 	\label{eq:dLambda}
@@ -246,13 +245,13 @@ um total de
 \noindent luz $l$. Assumindo o caso B de recombinação do hidrogênio, um em cada 2.226 fótons
 ionizantes produzem um fóton de \Halpha \citep{Osterbrock.Ferland.2006a}. Esse número não varia
 muito em função da temperatura e da densidade nas regiões nebulares. Por fim a luminosidade
-intrísica de \Halpha pode ser teoricamente calculada como:
+intrínseca de \Halpha pode ser teoricamente calculada como:
 \begin{equation}
 	\LHalpha = h \nu_{\Halpha} \frac{\mathrm{Q}_H}{2.226},
 	\label{eq:LHa_recomb_theory}
 \end{equation}
 \noindent aonde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo
-assume-se que nenhuma radiação escapa da núvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido
+assume-se que nenhuma radiação escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido
 por extinção, também assume-se que a poeira não espalha muito os fótons com $h\nu\ < 13.6$ eV.
 Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
 obtemos:
@@ -282,21 +281,12 @@ Para nossa configuração de modelos podemos ver a evolução de $\mathcal{N}_H$
 \ref{fig:Nh_qh}. Esta figura mostra a evolução de $\mathcal{N}_H$ no tempo, em valores absolutos
 (painel superior esquerdo) e relativamente ao total de $\mathcal{N}_H$ (painel superior direito).
 Em \citet[Fig. 2b]{CidFernandes.etal.2011a} nós podemos ver a evolução temporal de $q_H$ sob
-todas as idades e metalicidades\footnote{Naquele estudo, o grupo 
-	\href{
-		http://starlight.ufsc.br
-	}{
-		SEAGal/\STARLIGHT
-	} utilizou as isócronas de Padova 1994 (
-	\href{
-		http://pleiadi.pd.astro.it/#data2
-	}{
-		http://pleiadi.pd.astro.it/\#data2
-	}
-	) com a IMF de \citet{Chabrier.2003a}.
-}. A mesma figura é reproduzida no painel inferior. É notável que o número de fótons H-ionizantes
-rapidamente converge ao máximo perto de $t = 10^7$ anos. Para uma SFR constante dentro dessa escala
-temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge para
+todas as idades e metalicidades\footnote{Naquele estudo, o
+grupo\href{http://starlight.ufsc.br}{SEAGal/\STARLIGHT} utilizou as isócronas de Padova 1994
+(\href{http://pleiadi.pd.astro.it/#data2}{http://pleiadi.pd.astro.it/\#data2}) com a IMF de
+\citet{Chabrier.2003a}.}. A mesma figura é reproduzida no painel inferior. É notável que o número de
+fótons H-ionizantes rapidamente converge ao máximo perto de $t = 10^7$ anos. Para uma SFR constante
+dentro dessa escala temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge para
 \begin{equation}
 	Q_H = \psi\ \mathcal{N}_H(t\ =\ 10^7\ \textrm{anos, IMF, Z}{}_\star).
 	\label{eq:QH_converge}
@@ -316,7 +306,7 @@ para $t = 10^7$ anos. Finalmente, resolvendo \eqref{eq:SFR_theoric} encontramos 
 \end{equation}
 
 Em \citet{Kennicutt.1998a} esse coeficiente é calculado utilizando diferentes modelos estelares mas
-utilizando a mesma IMF. Convertendo o valor de nossa calibração para as unidades utilizdas neste
+utilizando a mesma IMF. Convertendo o valor de nossa calibração para as unidades utilizadas neste
 artigo, temos $8.1 \times 10^{-42}\ ergs\ s^{-1}$, o qual é bem próximo ao valor obtido
 anteriormente ($7.9 \times 10^{-42}\ ergs\ s^{-1}$).
 
@@ -324,8 +314,8 @@ anteriormente ($7.9 \times 10^{-42}\ ergs\ s^{-1}$).
 	\centering
 	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
 	\includegraphics[scale=0.62]{figuras/Nh_logt_metBase_Padova2000_salp.pdf}
-	\caption[Evolução temporal do número de fótons H-ionizantes e da taxa de fótons H-ionizantes em
-unidades da massa formada.] 
+	\caption[Evolução temporal do número e da taxa de fótons H-ionizantes em unidades da massa
+	formada.] 
 	{\emph{Painel superior esquerdo}: A	evolução no tempo do número de fótons ($\mathcal{N}_H$) para 6
 metalicidades (de 0.02 $Z_\odot$ até 1.58 $Z_\odot$) que compoem nossos modelos de SSP. A linha
 preta grossa representa a evolução utilizando metalicidade solar. \emph{Painel superior direito}:
