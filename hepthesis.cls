@@ -629,11 +629,11 @@
 	{\Huge{\chapfont \@thesistitle\\}}
 	    \vspace{1.5 cm}
 	{\Large{\frontfont \@thesisauthor}\\}
-	    \vspace{.5 cm}
+	    \vspace{1. cm}
         {\Large{\frontfont Orientador:\\ \@supervisor}\\}
-	    \vspace{1.5 cm}
+	    \vspace{0.5 cm}
          {\Large{\frontfont Coorientadora:\\ \@cosupervisor}\\}
- 	    \vspace{2.2 cm}
+ 	    \vspace{1.0 cm}
 	    \raisebox{0pt}[10pt][10pt]%
 		     {\textbullet\ \textbullet\ \textbullet\hspace{3cm}}\\
 	    \vspace{1.0cm}
