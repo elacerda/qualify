@@ -6,7 +6,7 @@
 
 %:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::%
 %                                                               %
-%                          Capítulo 4                           %
+%                          Capítulo 5                           %
 %                                                               %
 %:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::%
 
@@ -16,37 +16,177 @@
 %                                                               %
 %***************************************************************%
 
-%***************************************************************%
-%                                                               %
-%                      Conversão tauV - Gas                     %
-%                                                               %
-%***************************************************************%
+\chapter{Extinção diferencial}
+\label{sec:difextin}
 
-\section{Explorando as diferenças}
-\label{sec:explordif}
+Nosso objetivo é conseguir estimar fração de gás para nossas galáxias do \CAL através da conversão
+de poeira em gás explorando uma conversão do tipo da Eq. \ref{eq:dust2gas}. Para isso vamos tentar
+entender melhor a diferença entre os coeficientes de extinção por poeira adotados, realizando um
+procedimento parecido e fazendo algumas comparações com um estudo de nosso grupo de populações
+estelares, que ainda está para ser públicado, sobre esta extinção diferencial em galáxias do \SDSS.
+Este estudo sobre extinção diferencial nas galáxias do \SDSS é parte da tese de Marielli de Souza
+Schlickmann.
 
-Estudo empíricos confirmam a existência de uma extinção diferencial \citep[e.g., ][]{Fanelltex} 
+%\section{Definindo nossas variáveis}
+\section{Estudo empírico}
+\label{sec:difextin:emp}
 
-%\chapter{Coeficiente de extinção como indicador de Gás}
-%\label{sec:gas}
-% Referências:
-% - Brinchman
-% - Guiderdoni & Rocca
-% - procurar mais conversões dust to gas ou dust to stars
-% - Referências para cada indicador
-%\section{Indicadores de gás}
-%\label{sec:synvsneb:proxies}
-% Figuras:
-% - ?? retiradas alguns papers para diferentes indicadores ??
-%\section{Lei de Schimidt-Kennict}
-%\label{sec:synvsneb:proxies}
-% Figuras:
-% - sample SK
-% - our pseudo - SK
-%\section{De poeira para gás}
-%\label{sec:synvsneb:proxies}
-% Figuras:
-% - perfis radiais de SigmaGas e de fgas
-% - real SK
+De maneira a explorar as diferenças entre os coeficientes de extinção, identificamos duas variáveis
+que nos ajudarão nesse processo:
+\begin{eqnarray}
+	\mathcal{D}_\tau\ &\equiv&\ \tauVN - \tauVS \\
+	\label{eq:difftau}
+	\mathcal{R}_\tau\ &\equiv&\ \frac{\tauVN}{\tauVS} 
+	\label{eq:ratiotau}
+\end{eqnarray}
+
+\subsection{Comparação direta entre os coeficientes}
+\label{sec:difextin:emp:comparetauV}
+
+Começamos a discussão que se estenderá nesta seção, e nas próximas a seguir, na Sec.
+\ref{sec:synvsneb:tauv}. Me atenho a discussão à perfis radiais, voltado para zonas ou pra valores
+integrados quando pertinente. Na Fig. \ref{fig:tauVhisto} vemos a comparação direta entre os
+coeficientes, juntamente com os histogramas. O primeiro painel mostra a comparação entre os
+coeficientes como na Fig. \ref{fig:tauVsynvsnebMask} para perfis radiais. Os dois histogramas são
+de $\Dtau$ e $\Rtau$. Os valores da mediana (média) de $\Dtau$ são 0.31 (0.32) e de $\Rtau$, 2.06
+(2.46) e ambos mostram claramente a existência de uma extinção diferencial. Esse resultado aparece
+da mesma forma para zonas e para as galáxias integradas. No trabalho de Marielli com as galáxias
+do \SDSS cabe lembrar que a síntese de populações estelares foi feita apenas para espectros
+integrados e com diferentes base de populações estelares e IMF, e ainda sim encontramos valores
+parecidos que evidenciam o mesmo fenômeno, e que serve de base para a discussão que vem a seguir.
+
+\begin{figure}
+	\centering
+	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/histoTauVR.pdf}}
+	\caption[Comparação $\tauVS$ e histogramas de $\Dtau$ e $\Rtau$.]
+	{}
+	\label{fig:tauVhisto}
+\end{figure}
+
+\subsection{O papel de $x_Y$ e da $b/a$}
+\label{sec:difextin:emp:xYcosi}
+
+Pela relação entre os coeficientes vemos que há um espalhamento notável, entretanto, parece óbvio
+que a extinção diferencial existe. Ao estudar todas as propriedades, galáxia por galáxia, vimos que
+existe uma relação interessante entre $\Dtau$ e $\Rtau$ e a fração de populações jovens ($x_Y$) e a
+relação axial da galáxia ($b/a$). A primeira pela fato que relaciona regiões onde existam populações
+mais jovens, ou seja, mais relacionadas a regiões formadoras de estrelas, ajudando-nos a quebrar um
+pouco nessa ambiguidade nos valores de $\tauVS$ e a última pelo fato de afetar diretamente a forma
+de modelar a extinção por poeira.
+
+Para utilizar a relação axial vamos fazer uma pequena correção para a projeção do disco no plano do
+céu:
+\begin{equation}
+	\varphi = \cos i = \left \{ \begin{matrix} \sqrt{\frac{(b/a)^2 - \alpha^2}{1 - \alpha^2}},
+	&\mbox{se }b/a > 0.13 \\ 0.05, &\mbox{se }b/a <= 0.13 \end{matrix}\right
+\end{equation}
+\noindent com $i$ é o ângulo de inclinação da galáxia e com $\alpha = 0.13$, o valor da relação
+axial intrinseca de uma galáxia mais frontal possível ({\em edge-on}), valores com $b/a$ <= 0.13
+recebem o valor da menor inclinação de nossa amostra (0.05) ao invés de 0 para não haver problemas
+matemáticos futuros. Esse é um refinamento que altera levemente o valor de $b/a$ e praticamente só
+afeta as galáxias com $b/a$ < 0.4.
+
+\begin{figure}
+	\centering
+	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/DtauR.pdf}}
+	\caption[$\Dtau$, $x_Y$ e $\varphi$.]
+	{}
+	\label{fig:Dtau}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/RtauR.pdf}}
+	\caption[$\Rtau$, $x_Y$ e $\varphi$.]
+	{}
+	\label{fig:Rtau}
+\end{figure}
+
+Na Fig. \ref{fig:Dtau} vemos como $\Dtau$ se relaciona com a $\varphi$ e $x_Y$. No primeiro e
+terceiro paineís vemos as distribuições, e no segundo e no quarto vemos as medianas para diferentes
+classes da variável cruzada, isto é, distribuição contra $x_Y$ com os pontos divididos em classes de
+$\varphi$ e distribuição contra $\varphi$ em classes de $x_Y$. É clara a tendência de $\Dtau\ \to\
+0$ quando $x_Y \to 1$. Pelo primeiro painel vemos que apesar da existência de uma anticorrelação
+entre $\Dtau$ e $x_Y$, existe um espalhamento considerável. No segundo painel dividimos nossa
+amostra em classes de $\varphi$ e parece não haver dependência. No terceiro e quarto painel
+exploramos a relação $\Dtau$ e $\varphi$. $\Dtau$ não parece haver dependência com $\varphi$ mas
+quando dividimos a amostra em classes de $x_y$ vemos que se confirma a anticorrelação.
+
+Repetimos esse mesmo experimento para $\Rtau$ na Fig. \ref{fig:Rtau}. Observando a mediana parece
+que $\Rtau \to 1$ quando $x_Y \to 1$, com uma $\Rtau \to 3 \sim 4$ quando $x_Y \to 0$. Vemos pelo
+último painel que a anticorrelação com $x_Y$ segue, mas olhando o segundo painel vemos que parece
+haver um pequeno afastamento entre as medianas da distribuição quando dividimos nessas classes de
+$\varphi$, mas esse resultado não parece aparece muito quando olhamos o terceiro painel. Quando
+fazemos o mesmo gráfico para as galáxias do \SDSS esse resultado é muito mais evidente, aparecendo
+uma correlação entre $\Rtau$. Em primeira estância creio que isso se deve ao poder da estatística de
+quase 1 milhão de pontos sendo 1 por galáxia. Nosso estudo para as galáxias integradas da nossa
+amostra peca por estatística, pois temos apenas 184 pontos.
+
+\section{Modelagem e interpretação}
+\label{sec:difextin:modeleinterp}
+Com esse cenário criado até agora neste capítulo, parece ser óbvio que $x_Y$ é fundamental em nossa
+interpretação da extinção diferencial. O resultado da correlação entre $\Rtau$ e $\varphi$ aparece
+muito melhor quando olhamos para a amostra do \SDSS e parece seguir bem na linha de interpretação
+que tivemos. Nessa seção vou apresentar o modelo proposto na tese de Marielli e utilizar a mesma
+modelagem com nossos dados.
+
+\subsection{O modelo}
+\label{sec:difextin:modeleinterp:model}
+
+$x_Y$ é claramente a melhor forma de sintonizar essa influência da idade como no modelo de
+\citet{Charlot.Fall.2000a}. Nele os autores consideram jovem todas as populações com idade menor que
+10 milhões de anos. Já interpretação da influência de $\varphi$ foi relacionada a diferença entre
+geometria das regiões \Hii e a da galáxia. As estrelas jovens, assim como as velhas, possuem
+atenuações semelhantes no ISM dos discos galáticos, mas as populações jovens possuem também a poeira
+de suas {\em birth-clouds}. Ou seja, se modelarmos as regiões \Hii como esfericamente simétricas, o
+coeficiente de extinção não deve se alterar quando mudamos a linha de visada entre o observador e a
+galáxia. Já para o ISM parece se alterar bastante, portanto a razão entre os coeficientes deve se
+alterar no mesmo passo que a inclinação se altera. Na Fig. \ref{fig:model} \myojo{blue}{(fazer
+figura)} fica melhor explicado.
+
+Essa figura juntamente com as considerações acima nos levam a a identificar um coeficiente de
+extinção para as populações jovens e outro para as velhas da seguinte maneira:
+\begin{eqnarray}
+	\tau_O &=& \frac{\tau_{\mathrm{ISM}}}{\varphi} \\
+	\label{eq:tauO}
+	\tau_Y &=& \frac{\tau_{\mathrm{ISM}}}{\varphi} + \alpha\tau_{\mathrm{BC}}
+	\label{eq:tauY} 
+\end{eqnarray}
+\noindent onde $\varphi$ e $\alpha$ entram para corrigir as possíveis diferenças entre a extinção
+para as populações jovens e para as suas regiões \Hii associadas. 
+
+Para relacionar essas variávies com nossos observáveis, começamos identificando $\tau_Y$ como
+$\tauVN$. Como comentamos na Sec. \ref{sec:synvsneb:tauv} $x_Y$ parece funcionar como um
+sintonizador da dos pesos entre $\tau_O$ e $\tau_Y$ na interpretação de $\tauVS$, assim, podemos
+aproximar $\tauVS$ como:
+\begin{equation}
+	\tauVS \approx \tilde{\tau} \equiv x_Y \tau_Y + (1 - x_Y) \tau_O.
+	\label{eq:tauVS}
+\end{equation}
+Com essa última equação fechamos nosso sistema e podemos escrever equações para $\tauISM$ e
+$\tauBC$, além de trazer uma interpretação para o real significado de $\tauVS$. Trabalhando com as
+Eqs. \ref{eq:tauO}, \ref{eq:tauY} e \ref{eq:tauVS} e identificando $\tau_Y = \tauVN$ obtemos:  
+\begin{eqnarray}
+	\tauBC &=& \frac{\tauVS - \tauVN}{1 - \alpha x_Y} \\
+	\label{eq:tauBC}
+	\tauISM &=& \varphi\frac{\tauVS - \alpha x_Y \tauVN}{1 - \alpha x_Y}  
+	\label{eq:tauISM}
+\end{eqnarray}
+
+\subsection{Comparação com os dados}
+\label{sec:difextin:modelinterp:comp}
+
+Começamos essa seção identificando as nossas variáveis $\Dtau$ e $\Rtau$ neste cenário:
+\begin{eqnarray}
+	\Dtau &=& (1 - \alpha x_Y) \tauBC \\
+	\label{eq:DtauxY}
+	\Rtau &=& \frac{\varphi^{-1} \tauISM + \alpha \tauBC}{\varphi^{-1} \tauISM + \alpha x_Y \tauBC}
+\equiv \frac{1 + \alpha \varphi \rho}{1 + \alpha \varphi x_Y \rho}
+	\label{eq:RtauxY}
+\end{eqnarray}
+\noindent onde $\rho = \frac{\tauBC}{\tauISM}$. 
+
+%\subsubsection{$\Dtau}
+
 
 % End of this chapter

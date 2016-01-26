@@ -4,7 +4,7 @@
 #
 #from matplotlib.ticker import MultipleLocator
 from matplotlib.backends.backend_pdf import PdfPages
-from CALIFAUtils.plots import plot_text_ax
+from CALIFAUtils.plots import plot_text_ax, next_row_col
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Polygon
 from matplotlib import pyplot as plt
@@ -99,6 +99,8 @@ if __name__ == '__main__':
     iU = args.itZ
 
     fnamesuffix = '.pdf'
+    if args.output is not None:
+        fnamesuffix = '%s%s' % (args.output, fnamesuffix)
     minR = args.maskradius
 
     if minR is None:
@@ -106,8 +108,8 @@ if __name__ == '__main__':
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
         maxR = H.Rbin__r[-1]
-        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
-        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
+        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR)
+        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * (H.RbinCenter__r >= minR)).T
         fnamesuffix = '_maskradius%s' % fnamesuffix
         
     if args.slice_gals is None:
@@ -147,28 +149,28 @@ if __name__ == '__main__':
     
     print ((~mask__g).sum()),((~mask__rg).sum()), NgalsOkZones, NgalsOkRbins
  
-    count = 0
-    fraclim = 5
-    gals_ok = []
-    for gal in np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]):
-        zoneDistance_HLR = H.get_prop_gal(H.zone_dist_HLR__g, gal)
-        igal_all = H.califaIDs_all.tolist().index(gal)
-        igal = H.califaIDs.tolist().index(gal)
-        Nz = len(zoneDistance_HLR[zoneDistance_HLR >= minR])
-        mask__z = H.get_prop_gal(mask__g, gal)
-        mask__r = H.get_prop_gal(mask__rg, gal)
-        NzOk = (~(mask__z)).astype(int).sum()
-        NrOk = (~(mask__r)).astype(int).sum()
-        NzOkfrac = 100*NzOk / Nz 
-        NrOkfrac = 100*NrOk / H.NRbins 
-         
-        if (NzOk < fraclim):# or (NrOk < fraclim):
-            count += 1
-            pref = '>>>'
-        else:
-            gals_ok.append(gal)
-            pref = ''
-        print pref, gal, len(zoneDistance_HLR), Nz, mask__z.sum(), mask__r.sum(), NzOk, NrOk, NzOkfrac, NrOkfrac
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # count = 0
+    # fraclim = 5
+    # gals_ok = []
+    #  
+    # for gal in np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]):
+    #     igal_all = H.califaIDs_all.tolist().index(gal)
+    #     igal = H.califaIDs.tolist().index(gal)
+    #     mask__z = H.get_prop_gal(mask__g, gal)
+    #     mask__r = H.get_prop_gal(mask__rg, gal)
+    #     NzOk = (~(mask__z)).astype(int).sum()
+    #     Nz = len(mask__z)
+    #     NzOkfrac = 100.*NzOk / Nz 
+    #       
+    #     if (NzOk < fraclim):# or (NrOk < fraclim):
+    #         count += 1
+    #         pref = '>>>'
+    #     else:
+    #         gals_ok.append(gal)
+    #         pref = ''
+    #     print pref, gal, Nz, mask__z.sum(), NzOk, '%.2f%%'%NzOkfrac
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
     D_gals = {
         gal : {
@@ -185,8 +187,8 @@ if __name__ == '__main__':
                       v_int = np.ma.log10(H.Mcor_GAL__g), 
                       vm_int = np.ma.masked_array(np.ma.log10(H.Mcor_GAL__g), mask = mask_GAL__g), 
                       label = r'$\log\ M_\star$ [ $M_\odot$ ]'),
-        'McorSD' : dict(v = np.ma.log10(H.McorSD__g),
-                        vm = np.ma.masked_array(np.ma.log10(H.McorSD__g), mask = mask__g), 
+        'McorSD' : dict(v = np.ma.log10(H.McorSD__Tg[iT]),
+                        vm = np.ma.masked_array(np.ma.log10(H.McorSD__Tg[iT]), mask = mask__g), 
                         v_int = np.ma.log10(H.McorSD_GAL__g),
                         vm_int = np.ma.masked_array(np.ma.log10(H.McorSD_GAL__g), mask = mask_GAL__g), 
                         label = r'$\log\ \mu_\star$ [ $M_\odot\ pc^{-2}$ ]'), 
@@ -199,12 +201,12 @@ if __name__ == '__main__':
                     vm = np.ma.masked_array(H.reply_arr_by_zones(H.ba_GAL__g), mask = mask__g), 
                     v_int = H.ba_GAL__g, 
                     vm_int = np.ma.masked_array(H.ba_GAL__g, mask = mask_GAL__g), 
-                    label = r'b/a'),
+                    label = r'$b/a$'),
         'Zneb' : dict(v = H.logO3N2_M13__g - 8.69, 
                       vm = np.ma.masked_array(H.logO3N2_M13__g - 8.69, mask = mask__g), 
                       v_int = H.integrated_logO3N2_M13__g - 8.69, 
                       vm_int = np.ma.masked_array(H.integrated_logO3N2_M13__g - 8.69, mask = mask_GAL__g), 
-                      label = r'$12\ +\ \log (O/H)$ [$Z_\odot$]'),
+                      label = r'$12\ +\ \log (O/H)$ [ $Z_\odot$ ]'),
         'tauV' : dict(v = H.tau_V__Tg[iT], 
                       vm = np.ma.masked_array(H.tau_V__Tg[iT], mask = mask__g), 
                       v_int = H.integrated_tau_V__g, 
@@ -219,12 +221,12 @@ if __name__ == '__main__':
                            vm = np.ma.masked_array(H.alogZ_mass__Ug[iU], mask = mask__g), 
                            v_int = H.alogZ_mass_GAL__Ug[iU], 
                            vm_int = np.ma.masked_array(H.alogZ_mass_GAL__Ug[iU], mask = mask_GAL__g), 
-                           label =  r'$\langle \log\ Z_\star \rangle_M (R)$ (t < %.2f Gyr) [$Z_\odot$]' % (H.tZ__U[iU] / 1e9)),
-        'xY' : dict(v = 100.*H.x_Y__Tg[iT], 
-                    vm = 100.*np.ma.masked_array(H.x_Y__Tg[iT], mask = mask__g), 
-                    v_int = 100.*H.integrated_x_Y__Tg[iT], 
-                    vm_int = 100.*np.ma.masked_array(H.integrated_x_Y__Tg[iT], mask = mask_GAL__g), 
-                    label =  r'$x_Y$ [\%]'),
+                           label =  r'$\langle \log\ Z_\star \rangle_M (R)$ (t < %.2f Gyr) [ $Z_\odot$ ]' % (H.tZ__U[iU] / 1e9)),
+        'xY' : dict(v = H.x_Y__Tg[iT], 
+                    vm = np.ma.masked_array(H.x_Y__Tg[iT], mask = mask__g), 
+                    v_int = H.integrated_x_Y__Tg[iT], 
+                    vm_int = np.ma.masked_array(H.integrated_x_Y__Tg[iT], mask = mask_GAL__g), 
+                    label =  r'$x_Y$'),
     }
 
     ######################### Morf #########################
@@ -243,8 +245,6 @@ if __name__ == '__main__':
     label_morf = [ '', 'Sa', 'Sb', 'Sbc', 'Sc', 'Sd', '' ]
     tagname_morf = [ l.replace(' + ', '') for l in label_morf ]
     tickpos = np.arange(types_morf[0] - 1,types_morf[-1] + 2, 1)
-    #halfbinstep = np.diff(types_morf)[0]/2.
-    #tickpos = np.linspace(types_morf[0] - halfbinstep, types_morf[-1] - halfbinstep, Ntypes)
     
     if args.dryrun: sys.exit()
     
@@ -261,68 +261,63 @@ if __name__ == '__main__':
     grid_shape = (NRows, NCols)
     #f.suptitle(suptitle_R, fontsize = 15)
     row, col = 0, 0
-    props_order = [ 'McorSD', 'at_flux', 'xY', 'ba', ] # 'alogZmass', 'tauV', 'tauVNeb', 'Zneb',  ]
-    mode = 'zones_mask'
-    zones_tot = 0
+    props_order = [ 'Mcor', 'at_flux', 'xY', 'ba', ] # 'alogZmass', 'tauV', 'tauVNeb', 'Zneb',  ]
+    mode = 'integrated_mask'
     for k in props_order:
-        print row, col
+        zones_tot = 0
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
         p = props[k]
         Nboxes = Ntypes
-        if mode == 'integrated':
-            boxes_data = [ (p['v_int'][m]).compressed() if isinstance(p['v_int'], np.ma.MaskedArray) 
-                           else p['v_int'][m] for m in mask_morf ]
-            if (row == 0) and (col == 0):
-                for i_mt, msk in enumerate(mask_morf):
-                    msk_aux = msk
-                    if isinstance(p['vm_int'], np.ma.MaskedArray):
-                        msk_aux = np.bitwise_and(msk_aux, ~(p['vm_int'].mask))
-                    Nmsk = msk_aux.astype(int).sum()    
-                    plot_text_ax(ax, '%d' % Nmsk, (i_mt + 1) / 6., 0.96, 20, 'top', 'center', color_morf[i_mt])
-        elif mode == 'integrated_mask':
-            boxes_data = [ (p['vm_int'][m]).compressed() if isinstance(p['vm_int'], np.ma.MaskedArray) 
-                           else p['vm_int'][m] for m in mask_morf ]
-            if (row == 0) and (col == 0):
-                for i_mt, msk in enumerate(mask_morf):
-                    msk_aux = msk
-                    if isinstance(p['vm_int'], np.ma.MaskedArray):
-                        msk_aux = np.bitwise_and(msk_aux, ~(p['vm_int'].mask))
-                    Nmsk = msk_aux.astype(int).sum()    
-                    plot_text_ax(ax, '%d' % Nmsk, (i_mt + 1) / 6., 0.96, 20, 'top', 'center', color_morf[i_mt])
-        elif mode == 'zones':
-            if k == 'ba':
-                boxes_data = [ (p['v_int'][m]).compressed() if isinstance(p['v_int'], np.ma.MaskedArray) 
-                               else p['vm_int'][m] for m in mask_morf ]
+        if mode.find('integrated') >= 0:
+            if mode.find('mask') >= 0:
+                v = p['vm_int']
             else:
-                boxes_data = [ (p['v'][H.reply_arr_by_zones(m)]).compressed() if isinstance(p['v'], np.ma.MaskedArray) 
-                               else p['v'][H.reply_arr_by_zones(m)] for m in mask_morf ]
-            if (row == 0) and (col == 0):
-                for i_mt, msk in enumerate(mask_morf):                    
-                    msk_aux = H.reply_arr_by_zones(msk)
-                    if isinstance(p['vm'], np.ma.MaskedArray):
-                        msk_aux = np.bitwise_and(msk_aux, ~(p['vm'].mask))
-                    N_zones_bin = msk_aux.astype(int).sum() 
-                    zones_tot += N_zones_bin 
-                    Nmsk = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[msk_aux]))
-                    plot_text_ax(ax, '%d' % Nmsk, (i_mt + 1) / 6., 0.02, 20, 'bottom', 'center', color_morf[i_mt])
-                    plot_text_ax(ax, '%d' % N_zones_bin, (i_mt + 1) / 6., 0.94, 20, 'top', 'center', color_morf[i_mt])
-        elif mode == 'zones_mask':
-            if k == 'ba':
-                boxes_data = [ (p['vm_int'][m]).compressed() if isinstance(p['vm_int'], np.ma.MaskedArray) 
-                               else p['vm_int'][m] for m in mask_morf ]
+                v = p['v_int']
+            boxes_data = []
+            for i_mt, msk in enumerate(mask_morf):
+                vm = v[msk].compressed()
+                boxes_data.append(vm)
+                msk_aux = msk
+                if isinstance(v, np.ma.MaskedArray):
+                    msk_aux = np.bitwise_and(msk_aux, ~(v.mask))
+                Nmsk = msk_aux.astype(int).sum()
+                print mode, k, types_morf[i_mt], np.percentile(vm, [ 50, 68, 95, 99 ]), vm.mean(), vm.std()    
+                if (row == 0) and (col == 0):
+                    plot_text_ax(ax, '%d' % Nmsk, (i_mt + 1) / 6., 1.02, 20, 'bottom', 'center', color_morf[i_mt])
+        else:
+            if mode.find('mask') >= 0:
+                if k == 'ba':
+                    v = p['vm_int']
+                    boxes_data = [ (v[m]).compressed() if isinstance(v, np.ma.MaskedArray) else v[m] for m in mask_morf ]
+                else:
+                    v = p['vm']
+                    boxes_data = [ (v[H.reply_arr_by_zones(m)]).compressed() if isinstance(v, np.ma.MaskedArray) 
+                        else v[H.reply_arr_by_zones(m)] for m in mask_morf 
+                    ]
             else:
-                boxes_data = [ (p['vm'][H.reply_arr_by_zones(m)]).compressed() if isinstance(p['vm'], np.ma.MaskedArray) 
-                               else p['vm'][H.reply_arr_by_zones(m)] for m in mask_morf ]
-            if (row == 0) and (col == 0):
-                for i_mt, msk in enumerate(mask_morf):                    
-                    msk_aux = H.reply_arr_by_zones(msk) 
-                    if isinstance(p['vm'], np.ma.MaskedArray):
-                        msk_aux = np.bitwise_and(msk_aux, ~(p['vm'].mask))
-                    N_zones_bin = msk_aux.astype(int).sum() 
-                    zones_tot += N_zones_bin 
-                    Nmsk = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[msk_aux]))
+                if k == 'ba':
+                    v = p['v_int']
+                    boxes_data = [ (v[m]).compressed() if isinstance(v, np.ma.MaskedArray) else v[m] for m in mask_morf ]
+                else:
+                    v = p['v']
+                    boxes_data = [ (v[H.reply_arr_by_zones(m)]).compressed() if isinstance(v, np.ma.MaskedArray) 
+                        else v[H.reply_arr_by_zones(m)] for m in mask_morf 
+                    ]
+            for i_mt, msk in enumerate(mask_morf):
+                if k == 'ba':
+                    if mode.find('mask') >= 0:
+                        v = p['vm']
+                    else:
+                        v = p['v']
+                msk_aux = np.bitwise_and(H.reply_arr_by_zones(msk), ~(v.mask))    
+                vm = v[msk_aux].compressed()
+                Nmsk = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[msk_aux]))
+                N_zones_bin = msk_aux.astype(int).sum() 
+                zones_tot += N_zones_bin 
+                print mode, k, types_morf[i_mt], np.percentile(vm, [ 50, 68, 95, 99 ]), vm.mean(), vm.std()
+                if (row == 0) and (col == 0):
                     plot_text_ax(ax, '%d' % Nmsk, (i_mt + 1) / 6., 0.02, 20, 'bottom', 'center', color_morf[i_mt])
-                    plot_text_ax(ax, '%d' % N_zones_bin, (i_mt + 1) / 6., 1.04, 20, 'bottom', 'center', color_morf[i_mt])
+                    plot_text_ax(ax, '%d' % N_zones_bin, (i_mt + 1) / 6., 1.02, 20, 'bottom', 'center', color_morf[i_mt])
         bp = plt.boxplot(boxes_data, sym='+', whis = [0.3,99.7], positions = types_morf)
         plt.setp(bp['boxes'], color='black')
         plt.setp(bp['whiskers'], color='black')
@@ -350,12 +345,24 @@ if __name__ == '__main__':
                 medians[i] = medianY[0]
             ax.plot([np.average(med.get_xdata())], [np.average(boxes_data[i])],
                      color='w', marker='*', markersize = 15, markeredgecolor='k')
+        m_int_find = mode.find('integrated')
+        if k == 'McorSD':
+            ax.set_ylim(0,5)
+        if k == 'Mcor':
+            ax.set_ylim(8.5,12)
         if k == 'ba':
             ax.set_ylim(0, 1)    
         elif k == 'xY':
-            ax.set_ylim(0, 100)
+            if m_int_find >= 0:
+                ax.set_ylim(0, .5)
+            else:
+                ax.set_ylim(0, 1.)
+            #ax.set_ylim(0, .5)
         elif k == 'at_flux':
-            ax.set_ylim(6, 10)    
+            if m_int_find >= 0:
+                ax.set_ylim(8, 10)
+            else:
+                ax.set_ylim(6, 10)
         ax.yaxis.set_major_locator(MaxNLocator(4))
         #ax.yaxis.label.set_size(15)
         ax.set_ylabel(p['label'])
@@ -375,9 +382,162 @@ if __name__ == '__main__':
                 row = 0
         else: 
             col += 1
-    print zones_tot
+        print k, zones_tot
     f.subplots_adjust(bottom = 0.05, top = 0.95, hspace = 0.2, wspace = 0.28, right = 0.98, left = 0.1)
     plt.close(f)
     fname = 'sample%s' % fnamesuffix
     f.savefig(fname)
+    
+    ##################################
+    Hall = H = C.H5SFRData('/Users/lacerda/dev/astro/EmissionLines/SFR_all305spiral_qualificacao.h5')
+    mask_morf_all = (Hall.morfType_GAL__g >= 0)
+    mask_all__g = np.less(Hall.reply_arr_by_zones(H.ba_GAL__g), ba_max)
+    mask_all__rg = np.less(H.reply_arr_by_radius(Hall.ba_GAL__g), ba_max)
+    mask_GAL_all__g = np.bitwise_or(np.zeros_like(Hall.integrated_EW_Ha__g, dtype = np.bool), np.less(Hall.ba_GAL__g, ba_max))
+
+    NgalsOkZones = len(np.unique(Hall.reply_arr_by_zones(Hall.califaIDs)[~mask_all__g]))  
+    NgalsOkRbins = len(np.unique(Hall.reply_arr_by_radius(Hall.califaIDs_all)[~mask_all__rg]))
+    print ((~mask_all__g).sum()),((~mask_all__rg).sum()), NgalsOkZones, NgalsOkRbins
+
+    props_all = { 
+        'Mcor' : dict(v = np.ma.log10(Hall.Mcor__g), 
+                      vm = np.ma.masked_array(np.ma.log10(Hall.Mcor__g), mask = mask_all__g), 
+                      v_int = np.ma.log10(Hall.Mcor_GAL__g), 
+                      vm_int = np.ma.masked_array(np.ma.log10(Hall.Mcor_GAL__g), mask = mask_GAL_all__g), 
+                      label = r'$\log\ M_\star$ [ $M_\odot$ ]'),
+        'McorSD' : dict(v = np.ma.log10(Hall.McorSD__Tg[iT]),
+                        vm = np.ma.masked_array(np.ma.log10(Hall.McorSD__Tg[iT]), mask = mask_all__g), 
+                        v_int = np.ma.log10(Hall.McorSD_GAL__g),
+                        vm_int = np.ma.masked_array(np.ma.log10(Hall.McorSD_GAL__g), mask = mask_GAL_all__g), 
+                        label = r'$\log\ \mu_\star$ [ $M_\odot\ pc^{-2}$ ]'), 
+        'at_flux' : dict(v = Hall.at_flux__g, 
+                         vm = np.ma.masked_array(Hall.at_flux__g, mask = mask_all__g), 
+                         v_int = Hall.at_flux_GAL__g, 
+                         vm_int = np.ma.masked_array(Hall.at_flux_GAL__g, mask = mask_GAL_all__g), 
+                         label = r'$\langle\log\ t_\star\rangle$ [ anos ]'),
+        'ba' : dict(v = Hall.reply_arr_by_zones(Hall.ba_GAL__g), 
+                    vm = np.ma.masked_array(Hall.reply_arr_by_zones(Hall.ba_GAL__g), mask = mask_all__g), 
+                    v_int = Hall.ba_GAL__g, 
+                    vm_int = np.ma.masked_array(Hall.ba_GAL__g, mask = mask_GAL_all__g), 
+                    label = r'$b/a$'),
+        'xY' : dict(v = Hall.x_Y__Tg[iT], 
+                    vm = np.ma.masked_array(Hall.x_Y__Tg[iT], mask = mask_all__g), 
+                    v_int = Hall.integrated_x_Y__Tg[iT], 
+                    vm_int = np.ma.masked_array(Hall.integrated_x_Y__Tg[iT], mask = mask_GAL_all__g), 
+                    label =  r'$x_Y$'),
+        'Zneb' : dict(v = Hall.logO3N2_M13__g - 8.69, 
+                      vm = np.ma.masked_array(Hall.logO3N2_M13__g - 8.69, mask = mask_all__g), 
+                      v_int = Hall.integrated_logO3N2_M13__g - 8.69, 
+                      vm_int = np.ma.masked_array(Hall.integrated_logO3N2_M13__g - 8.69, mask = mask_GAL_all__g), 
+                      label = r'$12\ +\ \log (O/H)$ [ $Z_\odot$ ]'),
+        'tauV' : dict(v = Hall.tau_V__Tg[iT], 
+                      vm = np.ma.masked_array(Hall.tau_V__Tg[iT], mask = mask_all__g), 
+                      v_int = Hall.integrated_tau_V__g, 
+                      vm_int = np.ma.masked_array(Hall.integrated_tau_V__g, mask = mask_GAL_all__g), 
+                      label = r'$\tau_V^\star$'),
+        'tauVNeb' : dict(v = Hall.tau_V_neb__g, 
+                         vm = np.ma.masked_array(Hall.tau_V_neb__g, mask = mask_all__g), 
+                         v_int = Hall.integrated_tau_V_neb__g, 
+                         vm_int = np.ma.masked_array(Hall.integrated_tau_V_neb__g, mask = mask_GAL_all__g), 
+                         label = r'$\tau_V^{neb}$'),
+        'alogZmass' : dict(v = Hall.alogZ_mass__Ug[iU], 
+                           vm = np.ma.masked_array(Hall.alogZ_mass__Ug[iU], mask = mask_all__g), 
+                           v_int = Hall.alogZ_mass_GAL__Ug[iU], 
+                           vm_int = np.ma.masked_array(Hall.alogZ_mass_GAL__Ug[iU], mask = mask_GAL_all__g), 
+                           label =  r'$\langle \log\ Z_\star \rangle_M (R)$ (t < %.2f Gyr) [ $Z_\odot$ ]' % (Hall.tZ__U[iU] / 1e9)),
+    }
+
+    f = plt.figure()
+    sc_kwargs = default_sc_kwargs.copy()
+    rs_kwargs = default_rs_kwargs.copy()
+    ols_kwargs = default_ols_kwargs.copy()
+    NRows = 2
+    NCols = 2
+    page_size_inches = [10, 8]
+    f.set_size_inches(page_size_inches)
+    f.set_dpi(100)
+    grid_shape = (NRows, NCols)
+    prop_histo = [ 'McorSD', 'at_flux', 'xY', 'ba' ]
+    bins = 30
+    row, col = 0, 0
+    for k in prop_histo:
+        p = props[k]
+        pall = props_all[k]
+        x = p['vm'].compressed()
+        xall = pall['vm'][Hall.reply_arr_by_zones(mask_morf_all)].compressed()
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        ax.set_axis_on()
+        ax.set_xlabel(p['label'])
+        print k, len(x), len(xall)
+        c = 'r'
+        pos_x = 0.86
+        va = 'top'
+        ha = 'right'
+        if k == 'at_flux' or k == 'ba':
+            pos_x = 0.02
+            ha = 'left'
+        ax.hist(xall, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed=True, )#, range = props_limits[i])
+        txt = r'%.2f' % np.mean(xall)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.median(xall)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.std(xall)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.max(xall)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.min(xall)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
+
+        c = 'b'
+        pos_x = 0.98
+        va = 'top'
+        if k == 'at_flux' or k == 'ba':
+            pos_x = 0.14
+        ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed=True, )#, range = props_limits[i])
+        txt = r'%.2f' % np.mean(x)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.median(x)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.std(x)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.max(x)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        txt = r'%.2f' % np.min(x)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 10, va = va, ha = ha, c = c)
+        plot_text_ax(ax, txt, **kw_text)
+        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
+
+        if k == 'McorSD':
+            ax.set_xlim(0,5)
+        elif k == 'Mcor':
+            ax.set_xlim(8.5,12)
+        elif k == 'ba':
+            ax.set_xlim(0, 1)    
+        elif k == 'xY':
+            ax.set_xlim(0, 1)
+        elif k == 'at_flux':
+            ax.set_xlim(6, 10)
+            
+        if col == 0:
+            ax.set_ylabel(r'$\mathrm{frac\c\~ao}$')
+            
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4))            
+        row, col = next_row_col(row, col, NRows, NCols)
+    f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.28, wspace = 0.28, right = 0.95, left = 0.12)
+    fname = 'sample_histo_%s' % fnamesuffix        
+    f.savefig(fname)
+    plt.close(f)
+         
+    
     

@@ -11,7 +11,7 @@
 
 %***************************************************************%
 %                                                               %
-%                     Comparação SFR EML                        %
+%                           Amostra                             %
 %                                                               %
 %***************************************************************%
 
@@ -21,17 +21,19 @@
 \section{Artigo - CALIFA, the Calar Alto Legacy Field Area survey III. Second public data
 release.}
 
-Este artigo (em anexo, \ref{apendice:GBetal2015a}) descreve uma amostra de 200 galáxias que tiveram
-seus dados liberados para o público, no segundo lançamento público de dados ({\em data-release} -
-DR2). Enveredando por todos as configurações de observação, procedimentos de redução dos dados,
-avaliação de erros e controle de qualidade. Nesse artigo nosso grupo de populações estelares me
-encarregou de escrever os programas de análise e gerar as imagens que usamos para avaliar a
-qualidade da síntese de populações estelares com o \starlight em 170670 espectros para distintas
-posições em cada galáxia, além de comparar com os resultados para a amostra do primeiro {\em
-data-release} (DR1). Durante a análise dos resíduos vimos que os mesmos reduziram sensivelmente
-desde a última versão, além de nos ajudar a melhorar a máscara de remoção de linhas telúricas dos
-espectros. Também verificamos que os erros relacionados aos espectros observados possuem uma
-distribuição muito próxima a uma gaussiana, ou seja, resíduos resultam praticamente ruído.
+Esse artigo (Apêndice \ref{apendice:GBetal2015a}) descreve uma amostra de 200 galáxias que tiveram
+seus dados liberados no segundo lançamento público de dados ({\em data-release} - DR2) do \PCAL.
+Enveredando por todos as configurações de observação, procedimentos de redução dos dados, avaliação
+de erros e controle de qualidade. 
+
+Nesse artigo nosso grupo de populações estelares me encarregou de escrever os programas de análise e
+gerar as imagens que usamos para avaliar a qualidade da síntese de populações estelares com o
+\starlight em 170670 espectros para distintas posições em cada galáxia, além de comparar com os
+resultados para a amostra do primeiro {\em data-release} (DR1). Durante a análise dos resíduos vimos
+que os mesmos reduziram sensivelmente desde a última versão, além de nos ajudar a melhorar a máscara
+de remoção de linhas telúricas dos espectros. Também verificamos que os erros relacionados aos
+espectros observados possuem uma distribuição muito próxima a uma gaussiana, ou seja, resíduos
+resultam praticamente ruído.
 
 \section{Definição da amostra deste trabalho}
 \label{sec:amostra:definicao}
@@ -44,27 +46,66 @@ normalização do espectro resultante. Esse procedimento, conhecido como {\em Vo
 detalhado, juntamente com o procedimento de derivação das propriedades estelares através do código
 \starlight para cada uma das regiões destas galáxias, em \citet{CidFernandes.etal.2013a}.
 
+\subsection{Mascarando elementos e removendo {\em outliers}}
+\label{sec:amostra:mask}
+
+Para que possamos focar nossos estudos às regiões de formação estelar, aplicamos uma máscara nos
+dados selecionando as regiões que possuam:
+\begin{itemize}
+  \item medidas do fluxo integrado das linhas de \Hbeta, \oIII, \Halpha e \nII com relação
+sinal-ruído maior do que 3;
+  \item medidas para as seis propriedades comparadas neste capítulo ($\tauVS$, $\tauVN$,
+$\SigmaSFR$, $\SigmaSFRN$, $\meanM{\log Z_\star}$ e $\log(O/H)$);
+  \item fração de população estelar jovem ($t_\star < t_{SF}$) maior que 0.05 (5\%) ($x_Y >0.05$);
+  \item $\tauV$ e $\tauVN$ maiores que 0.05;
+  \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais (ver
+  \ref{sec:synvsneb:amostra:rad});
+  \item distância maior que 70\% do raio que contém metade da luz ({\em half-light radius} - HLR).
+\end{itemize}
+\noindent O que aqui chamamos de população jovem discutiremos um pouco mais adiante, na Sec.
+\ref{sec:synvsneb:SFR}. última imposição é feita para que não haja contaminação por zonas
+do bojo da galáxia (partes centrais onde as linhas são produzidas por diferentes fenômenos físicos,
+relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos colaboradores
+analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
+centrais. Na figura \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
+amostra. Em azul temos as 226176 regiões em 305 galáxias e, em vermelho, as 16525 zonas de 184
+galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa seleção busca zonas mais compactas e
+mais jovens (maior fração de populações jovens diminuindo a idade média). 
+\begin{figure}
+	\centering
+	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/histosample.pdf}}
+	\caption[Histogramas: densidade superficial de massa, idade média, fração de populações jovens e
+	relação axial.] 
+	{Histogramas da densidade superficial de massa, idade média, fração de populações jovens e relação
+axial. Em azul temos a distribuição de valores de 226176 regiões em 305 galáxias e, em vermelho, a
+de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da média,
+mediana, desvio padrão, máximo e mínimo de cada distribuição.}
+	\label{fig:histosample}
+\end{figure}
+
 \subsection{Classificação Morfológica}
 \label{sec:amostra:morf}
 
 Com tipos morfológicos variando entre Sa e Sd, massas estelares entre $10^9$ e $10^{11.5}\ M_\odot$
 e populações estelares com idades médias entre $10^8$ e $10^{10}$ anos, podemos ver na Fig.
 \ref{fig:amostraMorf} que as galáxias se ordenam de forma interessante quando agrupadas por tipo
-morfológico, anti-correlacionando com a idade média estelar e a massa estelar ($M_\star$ e
+morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e
 $t_\star$) e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star <
 t_{SF})$). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja, são
 propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem no
-quando analisamos as classes morfológicas por idade média. O resultado parece ser muito interessante
-visto que a classificação morfológica foi feita por colaboradores do CALIFA totalmente através de
-inspeção visual das imagens na banda-r do \SDSS das mesmas galáxias. Vemos também que as galáxias
-tipo Sd possuem as populações estelares mais jovens e menos massivas na média. Por ser um fenômeno
-apenas de posição do referencial de observação não deveríamos ver preferência por valor de relação
-de semi-eixos (b/a) quando dividimos em classes morfológicas, o que realmente acontece.
+quando analisamos as classes morfológicas por idade média. 
+
+Esse resultado parece ser muito interessante visto que a classificação morfológica foi feita por
+colaboradores do CALIFA totalmente através de inspeção visual das imagens na banda-r do \SDSS das
+mesmas galáxias. Vemos também que as galáxias tipo Sd possuem as populações estelares mais jovens e
+menos massivas na média. Por ser um fenômeno apenas de posição do referencial de observação não
+deveríamos ver preferência por valor de relação axial ($b/a$) quando dividimos em classes
+morfológicas, o que realmente acontece.
 
 \begin{figure}
 	\centering
 	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/sample_morf.pdf}}
+	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/sample_realsample_maskradius_integrated.pdf}}
 	\caption[Classificação por morfologia.]
 	{\emph{Em sentido horário a partir do painel superior esquerdo}: gráfico da massa estelar, idade
 	estelar média, fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star < t_{SF})$) e
@@ -77,49 +118,9 @@ de semi-eixos (b/a) quando dividimos em classes morfológicas, o que realmente a
 	\label{fig:amostraMorf}
 \end{figure}
 
-Estamos em fase de finalização de um artigo aonde comparamos a relação entre a taxa de formação
-estelar e a massa para diferentes classes morfológicas. Esse artigo deve sair por meados de 2016.
-
-\subsection{Mascarando elementos e removendo {\em outliers}}
-\label{sec:amostra:mask}
-
-Para que possamos focar nossos estudos às regiões de formação estelar, aplicamos uma máscara nos
-dados selecionando as regiões que possuam:
-\begin{itemize}
-  \item medidas do fluxo integrado das linhas de \Hbeta, \oIII, \Halpha e \nII com relação
-sinal-ruído maior do que 3;
-  \item medidas para as seis propriedades comparadas neste capítulo ($\tauVS$, $\tauVN$,
-$\SigmaSFR$, $\SigmaSFRN$, $\meanM{\log Z_\star}$ e $\log(O/H)$);
-  \item fração de população estelar jovem ($t_\star < t_{SF}$) maior que 5\% ($x_Y > 5$\%);
-  \item $\tauV$ e $\tauVN$ maiores que 0.05;
-  \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais (ver
-  \ref{sec:synvsneb:amostra:rad});
-  \item distância maior que 70\% do raio que contém metade da luz ({\em half-light radius} - HLR).
-\end{itemize}
-\noindent O que aqui chamamos de população jovem discutiremos um pouco mais adiante, na Sec.
-\ref{sec:synvsneb:SFR}. última imposição é feita para que não haja contaminação por zonas
-do bojo da galáxia (partes centrais onde as linhas são produzidas por diferentes fenômenos físicos,
-relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos colaboradores
-analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
-centrais. Ao final, produzimos a Fig. \ref{fig:amostraRealMorf} da mesma forma que a Fig.
-\ref{fig:amostraMorf}, mas com a densidade superficial de massa ao invés da massa, pelo fato de que
-as zonas não possuem mesma área. Nos sobram 16840 zonas de 199 galáxias (21 Sa, 42 Sb, 63 Sbc, 59 Sc
-e 14 Sd). Podemos ver que as tendências observadas na Fig. \ref{fig:amostraMorf} não se alteram após
-estes cortes.
-
-\begin{figure}
-	\centering
-	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/sample_real_morf_zones.pdf}}
-	\caption[Classificação por morfologia após máscara.]
-	{Mesma ideia da Fig \ref{fig:amostraMorf} no entanto para todas as zonas restantes após a
-	aplicação da máscara discutida em \ref{sec:synvsneb:amostra:mask}. No painel superior esquerdo
-	temos a densidade superficial de massa, diferentemente da Fig. \ref{fig:amostraMorf} pois as zonas
-	possuem números diferentes de pixels, portanto, áreas diferentes. Também podemos ver acima deste
-	painel o número de zonas contidas em cada classe morfológica. Vemos que as tendências notáveis para
-	os valores integrados se mantém quando analisamos os resultados por zona.}
-	\label{fig:amostraRealMorf}
-\end{figure}
+Estamos em fase de finalização de um artigo em que comparamos a relação entre a taxa de formação
+estelar e a massa para diferentes classes morfológicas. Esse artigo já foi submetido e deve sair
+logo agora no início de 2016.
 
 \section{Perfis radiais}
 \label{sec:amostra:rad}
@@ -132,7 +133,8 @@ mesma análise, a vantagem dos {\em bins} radiais vem do balanceamento da influ�
 quando analisamos todas juntas. Para que seja possível este ``empilhamento'' de galáxias, estas
 médias radiais são feitas definindo-se um raio efetivo para cada galáxia. No nosso caso utilizamos
 como raio efetivo aquele que comporta metade da luz da galáxia ({\em half-light radius} - HLR) e
-definimos 30 anéis com espessura de 0.1 HLR partindo do pixel central de cada galáxia. 
+definimos 30 anéis com espessura de 0.1 HLR (ou seja, indo até 3HLR) partindo do pixel central de
+cada galáxia.
 
 No artigo de \citet{GonzalezDelgado.etal.2014a} os autores discutem as estruturas radiais de algumas
 propriedades estelares, aplicando este tipo de estudo para 107 galáxias contidas no CALIFA {\em
@@ -142,28 +144,27 @@ do que em luz. Também mostram que algumas propriedades, como idade estelar méd
 poeira e densidade superficial de massa estelar são bem representados pelo seus valores medidas a 1
 HLR.
 
-Neste trabalho, escolhemos utilizar perfis radiais em anéis elípticos, calculando a média dentro de
-todas as zonas não mascaradas em cana anel. Como um exemplo, podemos observar na Fig.
-\ref{fig:K0140xYRadProf} o perfil radial da fração de luz proveniente das populações jovens para a
-galáxia NGC1667 (objeto CALIFA 140). Nos dois primeiros painéis temos a imagem do \SDSS do mesmo
-objeto e o mapa de $x_Y$ calculado pelo \starlight. No últimos vemos o perfil radial juntamente com
-o valor de $x_Y$ para todas as zonas presentes na galáxia e que compõe nossa amostra. Dentro de
-nosso trabalho utilizamos as medidas em zonas, em perfis radiais e quando necessário, integradas (no
-disco ou na galáxia completa), nos possibilitando portanto verificar diferenças nestes tipos de
-abordagens.
+Escolhemos utilizar perfis radiais em anéis elípticos neste trabalho, calculando a média entre todas
+as zonas não mascaradas dentro de cana anel. Como um exemplo, podemos observar na Fig.
+\ref{fig:K0140xYRadProf} três exemplos de mapas e perfis radiais ($x_Y$, $\tauVS$ e $\tauVN$) da
+galáxia NGC1667 (objeto CALIFA 140). Em destaque (azul) temos o valor integrado para a galáxia.
+Dentro de nosso trabalho utilizamos as medidas em zonas, em perfis radiais e quando necessário,
+integradas (resolvendo para o disco ou para a galáxia completa), nos possibilitando portanto
+verificar diferenças nestes tipos de abordagens.
 
 \begin{figure}
 	\centering
 	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
 	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/K0140_xY_radialProfile_realsample.pdf}}
-	\caption[Imagem e perfil radial de $x_Y$.]
-	{\emph{Painel esquerdo}: Imagem da galáxia NGC1667 (CALIFA 140) do \SDSS. \emph{Painel central}:
-	Mapa da fração percentual de luz proveniente das populações jovens ($x_Y$). \emph{Painel direito}:
-	$x_Y$ contra a distância radial. Os pontos em cinza ao fundo são os valores para zonas. O perfil radial
-	calculado em anéis elípticos com espessura de 0.1 HLR é desenhado com uma linha preta contínua.
-	Já linha tracejada representa o valor da mediana de $x_Y$ nesses anéis. Vemos que neste caso o
-	valor do perfil radial de $x_Y$ acompanha o valor da mediana da distribuição dos valores para
-	zonas.}
+	\caption[Imagem e exemplos de mapas e perfis radiais.]
+	{Imagem do \SDSS da galáxia NGC1667 (CALIFA 140). Em cada fileira aparece o mapa e o perfil radial
+da fração de luz proveniente das populações jovens ($x_Y$ - \emph{primeira fileira}), do
+coeficiente de extinção resultante da síntese de populações estelares ($\tauVS$ - \emph{segunda
+fileira}) e do coeficiente de extinção por decremento de Balmer ($\tauVN$ - \emph{terceira
+fileira}). Nos mapas duas elipses concêntricas marcam 1 e 2 HLR. Em cada gráfico do perfil radial
+aparece no fundo em cinza os valores para as zonas, em linha tracejada preta a mediana da
+distribuição ao longo do raio e em azul tracejado o valor integrado para a galáxia, além do perfil
+radial (linha preta contínua).}
 	\label{fig:K0140xYRadProf}
 \end{figure}
  

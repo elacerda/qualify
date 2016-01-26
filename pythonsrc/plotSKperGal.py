@@ -541,16 +541,17 @@ if __name__ == '__main__':
 #     print 'plot: elapsed time: %.2f' % (t_plot - t_calc)
 #     print 'total: elapsed time: %.2f' % (t_plot - t_init_gal)
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    iGal = H.califaIDs_all.tolist().index(galName)
     
     f = plt.figure()
     NCols = 3
-    NRows = 1
-    page_size_inches = [15, 5]
+    NRows = 3
+    page_size_inches = [15, 15]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
 
-    ax = plt.subplot2grid(grid_shape, (0, 0))
+    ax = plt.subplot2grid(grid_shape, (1, 0))
     ax.set_axis_on()
     galimg = plt.imread(galaxyImgFile)[::-1, :, :]
     plt.setp(ax.get_xticklabels(), visible = False)
@@ -561,12 +562,14 @@ if __name__ == '__main__':
     
     ax = plt.subplot2grid(grid_shape, (0, 1))
     ax.set_axis_on()
-    ax.set_title(r'$\mathrm{frac\c\~ao\ de\ luz\ provenientes\ de\ populac\c\~oes\ jovens}$ ($x_Y$)', y = 1.08)
-    vmin = xOkMin * 100.
-    im = ax.imshow(100. * x_Y__yx, vmin = vmin, vmax = 50, origin = 'lower', interpolation = 'nearest', aspect = 'auto', cmap = 'viridis')
+    #ax.set_title(r'$\mathrm{frac\c\~ao\ de\ luz\ provenientes\ de\ populac\c\~oes\ jovens}$ ($x_Y$)', y = 1.08)
+    vmin = xOkMin
+    im = ax.imshow( x_Y__yx, vmin = vmin, vmax = .5, origin = 'lower', interpolation = 'nearest', aspect = 'auto', cmap = 'viridis')
     DrawHLRCircle(ax, K, color = 'black', lw = 2.5)
     ax.set_xlim(0, 65)
     ax.set_ylim(-5, 70)
+    ylabel = r'$x_Y$'
+    ax.set_title(ylabel, y = 1.02)
     ax.xaxis.set_major_locator(MaxNLocator(5))
     ax.yaxis.set_major_locator(MaxNLocator(5))
     ax.grid()
@@ -575,20 +578,78 @@ if __name__ == '__main__':
     
     ax = plt.subplot2grid(grid_shape, (0, 2))
     ax.set_axis_on()
-    ylabel = r'$x_Y[\%]$'
     ax.set_xlabel('R [HLR]')
-    ax.set_ylabel(ylabel, labelpad = 15)
     ax.set_xlim(minR, 2)
-    ax.set_ylim(0, 50)
+    ax.set_ylim(0, .50)
     ax.xaxis.set_major_locator(MaxNLocator(5))
     ax.yaxis.set_major_locator(MaxNLocator(5))
-    xm, ym = C.ma_mask_xyz(zoneDist_HLR__z, 100. * x_Y__z)
+    xm, ym = C.ma_mask_xyz(zoneDist_HLR__z, x_Y__z)
     rs = C.runstats(xm.compressed(), ym.compressed(), smooth = True, frac = 0.05, sigma = 1.2)
-    ax.scatter(zoneDist_HLR__z, 100. * x_Y__z, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', label = 'zones')
-    ax.plot(RbinCenter__r, 100. * x_Y__r, 'k-', lw = 2, label = 'radial bins')
+    ax.scatter(zoneDist_HLR__z, x_Y__z, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', label = 'zones')
+    ax.plot(RbinCenter__r, x_Y__r, 'k-', lw = 2, label = 'radial bins')
     ax.plot(rs.xS, rs.yS, 'k--', label = 'smoothed median')
+    ax.axhline(y = H.integrated_x_Y__Tg[iT][iGal], c = 'b', ls = '--', lw = 2)
 
-    f.subplots_adjust(left = 0.03, bottom = 0.15, right = 0.95, wspace = 0.25, top = 0.85)
-    f.savefig('%s_xY_radialProfile%s' % (galName, fnamesuffix))
+    ############
+    ax = plt.subplot2grid(grid_shape, (1, 1))
+    ax.set_axis_on()
+    im = ax.imshow(tau_V__yx, vmin = 0.05, vmax = 1.5, origin = 'lower', interpolation = 'nearest', aspect = 'auto', cmap = 'viridis')
+    DrawHLRCircle(ax, K, color = 'black', lw = 2.5)
+    ax.set_xlim(0, 65)
+    ax.set_ylim(-5, 70)
+    ylabel = r'$\tau_V^\star$'
+    ax.set_title(ylabel, y = 1.02)# labelpad = 15)
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    ax.grid()
+    cb = f.colorbar(ax = ax, mappable = im)
+    cb.ax.yaxis.set_major_locator(MaxNLocator(5))
+    
+    ax = plt.subplot2grid(grid_shape, (1, 2))
+    ax.set_axis_on()
+    ax.set_xlabel('R [HLR]')
+    #ax.set_title(ylabel)# labelpad = 15)
+    ax.set_xlim(minR, 2)
+    ax.set_ylim(0, 1.5)
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    xm, ym = C.ma_mask_xyz(zoneDist_HLR__z, tau_V__z)
+    rs = C.runstats(xm.compressed(), ym.compressed(), smooth = True, frac = 0.05, sigma = 1.2)
+    ax.scatter(zoneDist_HLR__z, tau_V__z, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', label = 'zones')
+    ax.plot(RbinCenter__r, atau_V__r, 'k-', lw = 2, label = 'radial bins')
+    ax.plot(rs.xS, rs.yS, 'k--', label = 'smoothed median')
+    ax.axhline(y = H.integrated_tau_V__g[iGal], c = 'b', ls = '--', lw = 2)
+
+    #########################
+    ax = plt.subplot2grid(grid_shape, (2, 1))
+    ax.set_axis_on()
+    im = ax.imshow(tau_V_neb__yx, vmin = 0.05, vmax = 3, origin = 'lower', interpolation = 'nearest', aspect = 'auto', cmap = 'viridis')
+    DrawHLRCircle(ax, K, color = 'black', lw = 2.5)
+    ax.set_xlim(0, 65)
+    ax.set_ylim(-5, 70)
+    ylabel = r'$\tau_V^{neb}$'
+    ax.set_title(ylabel, y = 1.02)# labelpad = 15)    
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    ax.grid()
+    cb = f.colorbar(ax = ax, mappable = im)
+    cb.ax.yaxis.set_major_locator(MaxNLocator(5))
+    
+    ax = plt.subplot2grid(grid_shape, (2, 2))
+    ax.set_axis_on()
+    ax.set_xlabel('R [HLR]')
+    ax.set_xlim(minR, 2)
+    ax.set_ylim(0, 3)
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    xm, ym = C.ma_mask_xyz(zoneDist_HLR__z, tau_V_neb__z)
+    rs = C.runstats(xm.compressed(), ym.compressed(), smooth = True, frac = 0.05, sigma = 1.2)
+    ax.scatter(zoneDist_HLR__z, tau_V_neb__z, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', label = 'zones')
+    ax.plot(RbinCenter__r, atau_V_neb__r, 'k-', lw = 2, label = 'radial bins')
+    ax.plot(rs.xS, rs.yS, 'k--', label = 'smoothed median')
+    ax.axhline(y = H.integrated_tau_V_neb__g[iGal], c = 'b', ls = '--', lw = 2)
+
+    f.subplots_adjust(left = 0.03, bottom = 0.15, right = 0.95, hspace = 0.3, wspace = 0.3, top = 0.9)
+    f.savefig('%s_xYtauVs_radialProfile%s' % (galName, fnamesuffix))
     plt.close(f)
     
