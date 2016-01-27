@@ -18,14 +18,17 @@
 \chapter{Linhas de emissão}
 \label{sec:emlines}
 
-Os espectros observados carregam uma mistura de energia provenientes de partes distintas das
-galáxias (estrelas, gás, poeira, etc). Com a síntese de populações estelares pode-se modelar os
-espectros de energias proveniente das estrelas de diferentes idades e composições químicas
-(metalicidade), além da correção pela aplicação de alguma lei de extinção por poeira. Subtraindo os
-espectros observados dos espectros modelados obtêm-se os espectros residuais, compostos basicamente
-pelas linhas de emissão. Essas linhas são geradas principalmente através das ionizações e
-recombinações de fótons nos átomos dos elementos encontrados no meio interestelar, e mais
-densamente, nas nuvens de gás.
+Os espectros observados carregam uma mistura de luz provenientes de partes distintas das galáxias
+(estrelas, gás, poeira, etc). Com a síntese de populações estelares pode-se modelar os espectros
+proveniente das estrelas de diferentes idades e composições químicas (metalicidade), além da
+correção pela aplicação de uma lei de extinção por poeira. Subtraindo os espectros observados dos
+espectros modelados obtêm-se os espectros residuais, compostos basicamente pelas linhas de emissão.
+Essas linhas são geradas principalmente através das ionizações e recombinações de átomos dos
+elementos encontrados no meio interestelar, e mais densamente, nas nuvens de gás.
+
+Neste capítulo descrevo um módulo em \pyt que desenvolvemos para incluir medidas de linhas de
+emissão e subprodutos delas derivados em nossa plataforma geral de análise dos cubos de dados do
+CALIFA.
 
 \section{EmLinesDataCube}
 \label{sec:emline:datacube}
@@ -35,28 +38,23 @@ integrados das linhas de emissão é peça fundamental em nosso projeto. Rubén 
 colaborador e membro do \PCAL, desenvolveu um programa que, utilizando-se dos espectros residuais
 (obtidos pela subtração dos espectros modelados dos observados), ajusta perfis gaussianos para as
 linhas possibilitando então a medida dos fluxos integrados das linhas de emissão além de estimar os
-erros envolvidos neste processo. Acreditamos que essas medidas sejam liberadas para a comunidade
+erros envolvidos neste processo. Provavelmente essas medidas sejam liberadas para a comunidade
 científica assim que o último lançamento público de dados do CALIFA for feito (DR3).
 
 Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Para tal,
-escrevi um objeto em \textsc{p}y\textsc{thon} que além de organizar os resultados provenientes do
-programa do Rubén também calcula a abundância de oxigênio, um dos índices usados como metalicidade
-nebular ($\log$ (O/H)), o coeficiente de extinção por decremento de Balmer para as regiões
-nebulares ($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada
-cálculo, etc. Esse objeto foi adicionado ao \pycasso\footnote{
-	{\em Python CALIFA Stellar Synthesys Organizer} -
-\href{
-	http://minerva.ufsc.br/~andre/PyCASSO-0.9.3/intro.html
-}{
-	http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html}
-}
-\citep{CidFernandes.etal.2013a} para que os demais membros do projeto possam utilizá-lo. Nele também
-encontram-se as medidas dos fluxos em diversas linhas de emissão, a posição central das linhas
-medidas, amplitudes, desvios padrão, coeficientes para reconstrução do contínuo em cada linha de
-emissão, os erros nestas medidas, além das propriedades mencionadas anteriormente e seus erros
-propagados.
+escrevi um objeto em \pyt que além de organizar os resultados provenientes do programa de medida
+das linhas também calcula a abundância de oxigênio, um dos índices usados como metalicidade nebular
+($\log$ (O/H)), o coeficiente de extinção para as regiões nebulares ($\tauVN$), larguras
+equivalentes das linhas, assim como os erros propagados em cada cálculo, etc. Esse objeto foi
+adicionado ao \pycasso\footnote{ {\em Python CALIFA Stellar Synthesys Organizer} - \href{
+http://minerva.ufsc.br/~andre/PyCASSO-0.9.3/intro.html }{
+http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html} } \citep{CidFernandes.etal.2013a} para
+que os demais membros do projeto possam utilizá-lo. Nele também encontram-se as medidas dos fluxos
+em diversas linhas de emissão, a posição central das linhas medidas, amplitudes, desvios padrão,
+coeficientes para reconstrução do contínuo em cada linha de emissão, os erros nestas medidas, além
+das propriedades mencionadas anteriormente e seus erros propagados.
 
-\subsection{Extinção por decremento de Balmer}
+\subsection{Extinção estimada através do decremento de Balmer}
 \label{sec:emline:datacube:tauvneb}
 
 Em um modelo que assume que entre o observador e a fonte de energia existe uma camada difusa, como
@@ -66,10 +64,10 @@ uma cortina, que extingue a luz diferentemente em cada comprimento de onda, temo
     \label{eq:extin}
 \end{equation}
 \noindent onde $F_\lambda^{int}$ é o fluxo intrínseco ($F_\lambda^{obs}$, o observado) em cada
-comprimento de onda, $\tau_\lambda$ é o coeficiente de profundidade óptica para o comprimento de
+comprimento de onda, $\tau_\lambda$ é a profundidade óptica para o comprimento de
 onda $\lambda$. O modelo de extinção de \citet{CCM1989a} nos dá uma calibração empírica da razão
 entre os coeficientes de extinção em um comprimento de onda e na banda V ($\tau_\lambda / \tau_V$),
-com isso podemos desenvolver \eqref{eq:extin} de maneira que possamos escrever uma equação para
+e com isso podemos desenvolver \eqref{eq:extin} de maneira que possamos escrever uma equação para
 $\tau_V$:
 \begin{eqnarray}
    F_\lambda^{obs} &=& F_\lambda^{int} e^{-(\frac{\tau_\lambda}{\tauV}) \tauV} \\
@@ -84,14 +82,13 @@ $\tau_V$:
  \ln \left(\frac{F_\lambda^{int}}{F_{\lambda^\prime}^{int}}\right)\right] 
  \label{eq:tauV}
 \end{eqnarray}
-\noindent Nessa equação, os $q_\lambda$ são provenientes do modelo adotado.
+\noindent Nessa equação, os $q_\lambda$ são provenientes da curva de extinção adotada.
 
-A poeira existente ao redor de regiões de formação estelar é criada principalmente pela própria
-formação estelar. Utilizando \eqref{eq:tauV} podemos calcular qual o coeficiente de extinção para
-essas regiões nebulares. Para este cálculo utilizamos o fato de que, apesar da extinção do espectro
-observado, a razão entre os fluxos intrínsecos das duas primeiras linhas da série de Balmer, \Halpha
-e \Hbeta, varia muito um pouco com a metalicidade, a densidade e a temperatura. Usamos aqui esse
-valor como constante e igual a $2.86$ \citep{Osterbrock.Ferland.2006a}. Com isso temos:
+Utilizando \eqref{eq:tauV} podemos calcular qual o coeficiente de extinção para essas regiões
+nebulares. Para este cálculo utilizamos o fato de que a razão entre os fluxos intrínsecos das duas
+primeiras linhas da série de Balmer, \Halpha e \Hbeta, varia muito um pouco com a metalicidade, a
+densidade e a temperatura. Usamos aqui esse valor como constante e igual a $2.86$
+\citep{Osterbrock.Ferland.2006a}. Com isso temos:
 \begin{equation}
 	\tauVN = 2.886\ \ln \left( \frac{F_{\Halpha}^{obs}/F_{\Hbeta}^{obs}}{2.86} \right).
 \end{equation}
@@ -106,7 +103,15 @@ O erro propagado para $\tauVN$ é:
 	\epsilon (\tauVN) &=& \frac{1}{(q_{\Hbeta} - q_{\Halpha})} \
 \sqrt{\left(\frac{\epsilon (F_{\Halpha}^{obs})}{F_{\Halpha}^{obs}}\right)^2 + \
 \left(\frac{\epsilon (F_{\Hbeta}^{obs})}{F_{\Hbeta}^{obs}}\right)^2 }
+	\label{eq:etauneb}
 \end{eqnarray}
+\noindent Os termos de dentro da raiz na Eq. \ref{eq:etauneb} são as relações sinal-ruído ($S/N$) de
+\Halpha e \Hbeta. Como \Hbeta é sempre a mais ruidosa das duas, podemos aproximar a incerteza em $\tauVN$
+por:
+\begin{equation}
+	\epsilon (\tauVN) \approx \frac{2.889}{(S/N)_{\Hbeta}}
+	\label{eq:etaunebaprox}
+\end{equation}
 
 \subsection{Metalicidade Nebular}
 \label{sec:emline:datacube:Zneb}
@@ -122,7 +127,11 @@ autores para a calibração do $\log$ (O3N2) foi:
 \begin{equation}
 	12 + \log \textrm{(O/H)} = 8.533[\pm0.012] - 0.214[\pm0.012]\times \textrm{O3N2}
 \end{equation}
-\noindent conforme pode ser vista na Fig. \ref{fig:Marino2013_O3N2}.
+\noindent onde O3N2 vem da razão entre os fluxos de \oIII, \Hbeta, \nII e \Halpha: 
+\begin{equation}
+	\textrm{O3N2} = \log \left(\frac{\oIII/\Hbeta}{\nII/\Halpha}\right). 
+\end{equation}
+A Fig. \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por \citet{Marino.etal.2013a}.
 
 \begin{figure}
 	\centering
@@ -156,7 +165,6 @@ from pycasso import fitsQ3DataCube
 
 CALIFASuperFits='K0277.fits'
 EmLinesFits='K0277.EML.fits'
-
 # Carregando arquivos FITS
 K = fitsQ3DataCube(CALIFASuperFits)
 K.loadEmLinesDataCube(EmLinesFits)
@@ -165,15 +173,10 @@ K.loadEmLinesDataCube(EmLinesFits)
 
 # Indices dos vetores aonde estao armazenados os
 # fluxos de cada linha
-i_Ha = K.EL.lines.index('6563')
-i_Hb = K.EL.lines.index('4861')
-i_O3 = K.EL.lines.index('5007')
-i_N2 = K.EL.lines.index('6583')
-Ha_obs__z = K.EL.flux[i_Ha, :]
-Hb_obs__z = K.EL.flux[i_Hb, :]
-N2_obs__z = K.EL.flux[i_N2, :]
-O3_obs__z = K.EL.flux[i_O3, :]
-
+Ha_obs__z = K.EL.flux[K.EL.lines.index('6563'), :]
+Hb_obs__z = K.EL.flux[K.EL.lines.index('4861'), :]
+N2_obs__z = K.EL.flux[K.EL.lines.index('6583'), :]
+O3_obs__z = K.EL.flux[K.EL.lines.index('5007'), :]
 # Razao entre os fluxos de N2/Ha e O3/Hb
 N2Ha__z = np.log10(N2_obs__z) - np.log10(Ha_obs__z)
 O3Hb__z = np.log10(O3_obs__z) - np.log10(Hb_obs__z)
@@ -217,7 +220,7 @@ estrelas massivas ionizantes, que produzem basicamente todos os fótons que gera
 de \Halpha.
 
 Nós queremos calibrar a luminosidade da linha de \Halpha ($\LHalpha$) como um indicador
-de SFR ($\psi$) \citep[e.g., ][]{Kennicutt.1998a} usando uma relação linear:
+de SFR ($\psi$) usando uma relação linear:
 \begin{equation}
 	\psi_{\Halpha} = k \times \LHalpha.
 	\label{eq:SFRHa}
@@ -252,9 +255,9 @@ intrínseca de \Halpha pode ser teoricamente calculada como:
 	\label{eq:LHa_recomb_theory}
 \end{equation}
 \noindent aonde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo
-assume-se que nenhuma radiação escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido
-por extinção, também assume-se que a poeira não espalha muito os fótons com $h\nu\ < 13.6$ eV.
-Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
+assume-se que nenhuma radiação ionizante escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar
+corrigido por extinção, também assume-se que a poeira não absorve muito os fótons com $h\nu\ < 13.6$
+eV. Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
 obtemos:
 \begin{eqnarray}
 	Q_H &=& \int dQ_H = \int q_H(t)\ \mathrm{d}\mathrm{M}(t) \\ 
@@ -283,11 +286,11 @@ Para nossa configuração de modelos podemos ver a evolução de $\mathcal{N}_H$
 (painel superior esquerdo) e relativamente ao total de $\mathcal{N}_H$ (painel superior direito).
 Em \citet[Fig. 2b]{CidFernandes.etal.2011a} nós podemos ver a evolução temporal de $q_H$ sob
 todas as idades e metalicidades\footnote{Naquele estudo, o
-grupo\href{http://starlight.ufsc.br}{SEAGal/\STARLIGHT} utilizou as isócronas de Padova 1994
-(\href{http://pleiadi.pd.astro.it/#data2}{http://pleiadi.pd.astro.it/\#data2}) com a IMF de
-\citet{Chabrier.2003a}.}. A mesma figura é reproduzida no painel inferior. É notável que o número de
-fótons H-ionizantes rapidamente converge ao máximo perto de $t = 10^7$ anos. Para uma SFR constante
-dentro dessa escala temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge para
+grupo \href{http://starlight.ufsc.br}{SEAGal/\STARLIGHT} utilizou as isócronas de Padova 1994 com a
+IMF de \citet{Chabrier.2003a}.}. A mesma figura é reproduzida no painel inferior. É notável que o
+número de fótons H-ionizantes rapidamente converge ao máximo perto de $t = 10^7$ anos. Para uma SFR
+constante dentro dessa escala temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge
+para
 \begin{equation}
 	Q_H = \psi\ \mathcal{N}_H(t\ =\ 10^7\ \textrm{anos, IMF, Z}{}_\star).
 	\label{eq:QH_converge}
@@ -301,15 +304,14 @@ dentro dessa escala temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:Q
 para $t = 10^7$ anos. Finalmente, resolvendo \eqref{eq:SFR_theoric} encontramos o valor para $k$ em
 \eqref{eq:SFRHa} ($\psi \equiv \mathrm{SFR}$):
 \begin{equation}
-	\mathrm{SFR}_{\Halpha} = 3.13\ \mathrm{M}_\odot\ ano^{-1}\ \times
-\left(\frac{\LHalpha}{10^8\ \mathrm{L}_\odot}\right)
+	\mathrm{SFR}_{\Halpha}\ [\mathrm{M}_\odot\ \mathrm{ano}^{-1}] = 3.13 \times
+	\left(\frac{\LHalpha}{10^8\ \mathrm{L}_\odot}\right) = 8.1 \times 10^{-42}\ \LHalpha\ [ergs\ s^{-1}]
 	\label{eq:SFRNeb}
 \end{equation}
 
 Em \citet{Kennicutt.1998a} esse coeficiente é calculado utilizando diferentes modelos estelares mas
-utilizando a mesma IMF. Convertendo o valor de nossa calibração para as unidades utilizadas neste
-artigo, temos $8.1 \times 10^{-42}\ ergs\ s^{-1}$, o qual é bem próximo ao valor obtido
-anteriormente ($7.9 \times 10^{-42}\ ergs\ s^{-1}$).
+utilizando a mesma IMF. Nosso valor é bem próximo daquele obtido neste artigo ($7.9 \times
+10^{-42}$). 
 
 \begin{figure}
 	\centering

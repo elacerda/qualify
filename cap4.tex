@@ -22,14 +22,14 @@
 \label{sec:synvsneb:SFR}
 
 Com a síntese de populações estelares podemos calcular a história de formação estelar utilizando o
-vetor cumulativo de massa ($\eta_\star(t_\star)$), que abarca a fração total de massa convertida em
+vetor cumulativo de massa ($\eta_\star(t_\star)$), que integra a fração total de massa convertida em
 estrelas para cada idade das populações da base ($\mu_j$). Então podemos calcular uma taxa de
 formação dentro de um intervalo de tempo:
 \begin{eqnarray}
 	\eta_\star(t_\star)\ &=&\ \sum\limits_{t_{\star,j} < t_\star} \mu_j \\
 	\overline{\mathrm{SFR}_\star}(t_\star)\ &=&\ M_\star \frac{(1\ -\ \eta_\star(t_\star))}{t_\star},
 \end{eqnarray}
-\noindent onde M${}_\star$ é a massa total convertida em estrelas durante toda a história de
+\noindent onde $M_\star$ é a massa total convertida em estrelas durante toda a história de
 formação estelar de uma galáxia. 
 
 Como explicado na Sec. \ref{sec:emlines:SFR}, podemos medir a taxa de formação estelar recente
@@ -41,17 +41,18 @@ Fig. \ref{fig:SFRsynvsneb} vemos a correlação entre as SFRs, calculando
 $\overline{\mathrm{SFR}_\star}(t_\star)$ para diferentes idades. Neste gráfico os cortes definidos
 na Sec. \ref{sec:amostra:mask} com relação a idade e coeficiente de extinção mínimos não estão
 aplicados. O mesmo é válido para cortes em distância radial. Encontramos $t_{SF}$ como sendo próximo
-a 32 milhões de anos, escolhida pois é a que possui o melhor coeficiente de correlação entre os
+a $3.2 \times 10^7$ anos, escolhida pois é a que possui o melhor coeficiente de correlação entre os
 perfis radiais da densidade de coluna da SFR $\Sigma_{\mathrm{SFR}}$. As correlações entre
 densidades de coluna são mais confiáveis pois removem o termo $d^2$ existente no cálculo da SFR que
 induz uma correlação direta entre $\mathrm{SFR}_\star$ e $\mathrm{SFR}_{\Halpha}$ Esse número não
 está muito distante da escala de tempo de vida das estrelas que produzem a maioria dos fótons
 capazes de produzirem a linha de \Halpha ($\sim10^7$ anos). Vemos também que o valor máximo de
-correlação não altera substancialmente entre $10^7$ e $10^{7.5}$.
+correlação não altera substancialmente entre $10^7$ e $10^{7.5}$ anos.
 
 Este procedimento de comparação foi feito também em \citet{Asari.etal.2007a}, no qual os autores
 encontraram $t_{SF}$ igual a 25 milhões de anos, para 82302 galáxias do \SDSS. A síntese de
-populações estelares foi realizada utilizando o \starlight, mas com uma diferente IMF.
+populações estelares foi realizada utilizando o \starlight, mas com uma diferente IMF. Apesar dessa
+diferença a concordância entre os resultados é boa.
 
 \begin{figure}
 	\centering
@@ -62,11 +63,11 @@ populações estelares foi realizada utilizando o \starlight, mas com uma difere
 $t_\star$. Para cada cor temos um tipo de cálculo de SFR e em linha preta contínua temos os valores
 do coeficiente de Spearmann para os perfis radiais de $\Sigma_{\mathrm{SFR}}$, que possui o valor de
 idade que utilizamos para ser nossa escala de tempo de formação estelar ($t_{SF})$. \emph{Demais
-painéis}: Cada um dos gráficos de comparação entre as SFR utilizando $t_\star = t_{SF} = 32 M anos$.
-Em cada painel a linha pontilhada vermelha é o ajuste linear utlizando {\em OLS bisector}, em azul é o
-ajuste forçando que a inclinação seja 1 e em preto é a bissetriz ($x = y$). Os números no canto
-inferior direito de cada painel temos o coeficiente angular, a interceptação da reta com o eixo
-vertical, e a média quadráticas dos desvios em relação ao ajuste.}
+painéis}: Cada um dos gráficos de comparação entre as SFR utilizando $t_\star = t_{SF} = $3.2 \times
+10^7$ anos$. Em cada painel a linha pontilhada vermelha é o ajuste linear utlizando {\em OLS
+bisector}, em azul é o ajuste forçando que a inclinação seja 1 e em preto é a bissetriz ($x = y$).
+Os números no canto inferior direito de cada painel temos o coeficiente angular, a interceptação da
+reta com o eixo vertical, e a média quadráticas dos desvios em relação ao ajuste.}
 	\label{fig:SFRsynvsneb}
 \end{figure}
 % Figuras:
@@ -81,25 +82,25 @@ mesmo fator $e^{-\tau_\lambda}$. Essa simplificação contraria tanto evidência
 estudos teóricos, que caminham para um cenário onde populações mais jovens são mais atenuadas pela
 poeira que populações mais velhas. \citet{Calzetti.etal.1994a} encontraram evidências diretas de que
 a extinção em regiões \Hii é aproximadamente duas vezes maior do que a das estrelas ($\tauVS \sim
-0.44 \tauVN$). \citet{Charlot.Fall.2000a} propõe um modelo onde populações jovens são atenuadas
-pela núvem de gás que a gerou ({\em birth cloud} - BC) e encontra que o coeficiente de extinção das
-BC é cerca de 3 vezes maior que o do meio interestelar ({\em interstellar medium} - ISM).
-\citet{Kreckel.etal.2013a} através de dados de espectrografia de campo integrado (como o CALIFA) do
-KINGFISH calcula a densidade superficial de poeira dessas galáxias e chega a conclusão que o
-coeficiente de extinção derivados do contínuo estelar não correlaciona com a quantidade total de
-massa de poeira, diferentemente daquele derivado do decremento Balmer.
+0.44 \tauVN$). \citet{Charlot.Fall.2000a} propõe um modelo onde populações jovens são atenuadas pela
+núvem de gás que a gerou ({\em birth cloud} - BC) e encontra que o coeficiente de extinção das BC é
+cerca de 3 vezes maior que o do meio interestelar ({\em interstellar medium} - ISM).
+\citet{Kreckel.etal.2013a} através de dados de espectrografia de campo integrado do KINGFISH calcula
+a densidade superficial de poeira dessas galáxias e chega a conclusão que o coeficiente de extinção
+derivados do contínuo estelar não correlaciona com a quantidade total de massa de poeira,
+diferentemente daquele derivado do decremento Balmer.
 
 Apesar do modelo de extinção ser o mesmo, o coeficiente calculado por cada um dos procedimentos é
 diferente, como podemos ver na Fig. \ref{fig:tauVsynvsneb}. Esta figura apresenta a comparação entre
 os coeficientes de extinção para zonas e também para os perfis radiais. O coeficiente que vem do
-\starlight é calculado no processo de ajuste espectral de maneira a evitar degenerescências nos
-resultados, já o do decremento Balmer representa melhor as regiões onde existem os observáveis
-necessários para seu cálculo, ou seja, regiões onde existam linhas de \Halpha e \Hbeta, portanto,
-regiões mais jovens. Verificamos que a medida que vamos sendo mais exigente com fração de luz
-proveniente das populações jovens ($x_Y$), valor mínimo de $\tauVS$ e $\tauVN$, e distância radial
-de cada zona considerada na comparação (ver Fig. \ref{fig:tauVsynvsnebMask}), as diferenças entre os
-dois coeficientes diminui, iluminando um caminho que vamos nos aprofundar um pouco melhor no próximo
-capítulo e que pode nos ajudar a um melhor entendimento do significado de $\tauVS$.
+\starlight é calculado no processo de ajuste espectral, já o do decremento de Balmer representa
+melhor as regiões onde existem os observáveis necessários para seu cálculo, ou seja, regiões onde existam
+linhas de \Halpha e \Hbeta, portanto, regiões mais jovens. Verificamos que a medida que vamos sendo
+mais exigente com fração de luz proveniente das populações jovens ($x_Y$), valor mínimo de $\tauVS$
+e $\tauVN$, e distância radial de cada zona considerada na comparação (ver Fig.
+\ref{fig:tauVsynvsnebMask}), as diferenças entre os dois coeficientes diminui, iluminando um caminho
+que vamos nos aprofundar um pouco melhor no próximo capítulo e que pode nos ajudar a um melhor
+entendimento do significado de $\tauVS$.
 
 \begin{figure}
 	\centering
@@ -163,7 +164,7 @@ bilhões de anos) vemos que o resultado se aproxima melhor da tendência para as
 \subsection{Metais em galáxias - \meanM{\log Z_\star} e $\log\ (O/H)$}
 \label{sec:synvsneb:ZemuZR}
 
-Como citado em \ref{sec:emline:datacube:Zneb}, com a calibração de \citet{Marino.etal.2013a} temos
+Como citado em \ref{sec:emline:datacube:Zneb}, com a calibração de \citet{Marino.etal.2013a} temos a
 metalicidade nebular para aquelas regiões aonde temos medidas para todas as linhas envolvidas no
 processo (\Hbeta, \oIII, \Halpha e \nII). Na Fig. \ref{fig:ZstarvsZneb} podemos ver a a relação
 entre a densidade superficial de massa estelar e a metalicidade nos três painéis de cima (zonas,
@@ -253,7 +254,7 @@ gradientes negativos de \meanM{\log Z_\star} menos inclinados que os previstos p
 crescimento isolado. Galáxias do tipo Sb-Sbc possuem gradientes de \meanM{\log Z_\star} compatíveis
 com aqueles medidos para a Via Láctea. Galáxias tipo Sc possuem com gradientes mais planos, nos
 mostrando que a evolução química do disco contribui bastante com a evolução química das galáxias
-desta classe morfológica. Em uma visão geral, concluímos que o processo de cessão de formação
+desta classe morfológica. Em uma visão geral, concluímos que o processo de parada de formação
 estelar\footnote{Geralmente conhecido como {\em quenching}.} é geralmente independente da massa
 total da galáxia, enquanto metalicidade e a estrutura física da galáxia são influenciadas por
 processos que são dependentes da massa.

@@ -149,7 +149,7 @@ if __name__ == '__main__':
     mu_GAL = np.ma.where(H.ba_GAL__g < 0.14, 0.05, ((H.ba_GAL__g ** 2.0 - axial_ratio_sq) / (1 - axial_ratio_sq)) ** 0.5)
     mu_GAL = np.ma.where(H.ba_GAL__g < 0.13, 0.0, ((H.ba_GAL__g ** 2.0 - axial_ratio_sq) / (1 - axial_ratio_sq)) ** 0.5)
     
-    alpha = 1.
+    alpha = 2
     
     # zones
     mu_GAL__g = H.reply_arr_by_zones(mu_GAL)
@@ -219,112 +219,211 @@ if __name__ == '__main__':
         kwargs_plot_rs = default_plot_rs_kwargs,
         kwargs_ols_plot = default_ols_plot_kwargs,
     )    
+
     if args.dryrun: sys.exit(1)
 
     ############################################################
     ############################################################
     ############################################################
+    
+    Dtau = lambda tauBC,a,x: (1-a*x)*tauBC
+    Rtau = lambda tauISM,tauBC,a,mu,x: (1 + mu * a * tauISM/tauBC)/(1 + mu * a * x * tauISM/tauBC)
+    
+    xY = np.arange(0, 1, 0.1)
+    tauBC = [0, .5, 1., 1.5, 2.]
 
-    NCols = 3
+    bins = (30,30)
+    NCols = 1
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [5,5]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
-    props = {
-        'tauBC' : {'v' : tau_BC__g, 'range' : [-.5, 2.5], 'label' : r'$\tau_{\mathrm{BC}}$'},
-        'tauISM' : {'v' : tau_ISM__g, 'range' : [-.25, 1], 'label' : r'$\tau_{\mathrm{ISM}}$'},
-        'rho' : {'v' : rho__g, 'range' : [-5, 15], 'label' : r'$\rho \equiv \tau_{\mathrm{BC}}$ / $\tau_{\mathrm{ISM}}$'},
-    }
-    col = 0
-    for i, k in enumerate(['tauBC', 'tauISM', 'rho']):
-        p = props[k]
-        ax = plt.subplot2grid(grid_shape, loc = (0, col))
-        x = p['v'].compressed()
-        c = 'b'
-        va = 'top'
-        ha = 'right'
-        fs = 14
-        pos_x = 0.98
-        bins = 30
-        ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
-        txt = r'%.2f' % np.mean(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.median(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.std(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.max(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.min(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        plt.setp(ax.get_yticklabels(), visible = False)
-        ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
-        ax.set_xlabel(p['label'])
-        col += 1
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
-    f.savefig('tauISM_tauBC_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 15, 
+        rms = True, 
+        text = True, 
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+    )
+    xran = [0,1]
+    yran = [-1, 2]
+ 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau_xY__g, mask = mask__g) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title('zonas')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    xlabel = r'$x_Y$'
+    ylabel = r'$\mathcal{D}_\tau$'
+    ax.set_xlabel(xlabel) 
+    ax.set_ylabel(ylabel)
+    rs.poly1d()
+    for i, t in enumerate(tauBC):
+        ax.plot(xY, Dtau(t,alpha,xY), 'k-')
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0.2, right = 0.95, left = 0.1)
+    f.savefig('DtauxY_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
     
-    NCols = 3
+    ############################################################    
+    NCols = 1
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [5,5]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
-    props = {
-        'tauBC' : {'v' : tau_BC__rg, 'range' : [-.5, 2.5], 'label' : r'$\tau_{\mathrm{BC}}$'},
-        'tauISM' : {'v' : tau_ISM__rg, 'range' : [-.25, 1], 'label' : r'$\tau_{\mathrm{ISM}}$'},
-        'rho' : {'v' : rho__rg, 'range' : [-5, 15], 'label' : r'$\rho \equiv \tau_{\mathrm{BC}}$ / $\tau_{\mathrm{ISM}}$'},
-    }
     col = 0
-    for i, k in enumerate(['tauBC', 'tauISM', 'rho']):
-        p = props[k]
-        ax = plt.subplot2grid(grid_shape, loc = (0, col))
-        x = p['v'].compressed()
-        c = 'b'
-        va = 'top'
-        ha = 'right'
-        fs = 14
-        pos_x = 0.98
-        bins = 30
-        ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
-        txt = r'%.2f' % np.mean(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.median(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.std(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.max(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'%.2f' % np.min(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
-        plot_text_ax(ax, txt, **kw_text)
-        plt.setp(ax.get_yticklabels(), visible = False)
-        ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
-        ax.set_xlabel(p['label'])
-        col += 1
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
-    f.savefig('tauISM_tauBC_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+
+    xran = [0,1]
+    yran = [-1, 2]
+ 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau_xY__rg, mask = mask__rg) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title('bins radiais')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    xlabel = r'$x_Y$'
+    ylabel = r'$\mathcal{D}_\tau$'
+    ax.set_xlabel(xlabel) 
+    ax.set_ylabel(ylabel)
+    rs.poly1d()
+    for i, t in enumerate(tauBC):
+        ax.plot(xY, Dtau(t,alpha,xY), 'k-')
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0.2, right = 0.95, left = 0.1)
+    f.savefig('DtauxY_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)    
 
-
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-#     NCols = 4
+#     ############################################################
+#     ############################################################
+#     ############################################################
+#     #sc_kwargs = default_sc_kwargs.copy()
+#     
+#     NCols = 3
 #     NRows = 1
 #     f = plt.figure()
 #     page_size_inches = [15,5]
+#     f.set_size_inches(page_size_inches)
+#     f.set_dpi(100)
+#     grid_shape = (NRows, NCols)
+#     props = {
+#         'tauBC' : {'v' : tau_BC__g, 'range' : [-.5, 2.5], 'label' : r'$\tau_{\mathrm{BC}}$'},
+#         'tauISM' : {'v' : tau_ISM__g, 'range' : [-.25, 1], 'label' : r'$\tau_{\mathrm{ISM}}$'},
+#         'rho' : {'v' : rho__g, 'range' : [-5, 15], 'label' : r'$\rho \equiv \tau_{\mathrm{BC}}$ / $\tau_{\mathrm{ISM}}$'},
+#     }
+#     col = 0
+#     for i, k in enumerate(['tauBC', 'tauISM', 'rho']):
+#         p = props[k]
+#         ax = plt.subplot2grid(grid_shape, loc = (0, col))
+#         x = p['v'].compressed()
+#         c = 'b'
+#         va = 'top'
+#         ha = 'right'
+#         fs = 14
+#         pos_x = 0.98
+#         bins = 30
+#         ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
+#         txt = r'%.2f' % np.mean(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.median(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.std(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.max(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.min(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         plt.setp(ax.get_yticklabels(), visible = False)
+#         ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+#         ax.set_xlabel(p['label'])
+#         col += 1
+#     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+#     f.savefig('tauISM_tauBC_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+#     plt.close(f)
+#     
+#     NCols = 3
+#     NRows = 1
+#     f = plt.figure()
+#     page_size_inches = [15,5]
+#     f.set_size_inches(page_size_inches)
+#     f.set_dpi(100)
+#     grid_shape = (NRows, NCols)
+#     props = {
+#         'tauBC' : {'v' : tau_BC__rg, 'range' : [-.5, 2.5], 'label' : r'$\tau_{\mathrm{BC}}$'},
+#         'tauISM' : {'v' : tau_ISM__rg, 'range' : [-.25, 1], 'label' : r'$\tau_{\mathrm{ISM}}$'},
+#         'rho' : {'v' : rho__rg, 'range' : [-5, 15], 'label' : r'$\rho \equiv \tau_{\mathrm{BC}}$ / $\tau_{\mathrm{ISM}}$'},
+#     }
+#     col = 0
+#     for i, k in enumerate(['tauBC', 'tauISM', 'rho']):
+#         p = props[k]
+#         ax = plt.subplot2grid(grid_shape, loc = (0, col))
+#         x = p['v'].compressed()
+#         c = 'b'
+#         va = 'top'
+#         ha = 'right'
+#         fs = 14
+#         pos_x = 0.98
+#         bins = 30
+#         ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
+#         txt = r'%.2f' % np.mean(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.median(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.std(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.max(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         txt = r'%.2f' % np.min(x)
+#         kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#         plot_text_ax(ax, txt, **kw_text)
+#         plt.setp(ax.get_yticklabels(), visible = False)
+#         ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+#         ax.set_xlabel(p['label'])
+#         col += 1
+#     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+#     f.savefig('tauISM_tauBC_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+#     plt.close(f)    
+# 
+#     NCols = 4
+#     NRows = 1
+#     f = plt.figure()
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -341,10 +440,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau__g, mask = mask__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -365,12 +464,12 @@ if __name__ == '__main__':
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.x_Y__Tg[iT], D_tau__g, z = mu_GAL__g, mask = mask__g)
 #     mask = []
@@ -382,7 +481,7 @@ if __name__ == '__main__':
 #     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
 #     ax.set_xlim(xran)
 #     ax.set_ylim(yran)
-#     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
+#     #ax.scatter(xm, ym, c = '0.5', **default_sc_kwargs)
 #     zcmap = mpl.cm.ScalarMappable()
 #     zcmap.set_cmap(mpl.cm.spectral_r)
 #     norm = mpl.colors.Normalize(vmin = 0., vmax = 1.)
@@ -394,11 +493,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -410,10 +509,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL__g, y = D_tau__g, mask = mask__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -427,19 +526,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{D}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL__g, D_tau__g, z = H.x_Y__Tg[iT], mask = mask__g)
 #     mask = []
@@ -451,7 +550,7 @@ if __name__ == '__main__':
 #     zticks = [0,.12,.18,.22,.30,1]
 #     ax.set_xlim(xran)
 #     ax.set_ylim(yran)
-#     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
+#     #ax.scatter(xm, ym, c = '0.5', **default_sc_kwargs)
 #     zcmap = mpl.cm.ScalarMappable()
 #     zcmap.set_cmap(mpl.cm.spectral_r)
 #     norm = mpl.colors.Normalize(vmin = 0., vmax = 1)
@@ -463,23 +562,23 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('DTau_xY_ba_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-# 
-#     ############################################################
-#     ############################################################
-#     ############################################################
-# 
+#  
+#     ###########################################################
+#     ###########################################################
+#     ###########################################################
+#  
 #     NCols = 4
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -496,10 +595,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau__rg, mask = mask__rg) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -520,12 +619,12 @@ if __name__ == '__main__':
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.x_Y__Trg[iT], D_tau__rg, z = mu_GAL__rg, mask = mask__rg)
 #     mask = []
@@ -549,11 +648,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -565,10 +664,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL__rg, y = D_tau__rg, mask = mask__rg) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -582,19 +681,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{D}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL__rg, D_tau__rg, z = H.x_Y__Trg[iT], mask = mask__rg)
 #     mask = []
@@ -618,23 +717,23 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('DTau_xY_ba_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-# 
-#     ############################################################
-#     ############################################################
-#     ############################################################
-# 
+#  
+#     ###########################################################
+#     ###########################################################
+#     ###########################################################
+#  
 #     NCols = 4
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -651,10 +750,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.integrated_x_Y__Tg[iT], y = integrated_D_tau, mask = mask_GAL__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -675,12 +774,12 @@ if __name__ == '__main__':
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.integrated_x_Y__Tg[iT], integrated_D_tau, z = mu_GAL, mask = mask_GAL__g)
 #     mask = []
@@ -704,11 +803,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -720,10 +819,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [-1, 2]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL, y = integrated_D_tau, mask = mask_GAL__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -737,19 +836,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{D}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL, integrated_D_tau, z = H.integrated_x_Y__Tg[iT], mask = mask_GAL__g)
 #     mask = []
@@ -773,21 +872,20 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('DTau_xY_ba_int_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-# 
-# 
-# 
+#  
+#     ################## 
 #     NCols = 4
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -804,10 +902,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = R_tau__g, mask = mask__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -828,12 +926,12 @@ if __name__ == '__main__':
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.x_Y__Tg[iT], R_tau__g, z = mu_GAL__g, mask = mask__g)
 #     mask = []
@@ -857,11 +955,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -873,10 +971,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL__g, y = R_tau__g, mask = mask__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -890,19 +988,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{R}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL__g, R_tau__g, z = H.x_Y__Tg[iT], mask = mask__g)
 #     mask = []
@@ -926,23 +1024,23 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('RTau_xY_ba_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-# 
-#     ############################################################
-#     ############################################################
-#     ############################################################
-# 
+#  
+#     ###########################################################
+#     ###########################################################
+#     ###########################################################
+#  
 #     NCols = 4
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -959,10 +1057,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = R_tau__rg, mask = mask__rg) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -983,12 +1081,12 @@ if __name__ == '__main__':
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.x_Y__Trg[iT], R_tau__rg, z = mu_GAL__rg, mask = mask__rg)
 #     mask = []
@@ -1012,11 +1110,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -1028,10 +1126,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL__rg, y = R_tau__rg, mask = mask__rg) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1045,19 +1143,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{R}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL__rg, R_tau__rg, z = H.x_Y__Trg[iT], mask = mask__rg)
 #     mask = []
@@ -1081,23 +1179,23 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('RTau_xY_ba_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-# 
-#     ############################################################
-#     ############################################################
-#     ############################################################
-# 
+#  
+#     ###########################################################
+#     ###########################################################
+#     ###########################################################
+#  
 #     NCols = 4
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [20,5]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -1114,10 +1212,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-#     
+#      
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
 #     xm, ym = C.ma_mask_xyz(x = H.integrated_x_Y__Tg[iT], y = integrated_R_tau, mask = mask_GAL__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1138,12 +1236,12 @@ if __name__ == '__main__':
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
 #     xm, ym, zm = C.ma_mask_xyz(H.integrated_x_Y__Tg[iT], integrated_R_tau, z = mu_GAL, mask = mask_GAL__g)
 #     mask = []
@@ -1167,11 +1265,11 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ols_kwargs = default_ols_kwargs.copy()
 #     ols_kwargs.update(dict(
 #         va = 'top',
@@ -1183,10 +1281,10 @@ if __name__ == '__main__':
 #         pos_y = 0.98, 
 #         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
 #     )
-# 
+#  
 #     xran = [0,1]
 #     yran = [0, 8]
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
 #     xm, ym = C.ma_mask_xyz(x = mu_GAL, y = integrated_R_tau, mask = mask_GAL__g) 
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1200,19 +1298,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\varphi$'
 #     ylabel = r'$\mathcal{R}_\tau$'
 #     ax.set_xlabel(xlabel) 
-#     #ax.set_ylabel(ylabel)
+#     ax.set_ylabel(ylabel)
 #     rs.poly1d()
 #     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
 #     for i, p in enumerate(rs.xPrc):
 #         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#     #plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#     #ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-# 
+#  
 #     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
 #     xm, ym, zm = C.ma_mask_xyz(mu_GAL, integrated_R_tau, z = H.integrated_x_Y__Tg[iT], mask = mask_GAL__g)
 #     mask = []
@@ -1236,206 +1334,201 @@ if __name__ == '__main__':
 #             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
 #             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
 #             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-#     ax.legend(loc = 'upper right', fontsize = 8, frameon = False)
+#     ax.legend(loc = 'upper right', fontsize = 12, frameon = False)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
 #     ax.yaxis.set_major_locator(MaxNLocator(4))
-#     
+#      
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('RTau_xY_ba_int_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)
-#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-
-
- #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    #with PdfPages('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix)) as pdf:
- #    NCols = 2
- #    NRows = 2
- #    f = plt.figure()
- #    page_size_inches = [10,10]
- #    f.set_size_inches(page_size_inches)
- #    f.set_dpi(100)
- #    grid_shape = (NRows, NCols)
- #     
- #    bins = (30, 30)
- #    cmap = 'Blues'
- #     
- #    ols_kwargs = default_ols_kwargs.copy()
- #    ols_kwargs.update(dict(
- #        va = 'top',
- #        ha = 'right', 
- #        pos_x = 0.98, 
- #        fs = 15, 
- #        rms = True, 
- #        text = True, 
- #        pos_y = 0.98, 
- #        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
- #    )
- #    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
- #    xran = [0, 1.5]
- #    yran = [0, 3]
- #    xm, ym = C.ma_mask_xyz(x = H.tau_V__Tg[iT], y = H.tau_V_neb__g, mask = mask__g) 
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
- #    # X, Y = np.meshgrid(xedges, yedges)
- #    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
- #    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
- #    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
- #    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
- #    ax.set_xlim(xran)
- #    ax.set_ylim(yran)
- #    ax.set_title('zonas')
- #    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
- #    #for i in xrange(len(rs.xPrcS)):
- #    #   ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
- #    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
- #    ax.set_xlabel(r'$\tau_V^\star$') 
- #    ax.set_ylabel(r'$\tau_V^{neb}$')
- #    rs.poly1d()
- #    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
- #    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
- #    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
- #    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
- #    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
- #    ax.xaxis.set_major_locator(MaxNLocator(4))
- #    ax.yaxis.set_major_locator(MaxNLocator(4))
- #     
- #    ols_kwargs.update(dict(
- #        va = 'top',
- #        ha = 'right', 
- #        pos_x = 0.98, 
- #        fs = 15, 
- #        rms = True, 
- #        text = True, 
- #        pos_y = 0.98, 
- #        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
- #    )
- #    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
- #    xran = [0, 1.5]
- #    yran = [0, 3]
- #    xm, ym = C.ma_mask_xyz(x = H.tau_V__Trg[iT], y = H.tau_V_neb__Trg[iT], mask = mask__rg) 
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
- #    # X, Y = np.meshgrid(xedges, yedges)
- #    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
- #    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
- #    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
- #    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
- #    ax.set_xlim(xran)
- #    ax.set_ylim(yran)
- #    ax.set_title('bins radiais')
- #    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
- #    #for i in xrange(len(rs.xPrcS)):
- #    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
- #    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
- #    ax.set_xlabel(r'$\tau_V^\star$') 
- #    ax.set_ylabel(r'$\tau_V^{neb}$')
- #    rs.poly1d()
- #    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
- #    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
- #    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
- #    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
- #    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
- #    ax.xaxis.set_major_locator(MaxNLocator(4))
- #    ax.yaxis.set_major_locator(MaxNLocator(4))
- # 
- #    ols_kwargs.update(dict(
- #        va = 'top',
- #        ha = 'right', 
- #        pos_x = 0.98, 
- #        fs = 15, 
- #        rms = True, 
- #        text = True, 
- #        pos_y = 0.98, 
- #        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
- #    )
- #    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
- #    xran = [0, 1.5]
- #    yran = [0, 3]
- #    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = H.integrated_tau_V_neb__g, mask = mask_GAL__g) 
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
- #    # X, Y = np.meshgrid(xedges, yedges)
- #    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
- #    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
- #    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
- #    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
- #    ax.set_xlim(xran)
- #    ax.set_ylim(yran)
- #    ax.set_title('integrado')
- #    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
- #    #for i in xrange(len(rs.xPrcS)):
- #    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
- #    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
- #    ax.set_xlabel(r'$\tau_V^\star$') 
- #    ax.set_ylabel(r'$\tau_V^{neb}$')
- #    rs.poly1d()
- #    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
- #    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
- #    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
- #    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
- #    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
- #    ax.xaxis.set_major_locator(MaxNLocator(4))
- #    ax.yaxis.set_major_locator(MaxNLocator(4))
- # 
- #    sum_Ha__g = H.sum_prop_gal(H.F_obs_Ha__g, mask_zones = mask__g)
- #    sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
- #    tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
- # 
- #    ols_kwargs.update(dict(
- #        va = 'top',
- #        ha = 'right', 
- #        pos_x = 0.98, 
- #        fs = 15, 
- #        rms = True, 
- #        text = True, 
- #        pos_y = 0.98, 
- #        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
- #    )
- #    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
- #    xran = [0, 1.5]
- #    yran = [0, 3]
- #    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = tau_V_neb_resolved__g, mask = mask_GAL__g) 
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
- #    # X, Y = np.meshgrid(xedges, yedges)
- #    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
- #    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- #    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
- #    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
- #    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
- #    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
- #    ax.set_xlim(xran)
- #    ax.set_ylim(yran)
- #    ax.set_title('espacialmente resolvido')
- #    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
- #    #for i in xrange(len(rs.xPrcS)):
- #    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
- #    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
- #    ax.set_xlabel(r'$\tau_V^\star$') 
- #    ax.set_ylabel(r'$\tau_V^{neb}$')
- #    rs.poly1d()
- #    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
- #    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
- #    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
- #    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
- #    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
- #    ax.xaxis.set_major_locator(MaxNLocator(4))
- #    ax.yaxis.set_major_locator(MaxNLocator(4))
- #     
- #    f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.3, wspace = 0.25, right = 0.95, left = 0.1)
- #    #pdf.savefig(f)
- #    f.savefig('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
- #    plt.close(f)
- #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
- 
-#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+# 
+#     #with PdfPages('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix)) as pdf:
+#     NCols = 2
+#     NRows = 2
+#     f = plt.figure()
+#     page_size_inches = [10,10]
+#     f.set_size_inches(page_size_inches)
+#     f.set_dpi(100)
+#     grid_shape = (NRows, NCols)
+#      
+#     bins = (30, 30)
+#     cmap = 'Blues'
+#      
+#     ols_kwargs = default_ols_kwargs.copy()
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 15, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.tau_V__Tg[iT], y = H.tau_V_neb__g, mask = mask__g) 
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     # X, Y = np.meshgrid(xedges, yedges)
+#     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+#     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     ax.set_title('zonas')
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     #for i in xrange(len(rs.xPrcS)):
+#     #   ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     rs.poly1d()
+#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(4))
+#      
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 15, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.tau_V__Trg[iT], y = H.tau_V_neb__Trg[iT], mask = mask__rg) 
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     # X, Y = np.meshgrid(xedges, yedges)
+#     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+#     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     ax.set_title('bins radiais')
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     #for i in xrange(len(rs.xPrcS)):
+#     #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     rs.poly1d()
+#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(4))
+#  
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 15, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = H.integrated_tau_V_neb__g, mask = mask_GAL__g) 
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     # X, Y = np.meshgrid(xedges, yedges)
+#     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+#     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     ax.set_title('integrado')
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     #for i in xrange(len(rs.xPrcS)):
+#     #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     rs.poly1d()
+#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(4))
+#  
+#     sum_Ha__g = H.sum_prop_gal(H.F_obs_Ha__g, mask_zones = mask__g)
+#     sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
+#     tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
+#  
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 15, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = tau_V_neb_resolved__g, mask = mask_GAL__g) 
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     # X, Y = np.meshgrid(xedges, yedges)
+#     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+#     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     ax.set_title('espacialmente resolvido')
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     #for i in xrange(len(rs.xPrcS)):
+#     #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     rs.poly1d()
+#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(4))
+#      
+#     f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.3, wspace = 0.25, right = 0.95, left = 0.1)
+#     #pdf.savefig(f)
+#     f.savefig('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+#     plt.close(f)
+# 
 #     NCols = 3
 #     NRows = 1
 #     f = plt.figure()
@@ -1902,223 +1995,221 @@ if __name__ == '__main__':
 #     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
 #     f.savefig('HistoTauVres_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)    
-#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    
-#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-#         NCols = 3
-#         NRows = 2
-#         f = plt.figure(figsize = (15, 8), dpi = 100)
-#         grid_shape = (NRows, NCols)
+#    
+#     NCols = 3
+#     NRows = 2
+#     f = plt.figure(figsize = (15, 8), dpi = 100)
+#     grid_shape = (NRows, NCols)
 # 
-#         bins = (30, 30)
-#         cmap = 'Blues'
-#         
-#         ols_kwargs = default_ols_kwargs.copy()
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 14, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (0, 0))
-#         xran = [0, 1.5]
-#         yran = [0, 3]
-#         xm, ym = C.ma_mask_xyz(x = H.tau_V__Tg[iT], y = H.tau_V_neb__g, mask = mask__g) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$\tau_V^\star$') 
-#         ax.set_ylabel(r'$\tau_V^{neb}$')
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(3))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
+#     bins = (30, 30)
+#     cmap = 'Blues'
+#     
+#     ols_kwargs = default_ols_kwargs.copy()
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 14, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.tau_V__Tg[iT], y = H.tau_V_neb__g, mask = mask__g) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(3))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
 # 
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 10, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-#         ax.set_title('zonas')
-#         xran = [0, 1]
-#         yran = [0, 10]
-#         xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = R_tau__g, mask = mask__g) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$x_Y$')
-#         ax.set_ylabel(r'$\mathcal{R}_\tau$') 
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(4))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
-#         ax.axhline(y = 1, ls = '-.', c = 'k')
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 10, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+#     ax.set_title('zonas')
+#     xran = [0, 1]
+#     yran = [0, 10]
+#     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = R_tau__g, mask = mask__g) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$x_Y$')
+#     ax.set_ylabel(r'$\mathcal{R}_\tau$') 
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
+#     ax.axhline(y = 1, ls = '-.', c = 'k')
 # 
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 10, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (0, 2))
-#         xran = [0, 1]
-#         yran = [-1, 2]
-#         xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau__g, mask = mask__g) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$x_Y$')
-#         ax.set_ylabel(r'$\mathcal{D}_\tau$') 
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(4))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
-#         ax.axhline(y = 0, ls = '-.', c = 'k')
-#         
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 10, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (1, 0))
-#         xran = [0, 1.5]
-#         yran = [0, 3]
-#         xm, ym = C.ma_mask_xyz(x = H.tau_V__Trg[iT], y = H.tau_V_neb__Trg[iT], mask = mask__rg) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$\tau_V^\star$') 
-#         ax.set_ylabel(r'$\tau_V^{neb}$')
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(3))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 10, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+#     xran = [0, 1]
+#     yran = [-1, 2]
+#     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau__g, mask = mask__g) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$x_Y$')
+#     ax.set_ylabel(r'$\mathcal{D}_\tau$') 
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
+#     ax.axhline(y = 0, ls = '-.', c = 'k')
+#     
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 10, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+#     xran = [0, 1.5]
+#     yran = [0, 3]
+#     xm, ym = C.ma_mask_xyz(x = H.tau_V__Trg[iT], y = H.tau_V_neb__Trg[iT], mask = mask__rg) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$\tau_V^\star$') 
+#     ax.set_ylabel(r'$\tau_V^{neb}$')
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(3))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
 # 
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 10, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (1, 1))
-#         ax.set_title('bins radiais')
-#         xran = [0, 1]
-#         yran = [0, 10]
-#         xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = R_tau__rg, mask = mask__rg) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$x_Y$')
-#         ax.set_ylabel(r'$\mathcal{R}_\tau$') 
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(4))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
-#         ax.axhline(y = 1, ls = '-.', c = 'k')
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 10, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+#     ax.set_title('bins radiais')
+#     xran = [0, 1]
+#     yran = [0, 10]
+#     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = R_tau__rg, mask = mask__rg) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$x_Y$')
+#     ax.set_ylabel(r'$\mathcal{R}_\tau$') 
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
+#     ax.axhline(y = 1, ls = '-.', c = 'k')
 # 
-#         ols_kwargs.update(dict(
-#             va = 'top',
-#             ha = 'right', 
-#             pos_x = 0.98, 
-#             fs = 10, 
-#             rms = True, 
-#             text = True, 
-#             pos_y = 0.98, 
-#             kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-#         )
-#         ax = plt.subplot2grid(grid_shape, loc = (1, 2))
-#         xran = [0, 1]
-#         yran = [-1, 2]
-#         xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau__rg, mask = mask__rg) 
-#         h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-#         X, Y = np.meshgrid(xedges, yedges)
-#         im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-#         ax.set_xlim(xran)
-#         ax.set_ylim(yran)
-#         rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-#         for i in xrange(len(rs.xPrcS)):
-#             ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-#         ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-#         ax.set_xlabel(r'$x_Y$')
-#         ax.set_ylabel(r'$\mathcal{D}_\tau$') 
-#         p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
-#         ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-#         plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-#         ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-#         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-#         ax.xaxis.set_major_locator(MaxNLocator(4))
-#         ax.yaxis.set_major_locator(MaxNLocator(3))
-#         ax.axhline(y = 0, ls = '-.', c = 'k')
+#     ols_kwargs.update(dict(
+#         va = 'top',
+#         ha = 'right', 
+#         pos_x = 0.98, 
+#         fs = 10, 
+#         rms = True, 
+#         text = True, 
+#         pos_y = 0.98, 
+#         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+#     )
+#     ax = plt.subplot2grid(grid_shape, loc = (1, 2))
+#     xran = [0, 1]
+#     yran = [-1, 2]
+#     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau__rg, mask = mask__rg) 
+#     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+#     X, Y = np.meshgrid(xedges, yedges)
+#     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+#     ax.set_xlim(xran)
+#     ax.set_ylim(yran)
+#     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+#     for i in xrange(len(rs.xPrcS)):
+#         ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+#     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+#     ax.set_xlabel(r'$x_Y$')
+#     ax.set_ylabel(r'$\mathcal{D}_\tau$') 
+#     p = np.polyfit(xm.compressed(), ym.compressed(), 1) 
+#     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
+#     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+#     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.93, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+#     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+#     ax.xaxis.set_major_locator(MaxNLocator(4))
+#     ax.yaxis.set_major_locator(MaxNLocator(3))
+#     ax.axhline(y = 0, ls = '-.', c = 'k')
 # 
-#         f.tight_layout()
-#         pdf.savefig(f)
-#         plt.close(f)
+#     f.tight_layout()
+#     #pdf.savefig(f)
+#     plt.close(f)
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE

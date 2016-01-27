@@ -16,7 +16,97 @@
 %                                                               %
 %***************************************************************%
 
-%Estudo empíricos confirmam a existência de uma extinção diferencial \citep[e.g., ][]{Fanelltex} 
+\chapter{Estimando frações de gás}
+\label{sec:gasfrac}
+
+A fração de gás no modelo simples de evolução química ({\em closed-box model}) escala linearmente
+com a metalicidade do gás, onde a inclinação da reta é o {\em yield}, que representa o quanto de
+metais está sendo produzido e ejetado a cada geração de estrelas. Durante a pesquisa que nos levou a
+escrever o artigo que está no Apênd. \label{apendice:GDetal2014b} encontramos uma relação
+interessante que serviu de pontapé inicial para todo esse nosso projeto. Nesse capítulo vamos
+comentar brevemente sobre nosso progresso nessa conversão para nossas galáxias e discutir quais os
+desafios enfrentados até agora e aqueles que estão por vir nas próximas estapas de nosso projeto.
+
+\section{Um modelo simples de evolução química}
+\label{sec:gasfrac:closedbox}
+
+A relação da qual comentamos no preambulo deste capítulo pode ser vista na Fig.
+\ref{fig:dust2stars}. A razão entre o coeficiente de extinção e a densidade superficial de massa
+estelar ($A_V / \mu_\star$) parece relacionar de maneira interessante com a metalicidade média das
+populações estelares e nos motivou a buscar a conversão de poeira em gás e poder compará-la com a
+metalicidade nebular.
+\begin{figure}
+	\centering
+	%\resizebox{0.7\textwidth}{!}{\includegraphics{figuras/dust2stars.pdf}}
+	\includegraphics[height = 8cm, width = 9.5cm]{figuras/dust2stars.pdf}
+	\caption[$A_V / \mu_\star$ vs. \meanM{\log Z_\stars}]
+	{Relação entre metalicidade média das populações estelares e a razão entre o coeficiente de
+extinção (em magnitude) e a densidade superficial de massa estelar. Os pontos estão divididos em
+cores por tipo morfológico.}
+	\label{fig:dust2stars}
+\end{figure}
+O principal objetivo de nosso trabalho é pode estimar fração de gás espacialmente resolvidas nas
+galáxias do CALIFA. Podemos definir fração de gás como:
+\begin{equation}
+	f_{\mathrm{gas}} = \frac{\mathrm{M}_{\mathrm{gas}}}{\mathrm{M}_\star + \mathrm{M}_{\mathrm{gas}}}
+	\equiv
+\frac{1}{1 + \frac{\mathrm{M}_\star}{\mathrm{M}_{\mathrm{gas}}}}
+	\label{eq:fgas}
+\end{equation}
+\noindent onde $M_{\mathrm{gas}}$ é a massa total na forma de gás e $M_\star$ é a massa total em
+estrelas. 
+
+No modelo simples de evolução química de uma galáxia não existe nem {\em inflow} nem {\em outflow}
+de gás, isto é, uma galáxia está isolada em sistema fechado, portanto não recebe mais gás além de
+seu gás inicial, simplificando a equação da evolução química do gás:
+%\begin{eqnarray}
+%	Z_{\mathrm{gas}} &=& y \ln \left(1/f_{\mathrm{gas}}\right) \\
+%	\label{eq:Zgas_closedbox}
+%	\langle Z_\star \rangle_M &=& y \left(1 - \frac{f_{\mathrm{gas}} \ln (1/f_{\mathrm{gas})}}{1 -
+%	f_{\mathrm{gas}}} \right)
+%	\label{eq:Zstar_closedbox}
+%\end{eqnarray}
+\begin{equation}
+	Z_{\mathrm{gas}} = - y \ln f_{\mathrm{gas}}
+	\label{eq:Zgas_closedbox}
+\end{equation}
+\noindent on $y$ é o {\em yield}. Essa primeira equação foi derivada explicitamente pela primeira
+vez por \citet{Searle.Sargent.1972a} ao estudar duas regiões \Hii gigantes, ditas ``isoladas''.
+Nesse cenário, o {\em yield} e pode ser aproximado quando conhecemos $Z_{\mathrm{gas}}$ e
+$f_{\mathrm{gas}}$.
+
+\section{Relação de Kennicut-Schmidt e nossa {\em pseudo-KS}}
+\label{sec:gasfrac:KS}
+
+Como explicado na Sec. \ref{sec:intro:galaxias}, a quantidade de gás de uma galáxia e a taxa de
+formação estelar parecem estarem relacionadas através de uma lei de potências. Pensando nisso,
+estabelecemos nossa relação entre poeira e formação estelar, que pode ser vista na Fig.
+\ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como nossa variável representante da poeira e
+no direito, $\tauVN$. A conversão de poeira em gás é, da mesma forma que a conversão de CO em gás,
+dependente da metalicidade, mas com a vantagem de não necessitar medidas. O espalhamento
+nesta figura nos mostra que podemos explorar os resíduos em torno desse ajuste e será um dos nossos próximos passos. 
+
+\begin{figure}
+	\centering
+	%\resizebox{0.7\textwidth}{!}{\includegraphics{figuras/dust2stars.pdf}}
+	\resizebox{0.7\textwidth}{!}{\includegraphics{figuras/pseudoKS.pdf}}
+	\caption[Nossa {\em pseudo-KS}.]
+	{Relação entre a densidade superficial da taxa de formação estelar e o coeficiente de extinção
+proveniente da síntese ($\tauVS$ - {\em painel esquerdo}) e do decremento de Balmer ($\tauVN$ -
+{\em painel direito}). A linha tracejada em vermelho marca o ajuste linear da mediana e os
+valores marcam o coeficiente de correlação de Spearmann (canto inferior esquerdo) e a
+inclinação, valor de interceptação do eixo y e o valor do desvio médio quadrático da distribuição em
+torno do ajuste (canto superior direito).}
+	\label{fig:pseudoKS}
+\end{figure}
+
+Diversos autores atualmente calculam e discutem a relação KS e a sua validade para diferentes
+resoluções espaciais \citep[e.g., ][]{Kennicutt.etal.2007a, Leroy.etal.2012a,
+Calzetti.Liu.Koda.2012a, Lada.etal.2013a, Tacconi.etal.2013a, Casasola.etal.2015a}. A inclinação
+da KS (N = 1.4 na Eq. \ref{eq:SFRKennicutt}) varia geralmente entre 1 e 2, dependendo da resolução
+espacial observada (regiões \Hii, perfis radiais, galáxias integradas) ou do tipo de gás usado
+(atômico, molecular ou a soma dos dois). Nossa intenção é que possamos mapear o gás molecular, que é
+responsável diretamente pela formação estelar. 
 
 %\chapter{Coeficiente de extinção como indicador de Gás}
 %\label{sec:gas}

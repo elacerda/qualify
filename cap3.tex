@@ -22,7 +22,7 @@
 release.}
 
 Esse artigo (Apêndice \ref{apendice:GBetal2015a}) descreve uma amostra de 200 galáxias que tiveram
-seus dados liberados no segundo lançamento público de dados ({\em data-release} - DR2) do \PCAL.
+seus dados liberados no segundo lançamento público de dados ({\em data-release} - DR2) do CALIFA.
 Enveredando por todos as configurações de observação, procedimentos de redução dos dados, avaliação
 de erros e controle de qualidade. 
 
@@ -32,8 +32,7 @@ gerar as imagens que usamos para avaliar a qualidade da síntese de populações
 resultados para a amostra do primeiro {\em data-release} (DR1). Durante a análise dos resíduos vimos
 que os mesmos reduziram sensivelmente desde a última versão, além de nos ajudar a melhorar a máscara
 de remoção de linhas telúricas dos espectros. Também verificamos que os erros relacionados aos
-espectros observados possuem uma distribuição muito próxima a uma gaussiana, ou seja, resíduos
-resultam praticamente ruído.
+espectros observados possuem uma distribuição muito próxima a uma gaussiana.
 
 \section{Definição da amostra deste trabalho}
 \label{sec:amostra:definicao}
@@ -49,17 +48,28 @@ detalhado, juntamente com o procedimento de derivação das propriedades estelar
 \subsection{Mascarando elementos e removendo {\em outliers}}
 \label{sec:amostra:mask}
 
-Para que possamos focar nossos estudos às regiões de formação estelar, aplicamos uma máscara nos
+Para que possamos focar nossos estudos nas regiões de formação estelar, aplicamos uma máscara nos
 dados selecionando as regiões que possuam:
 \begin{itemize}
   \item medidas do fluxo integrado das linhas de \Hbeta, \oIII, \Halpha e \nII com relação
 sinal-ruído maior do que 3;
-  \item medidas para as seis propriedades comparadas neste capítulo ($\tauVS$, $\tauVN$,
-$\SigmaSFR$, $\SigmaSFRN$, $\meanM{\log Z_\star}$ e $\log(O/H)$);
-  \item fração de população estelar jovem ($t_\star < t_{SF}$) maior que 0.05 (5\%) ($x_Y >0.05$);
+  \item medidas para as seis propriedades comparadas neste capítulo:
+  \begin{itemize}
+    \item coeficiente de extinção proveniente da síntese - $\tauVS$;
+    \item coeficiente de extinção estimado através do decremento de Balmer - $\tauVN$;
+    \item densidade superficial da taxa de formação estelar calculado através da síntese -
+$\SigmaSFR$;
+	\item densidade superficial da taxa de formação estelar calculado através da luminosidade de
+\Halpha - $\SigmaSFRN$;
+	\item metalicidade média das populações estelares, pesada pela massa estelar - $\meanM{\log
+Z_\star}$;
+	\item abundância de oxigênio (utilizada como medida de metalicidade nebular) - $\log(O/H)$).
+  \end{itemize}
+  \item fração de luz proveniente de populações estelares jovens maior que 0.05 (5\%) ($x_Y >
+0.05$);
   \item $\tauV$ e $\tauVN$ maiores que 0.05;
   \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais (ver
-  \ref{sec:synvsneb:amostra:rad});
+\ref{sec:amostra:rad};
   \item distância maior que 70\% do raio que contém metade da luz ({\em half-light radius} - HLR).
 \end{itemize}
 \noindent O que aqui chamamos de população jovem discutiremos um pouco mais adiante, na Sec.
@@ -68,9 +78,10 @@ do bojo da galáxia (partes centrais onde as linhas são produzidas por diferent
 relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos colaboradores
 analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
 centrais. Na figura \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
-amostra. Em azul temos as 226176 regiões em 305 galáxias e, em vermelho, as 16525 zonas de 184
-galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa seleção busca zonas mais compactas e
-mais jovens (maior fração de populações jovens diminuindo a idade média). 
+amostra sobre algumas propriedades. Em azul temos as 226176 regiões em 305 galáxias e, em vermelho,
+as 16525 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa seleção
+busca zonas mais compactas e mais jovens (maior fração de populações jovens diminuindo a idade
+média). \myojo{blue}{Qual o corte mais dramático?}
 \begin{figure}
 	\centering
 	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/histosample.pdf}}
@@ -89,13 +100,13 @@ mediana, desvio padrão, máximo e mínimo de cada distribuição.}
 Com tipos morfológicos variando entre Sa e Sd, massas estelares entre $10^9$ e $10^{11.5}\ M_\odot$
 e populações estelares com idades médias entre $10^8$ e $10^{10}$ anos, podemos ver na Fig.
 \ref{fig:amostraMorf} que as galáxias se ordenam de forma interessante quando agrupadas por tipo
-morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e
-$t_\star$) e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star <
-t_{SF})$). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja, são
-propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem no
-quando analisamos as classes morfológicas por idade média. 
+morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e $t_\star$)
+e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star < 32
+milhões de anos)$). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja, são
+propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem
+quando analisamos as classes morfológicas por idade média.
 
-Esse resultado parece ser muito interessante visto que a classificação morfológica foi feita por
+Esse resultado parece ser interessante visto que a classificação morfológica foi feita por
 colaboradores do CALIFA totalmente através de inspeção visual das imagens na banda-r do \SDSS das
 mesmas galáxias. Vemos também que as galáxias tipo Sd possuem as populações estelares mais jovens e
 menos massivas na média. Por ser um fenômeno apenas de posição do referencial de observação não
