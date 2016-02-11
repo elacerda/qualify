@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 from matplotlib.pyplot import MaxNLocator
 from matplotlib.backends.backend_pdf import PdfPages
 from CALIFAUtils.plots import density_contour
+from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 from CALIFAUtils.plots import plotOLSbisectorAxis, plot_text_ax, next_row_col
 from scipy.stats import spearmanr
 
@@ -127,20 +128,23 @@ if __name__ == '__main__':
     mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, ba_max))
     mask_GAL__g = np.bitwise_or(mask_GAL__g, ~gals_slice__integr)   
     
-    mask__g = np.bitwise_or(np.ma.log10(H.SFRSD__Tg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Tg[iT]).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
-    mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
-    #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
-    mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
-    mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
-    mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
-
-    mask__rg = mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
-    mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    mask__g = mask_zones_iT(iT, H, args, maskRadiusOk__g, gals_slice__g)
+    mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
+    # mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
+    # #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
+    # mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
+    # mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
+    # mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
+    # 
+    # mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
+    # mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     
     NgalsOkZones = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]))  
-    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
+    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg].compressed()))
     
     print NgalsOkZones, NgalsOkRbins, H.N_zones__g.sum() - mask__g.astype(int).sum(), (H.N_gals * H.NRbins) - mask__rg.astype(int).sum() 
     
@@ -191,7 +195,6 @@ if __name__ == '__main__':
         ax.set_xlim(xran)
         ax.set_ylim(yran)
         xm, ym = C.ma_mask_xyz(H.alogZ_mass__Ug[iU], y = y, mask = mask__g)
-        #ax.scatter(xm, ym, c = '0.8', **default_sc_kwargs)
         density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
         if (row == 0) and (col == 0):
             kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
@@ -376,7 +379,6 @@ if __name__ == '__main__':
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = x, y = H.alogZ_mass__Ug[iU], mask = mask__g)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-        rs.OLS_bisector()
         #print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
         kw_text = dict(pos_x = 0.01, pos_y = 0.99 - (iU * 0.08), fs = 15, va = 'top', ha = 'left', c = c)
@@ -411,7 +413,6 @@ if __name__ == '__main__':
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = x, y = H.alogZ_mass__Urg[iU], mask = mask__rg)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-        rs.OLS_bisector()
         #print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
         row, col = next_row_col(row, col, NRows, NCols)
@@ -439,7 +440,6 @@ if __name__ == '__main__':
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = x, y = H.alogZ_mass_GAL__Ug[iU], mask = mask_GAL__g)    
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-        rs.OLS_bisector()
         #print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
         row, col = next_row_col(row, col, NRows, NCols)
@@ -448,7 +448,7 @@ if __name__ == '__main__':
     kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 12, va = 'center', ha = 'right', c = 'k')
     plot_text_ax(ax, '$Z_{neb}$' % (tZ / 1e9), **kw_text)
     ax.plot(rs.xS, rs.yS, 'k--')
-    ax.set_xlabel(r'$\langle\log\ \mu_\star\rangle_{GAL}$ [$M_\odot$]')
+    ax.set_xlabel(r'$\log\ M_\star$ [$M_\odot$]')
     #ax.set_xlim(0, 4.5)
     ax.set_ylim(-2,0.4)
     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -497,8 +497,6 @@ if __name__ == '__main__':
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = H.alogZ_mass__Urg[iU], y = y, mask = mask__rg)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-        rs.OLS_bisector()
-        print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
         kw_text = dict(pos_x = 0.01 + (iU * 0.17), pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = c)
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
@@ -521,8 +519,6 @@ if __name__ == '__main__':
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = H.alogZ_mass_GAL__Ug[iU], y = y, mask = mask_GAL__g)    
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-        rs.OLS_bisector()
-        print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
         kw_text = dict(pos_x = 0.01 + (iU * 0.17), pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = c)
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)

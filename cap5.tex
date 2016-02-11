@@ -45,8 +45,8 @@ que nos ajudarão nesse processo:
 
 Neste capítulo (e nos seguintes) me atenho a discussão à perfis radiais, voltado para zonas ou pra
 valores integrados quando pertinente. Na Fig. \ref{fig:tauVhisto} vemos a comparação direta entre os
-coeficientes, juntamente com os histogramas de \Dtau e \Rtau. O primeiro painel mostra a comparação
-entre os coeficientes como na Fig. \ref{fig:tauVsynvsnebMask} para perfis radiais. Os dois
+coeficientes, juntamente com os histogramas de $\Dtau$ e $\Rtau$. O primeiro painel mostra a
+comparação entre os coeficientes como na Fig. \ref{fig:tauVsynvsnebMask} para perfis radiais. Os dois
 histogramas são de $\Dtau$ e $\Rtau$. Os valores da mediana (média) de $\Dtau$ são 0.31 (0.32) e de
 $\Rtau$, 2.06 (2.46) e ambos mostram claramente a existência de uma extinção diferencial. Esse
 resultado aparece da mesma forma para zonas e para as galáxias integradas. No trabalho de Marielli
@@ -57,9 +57,11 @@ seguir.
 
 \begin{figure}
 	\centering
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/histoTauVR.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/histoTauVR.pdf}
 	\caption[Comparação $\tauVS$ e histogramas de $\Dtau$ e $\Rtau$.]
-	{}
+	{\emph{Painel esquerdo}: Igual ao painel superior direito da Fig. \ref{fig:tauVsynvsnebMask}.
+\emph{Painel central}: histograma normalizado de $\Dtau$. \emph{Painel esquerdo}: histograma
+normalizado de $\Rtau$.}
 	\label{fig:tauVhisto}
 \end{figure}
 
@@ -88,7 +90,7 @@ afeta as galáxias com $b/a$ < 0.4.
 
 \begin{figure}
 	\centering
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/DtauR.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/DtauR.pdf}
 	\caption[$\Dtau$, $x_Y$ e $\varphi$.]
 	{\emph{Primeiro painel}: $\Dtau$ versus $x_Y$ para nossa amostra. Os contornos contornam
 $1\sigma$, $2\sigma$ e $3\sigma$ da distribuição. As linhas marcam a mediana e os 5,16,64,95
@@ -101,7 +103,7 @@ a segundo mas com a amostra dividida em classes de $x_Y$.}
 
 \begin{figure}
 	\centering
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/RtauR.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/RtauR.pdf}
 	\caption[$\Rtau$, $x_Y$ e $\varphi$.]
 	{Igual a Fig. \ref{fig:Dtau} mas com $\Rtau$.}
 	\label{fig:Rtau}
@@ -129,25 +131,39 @@ amostra peca por estatística, pois temos apenas 184 pontos.
 
 \section{Modelagem e interpretação}
 \label{sec:difextin:modeleinterp}
+
 Com esse cenário criado até agora neste capítulo, parece ser óbvio que $x_Y$ é fundamental em nossa
-interpretação da extinção diferencial. O resultado da correlação entre $\Rtau$ e $\varphi$ aparece
-muito melhor quando olhamos para a amostra do \SDSS e parece seguir bem na linha de interpretação
-que tivemos. Nessa seção vou apresentar o modelo proposto na tese de Marielli e utilizar a mesma
-modelagem com nossos dados.
+interpretação da extinção diferencial. O resultado da correlação entre $\Rtau$ e $\varphi$
+não parece ser tão forte localmente quanto para valores integrados pois ele aparece muito melhor
+quando olhamos para a amostra do \SDSS. Seguiremos aqui assumindo essa na linha de interpretação do
+trabalho de extinção diferencial nas galáxias do \SDSS. Essa diferença esperamos discutir em um
+futuro próximo e entra na lista de coisas para fazer, portando nesta seção vou apresentar o modelo
+proposto na tese de Marielli e utilizar a mesma modelagem com nossos dados.
 
 \subsection{O modelo}
 \label{sec:difextin:modeleinterp:model}
 
-$x_Y$ é claramente a melhor forma de sintonizar essa influência da idade como no modelo de
-\citet{Charlot.Fall.2000a}. Nele os autores consideram jovem todas as populações com idade menor que
-10 milhões de anos. Já interpretação da influência de $\varphi$ foi relacionada a diferença entre
-geometria das regiões \Hii e a da galáxia. As estrelas jovens, assim como as velhas, possuem
-atenuações semelhantes a do ISM dos discos galáticos, mas as populações jovens possuem também a
-poeira de suas {\em birth-clouds}. Ou seja, se modelarmos as regiões \Hii como esfericamente simétricas, o
-coeficiente de extinção não deve se alterar quando mudamos a linha de visada entre o observador e a
-galáxia. Já para o ISM parece se alterar bastante, portanto a razão entre os coeficientes deve se
-alterar no mesmo passo que a inclinação se altera. Na Fig. \ref{fig:model} \myojo{blue}{(fazer
-figura)} fica melhor explicado.
+Segundo tudo que vimos até agora, nosso modelo deve levar em conta que a luz proveniente das
+populações jovens são atenuadas de maneira mais intensa que o meio interestelar. Além disso, deve
+levar em conta que existe algum tipo de relação entre a razão entre os coeficientes seja afetada
+diretamente pelo ângulo de inclinação da galáxia. Apesar de aqui estarmos utilizando $t_{SF} = 32$
+milhões de anos, tanto na tese de Marielli quanto no artigo de \citet{Charlot.Fall.2000a} são
+consideradas jovens todas as populações com idade menor que 10 milhões de anos. A interpretação da
+influência de $\varphi$ foi relacionada a diferença entre geometria das regiões \Hii e a da galáxia.
+As estrelas jovens, assim como as velhas, possuem atenuações semelhantes a do ISM dos discos
+galáticos, mas as populações jovens possuem também a poeira de suas {\em birth-clouds}. Ou seja, se
+modelarmos as regiões \Hii como esfericamente simétricas, o coeficiente de extinção não deve se
+alterar quando mudamos a linha de visada entre o observador e a galáxia. Já para o ISM parece se
+alterar bastante, portanto a razão entre os coeficientes deve se alterar no mesmo passo que a
+inclinação se altera. Na Fig.
+\ref{fig:model} fica melhor explicado.
+
+\begin{figure}
+	\includegraphics[width=0.99\textwidth]{figuras/Hiiregion_model.png}
+	\caption[Modelo para extinção diferencial.]
+	{}
+	\label{fig:model}
+\end{figure}
 
 Essa figura juntamente com as considerações acima nos levam a a identificar um coeficiente de
 extinção para as populações jovens e outro para as velhas da seguinte maneira:
@@ -207,7 +223,7 @@ $\tauISM$ que passam por zero).
 
 \begin{figure}
 	\centering
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/tauISMBC_R.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/tauISMBC_R.pdf}
 	\caption[Histogramas de $\tauBC$, $\tauISM$ e $\rho$.]
 	{Nos três painéis vemos os histogramas de $\tauBC$, $\tauISM$ e $\rho$. Os intervalos se estendem
 para fora do gráfico, portanto, a última classe de cada histograma (em ambos os lados) contém todos

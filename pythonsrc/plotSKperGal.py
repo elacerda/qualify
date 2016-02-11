@@ -17,6 +17,7 @@ from CALIFAUtils.plots import DrawHLRCircle
 from CALIFAUtils.plots import plotOLSbisectorAxis
 from CALIFAUtils.scripts import calc_running_stats
 from CALIFAUtils.plots import DrawHLRCircleInSDSSImage
+from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 # mpl.rcParams['font.size'] = 16
@@ -174,22 +175,25 @@ if __name__ == '__main__':
     mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, ba_max))
     mask_GAL__g = np.bitwise_or(mask_GAL__g, ~gals_slice__integr)   
     
-    mask__g = np.bitwise_or(np.ma.log10(H.SFRSD__Tg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Tg[iT]).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
-    mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
-    #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
-    mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
-    mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
-    mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
-
-    mask__rg = mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
-    mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    mask__g = mask_zones_iT(iT, H, args, maskRadiusOk__g, gals_slice__g)
+    mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
+    # mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
+    # #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
+    # mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
+    # mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
+    # mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
+    # 
+    # mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
+    # mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
     #mask__rg = ~maskRadiusOk__rg
     
     NgalsOkZones = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]))  
-    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
+    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg].compressed()))
     
     print NgalsOkZones, NgalsOkRbins
 

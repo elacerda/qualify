@@ -7,6 +7,7 @@ from matplotlib.ticker import MultipleLocator
 import sys
 import CALIFAUtils as C
 from scipy import stats as st
+from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 #from matplotlib.backends.backend_pdf import PdfPages
 #from matplotlib.ticker import MultipleLocator
 #from matplotlib.ticker import MaxNLocator
@@ -23,7 +24,6 @@ import CALIFAUtils as C
 import argparse as ap
 import numpy as np
 import sys
-from numpy.ma.extras import mask_cols
 
 mpl.rcParams['font.size'] = 12
 mpl.rcParams['axes.labelsize'] = 12
@@ -32,32 +32,6 @@ mpl.rcParams['xtick.labelsize'] = 10
 mpl.rcParams['ytick.labelsize'] = 10 
 mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['font.serif'] = 'Times New Roman'
-
-def mask_zones_iT(iT, H, args, maskRadiusOk, gals_slice):
-    mask__g = np.bitwise_or(np.ma.log10(H.SFRSD__Tg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Tg[iT]).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
-    mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
-    mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), args.bamin))
-    mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
-    mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
-    #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
-    return mask__g
-
-def mask_radius_iT(iT, H, args, maskRadiusOk, gals_slice):
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # mask__rg = np.bitwise_or(np.ma.log10(H.aSFRSD__Trg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Trg[iT]).mask)
-    # mask__rg = np.bitwise_or(mask__rg, np.ma.log10(H.aSFRSD_Ha__rg * 1e6).mask)
-    # mask__rg = np.bitwise_or(mask__rg, np.ma.log10(H.tau_V_neb__rg).mask)
-    # mask__rg = np.bitwise_or(mask__rg, H.O_O3N2_M13__rg.mask)
-    # mask__rg = np.bitwise_or(mask__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), args.bamin))
-    # mask__rg = np.bitwise_or(mask__rg, ~maskRadiusOk)
-    # mask__rg = np.bitwise_or(mask__rg, ~gals_slice)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    mask__rg = mask__rg = np.bitwise_or(~maskRadiusOk, np.less(H.reply_arr_by_radius(H.ba_GAL__g), args.bamin))
-    mask__rg = np.bitwise_or(mask__rg, ~gals_slice)
-    #mask__rg = np.bitwise_or(mask__rg, np.less(H.EW_Ha__rg, 3.))
-    return mask__rg
 
 def parser_args():        
     parser = ap.ArgumentParser(description = '%s' % sys.argv[0])
@@ -115,12 +89,12 @@ if __name__ == '__main__':
     fnamesuffix = '.png'
     
     if args.maskradius is None:
+        ticks_r = [0, 1.5, 3]
         maskRadiusOk__g = np.ones_like(H.zone_dist_HLR__g, dtype = np.bool)
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
-        minR = args.maskradius
+        ticks_r = [0.7, 1.85, 3]
         maxR = H.Rbin__r[-1]
-        maxR = 3
         maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
         maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
         fnamesuffix = '_maskradius%s' % fnamesuffix
@@ -140,12 +114,14 @@ if __name__ == '__main__':
         if len(gals_txt) > 1:
             gals_txt = '.'.join(gals_txt)
         fnamesuffix = '_%s%s' % ('_'.join(gals_txt), fnamesuffix)
+        
+    if args.dryrun: sys.exit(1)
 
     ##########################
     ######### MASKS ##########
     ##########################
-    ba_max = args.bamin
-    mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, ba_max))
+    bamin = args.bamin
+    mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, bamin))
     mask_GAL__g = np.bitwise_or(mask_GAL__g, ~gals_slice__integr)   
     
     txt_suptitle = r'$\Longrightarrow$ %s  NGals:%d  $x_Y$(min):%.0f%%  $\tau_V^\star $(min):%.2f  $\tau_V^{neb}$(min):%.2f  $\epsilon\tau_V^{neb}$(max):%.2f ' % (gals_txt, N_gals, H.xOkMin * 100., H.tauVOkMin, H.tauVNebOkMin, H.tauVNebErrMax)    
@@ -196,7 +172,7 @@ if __name__ == '__main__':
             xran = [-6, 0]
             yran = [-6, 0]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())
@@ -204,9 +180,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -301,7 +277,7 @@ if __name__ == '__main__':
             xran = [-3.5, 1]
             yran = [-3.5, 1]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
@@ -309,9 +285,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -405,7 +381,7 @@ if __name__ == '__main__':
             xran = [-3.5, 1]
             yran = [-3.5, 1]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
@@ -413,9 +389,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -515,7 +491,7 @@ if __name__ == '__main__':
             mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
             xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.6)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
@@ -523,9 +499,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -619,7 +595,7 @@ if __name__ == '__main__':
             xran = [-5, 2]
             yran = [-5, 2]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 10, edgecolor = 'none', alpha = 0.8)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
@@ -627,9 +603,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -722,7 +698,7 @@ if __name__ == '__main__':
             xran = [-5, 0]
             yran = [-5, 0]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 10, edgecolor = 'none', alpha = 0.8)
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
@@ -730,9 +706,9 @@ if __name__ == '__main__':
             Yrms = (ym - Y2).std()
             ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
-                txt = r'y = x + %.2f (rms:%.2f)' % (b2[iT], Yrms)
+                txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
-                txt = r'y = x - %.2f (rms:%.2f)' % (-1. * b2[iT], Yrms)
+                txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
             plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
@@ -805,7 +781,7 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     ax.set_xlim(6,8)
     ax.set_ylim(0,1)
-    ax.legend(bbox_to_anchor = (0.3, 1), fontsize = 12, frameon = False)
+    ax.legend(bbox_to_anchor = (0.99, .4), fontsize = 12, frameon = False)
     xlim_inf, xlim_sup = ax.get_xlim()
     ylim_inf, ylim_sup = ax.get_ylim()
     x_pos = np.log10(tSF__T[iT])
@@ -813,7 +789,7 @@ if __name__ == '__main__':
     arrow_size_x = 0.2
     arrow_size_y = 0.15
     textbox = dict(boxstyle = 'round', facecolor = 'wheat', alpha = 0.) 
-    ax.annotate('%.2f Myr' % (tSF / 1e6),
+    ax.annotate('%.2f Myr\nRs:%.3f' % ((tSF / 1e6), y_pos),
         xy = (x_pos, y_pos), xycoords = 'data',
         xytext = (x_pos + arrow_size_x, y_pos + arrow_size_y),
         textcoords = 'data',
@@ -846,10 +822,10 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     ax.set_ylim(yran)
     #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
-    b2 = (ym - xm).mean()
-    Y2 = xm + b2
-    Yrms = (ym - Y2).std()
+    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    b2 = (ym.compressed() - xm.compressed()).mean()
+    Y2 = xm.compressed() + b2
+    Yrms = (ym.compressed() - Y2).std()
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
@@ -878,10 +854,10 @@ if __name__ == '__main__':
     X, Y = np.meshgrid(xedges, yedges)
     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
-    b2 = (ym - xm).mean()
-    Y2 = xm + b2
-    Yrms = (ym - Y2).std()
+    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    b2 = (ym.compressed() - xm.compressed()).mean()
+    Y2 = xm.compressed() + b2
+    Yrms = (ym.compressed() - Y2).std()
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
@@ -909,10 +885,10 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     ax.set_ylim(yran)
     #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
-    b2 = (ym - xm).mean()
-    Y2 = xm + b2
-    Yrms = (ym - Y2).std()
+    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    b2 = (ym.compressed() - xm.compressed()).mean()
+    Y2 = xm.compressed() + b2
+    Yrms = (ym.compressed() - Y2).std()
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
@@ -940,10 +916,10 @@ if __name__ == '__main__':
     X, Y = np.meshgrid(xedges, yedges)
     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.6)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm, ym, **ols_kwargs)
-    b2 = (ym - xm).mean()
-    Y2 = xm + b2
-    Yrms = (ym - Y2).std()
+    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    b2 = (ym.compressed() - xm.compressed()).mean()
+    Y2 = xm.compressed() + b2
+    Yrms = (ym.compressed() - Y2).std()
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)

@@ -21,6 +21,9 @@
 \usepackage{subfigure}
 \usepackage[section]{placeins}
 
+% Indent the first paragraph
+\usepackage{indentfirst}
+
 % Table package
 \usepackage{longtable}
 
@@ -45,6 +48,14 @@
 \usepackage[T1]{fontenc}
 \usepackage{pdfpages}
 \usepackage{xfrac}
+
+% linhas orfans e viuvas
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+\usepackage{enumitem}
+\setlist{nosep}
 
 % Used for code formatting.
 \usepackage{fancyvrb}

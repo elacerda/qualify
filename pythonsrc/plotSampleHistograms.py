@@ -3,8 +3,9 @@
 # Lacerda@Granada - 02/Dec/2015
 #
 #from matplotlib.ticker import MultipleLocator
-from matplotlib.backends.backend_pdf import PdfPages
+from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 from CALIFAUtils.plots import plot_text_ax, next_row_col
+from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.ticker import MaxNLocator
 from matplotlib.patches import Polygon
 from matplotlib import pyplot as plt
@@ -104,12 +105,14 @@ if __name__ == '__main__':
     minR = args.maskradius
 
     if minR is None:
+        ticks_r = [0, 1.5, 3]
         maskRadiusOk__g = np.ones_like(H.zone_dist_HLR__g, dtype = np.bool)
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
+        ticks_r = [0.7, 1.85, 3]
         maxR = H.Rbin__r[-1]
-        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR)
-        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * (H.RbinCenter__r >= minR)).T
+        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
+        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
         fnamesuffix = '_maskradius%s' % fnamesuffix
         
     if args.slice_gals is None:
@@ -132,20 +135,23 @@ if __name__ == '__main__':
     mask_GAL__g = np.bitwise_or(np.zeros_like(H.integrated_EW_Ha__g, dtype = np.bool), np.less(H.ba_GAL__g, ba_max))
     mask_GAL__g = np.bitwise_or(mask_GAL__g, ~gals_slice__integr)
     
-    mask__g = np.bitwise_or(np.ma.log10(H.SFRSD__Tg[iT] * 1e6).mask, np.ma.log10(H.tau_V__Tg[iT]).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
-    mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
-    mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
-    #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
-    mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
-    mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
-    mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
-
-    mask__rg = mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
-    mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    mask__g = mask_zones_iT(iT, H, args, maskRadiusOk__g, gals_slice__g)
+    mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.SFRSD_Ha__g * 1e6).mask)
+    # mask__g = np.bitwise_or(mask__g, np.ma.log10(H.tau_V_neb__g).mask)
+    # mask__g = np.bitwise_or(mask__g, H.logO3N2_M13__g.mask)
+    # #mask__g = np.bitwise_or(mask__g, np.less(H.EW_Ha__g, 3.))
+    # mask__g = np.bitwise_or(mask__g, np.less(H.reply_arr_by_zones(H.ba_GAL__g), ba_max))
+    # mask__g = np.bitwise_or(mask__g, ~maskRadiusOk__g)
+    # mask__g = np.bitwise_or(mask__g, ~gals_slice__g)
+    # 
+    # mask__rg = np.bitwise_or(~maskRadiusOk__rg, np.less(H.reply_arr_by_radius(H.ba_GAL__g), ba_max))
+    # mask__rg = np.bitwise_or(mask__rg, ~gals_slice__rg)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     
     NgalsOkZones = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]))  
-    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
+    NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg].compressed()))
     
     print ((~mask__g).sum()),((~mask__rg).sum()), NgalsOkZones, NgalsOkRbins
  
@@ -389,7 +395,7 @@ if __name__ == '__main__':
     f.savefig(fname)
     
     ##################################
-    Hall = H = C.H5SFRData('/Users/lacerda/dev/astro/EmissionLines/SFR_all305spiral_qualificacao.h5')
+    Hall = H = C.H5SFRData('/Users/lacerda/dev/astro/EmissionLines/SFR_305spirals.h5')
     mask_morf_all = (Hall.morfType_GAL__g >= 0)
     mask_all__g = np.less(Hall.reply_arr_by_zones(H.ba_GAL__g), ba_max)
     mask_all__rg = np.less(H.reply_arr_by_radius(Hall.ba_GAL__g), ba_max)

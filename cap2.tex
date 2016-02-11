@@ -88,7 +88,9 @@ Utilizando \eqref{eq:tauV} podemos calcular qual o coeficiente de extinção par
 nebulares. Para este cálculo utilizamos o fato de que a razão entre os fluxos intrínsecos das duas
 primeiras linhas da série de Balmer, \Halpha e \Hbeta, varia muito um pouco com a metalicidade, a
 densidade e a temperatura. Usamos aqui esse valor como constante e igual a $2.86$
-\citep{Osterbrock.Ferland.2006a}. Com isso temos:
+\citep[densidade eletrônica de $n = 100\ cm^{-3}$ e temperatura eletrônica $T_e = 10^4$ K;
+][]{Osterbrock.Ferland.2006a}.
+Com isso temos:
 \begin{equation}
 	\tauVN = 2.886\ \ln \left( \frac{F_{\Halpha}^{obs}/F_{\Hbeta}^{obs}}{2.86} \right).
 \end{equation}
@@ -105,11 +107,11 @@ O erro propagado para $\tauVN$ é:
 \left(\frac{\epsilon (F_{\Hbeta}^{obs})}{F_{\Hbeta}^{obs}}\right)^2 }
 	\label{eq:etauneb}
 \end{eqnarray}
-\noindent Os termos de dentro da raiz na Eq. \ref{eq:etauneb} são as relações sinal-ruído ($S/N$) de
-\Halpha e \Hbeta. Como \Hbeta é sempre a mais ruidosa das duas, podemos aproximar a incerteza em $\tauVN$
-por:
+\noindent Os termos de dentro da raiz na Eq. \ref{eq:etauneb} são o inverso das relações sinal-ruído
+($S/N$) de \Halpha e \Hbeta. Como \Hbeta é sempre a mais ruidosa das duas, podemos aproximar a
+incerteza em $\tauVN$ por:
 \begin{equation}
-	\epsilon (\tauVN) \approx \frac{2.889}{(S/N)_{\Hbeta}}
+	\epsilon (\tauVN) \approx \frac{2.886}{(S/N)_{\Hbeta}}
 	\label{eq:etaunebaprox}
 \end{equation}
 
@@ -127,15 +129,14 @@ autores para a calibração do $\log$ (O3N2) foi:
 \begin{equation}
 	12 + \log \textrm{(O/H)} = 8.533[\pm0.012] - 0.214[\pm0.012]\times \textrm{O3N2}
 \end{equation}
-\noindent onde O3N2 vem da razão entre os fluxos de \oIII, \Hbeta, \nII e \Halpha: 
+\noindent onde O3N2 vem da razão entre os fluxos intrínsecos de \oIII, \Hbeta, \nII e \Halpha:
 \begin{equation}
-	\textrm{O3N2} = \log \left(\frac{\oIII/\Hbeta}{\nII/\Halpha}\right). 
+	\textrm{O3N2} = \log \left(\frac{\OIII}{\Hbeta} \times \frac{\Halpha}{\NII}\right). 
 \end{equation}
 A Fig. \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por \citet{Marino.etal.2013a}.
 
 \begin{figure}
 	\centering
-	%\includegraphics[width=0.3\columnwidth]{figuras/O3N2_CALIFA.pdf}
 	\includegraphics[scale=0.8, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
 	\caption[Calibração da abundância de oxigênio no gás]{Calibração da abundância de oxigênio 
 	nebular	para 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}. Figura retirada de 
@@ -310,12 +311,10 @@ para $t = 10^7$ anos. Finalmente, resolvendo \eqref{eq:SFR_theoric} encontramos 
 \end{equation}
 
 Em \citet{Kennicutt.1998a} esse coeficiente é calculado utilizando diferentes modelos estelares mas
-utilizando a mesma IMF. Nosso valor é bem próximo daquele obtido neste artigo ($7.9 \times
-10^{-42}$). 
+utilizando a mesma IMF. Nosso valor é bem próximo daquele obtido no artigo ($7.9 \times 10^{-42}$). 
 
 \begin{figure}
 	\centering
-	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
 	\includegraphics[scale=0.62]{figuras/Nh_logt_metBase_Padova2000_salp.pdf}
 	\caption[Evolução temporal do número e da taxa de fótons H-ionizantes em unidades da massa
 	formada.] 

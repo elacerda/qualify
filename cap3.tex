@@ -59,6 +59,7 @@ detalhado, juntamente com o procedimento de derivação das propriedades estelar
 Para que possamos focar nossos estudos nas regiões de formação estelar, aplicamos uma máscara nos
 dados selecionando as regiões que possuam:
 \begin{itemize}
+  \setlength\itemsep{0.2cm}
   \item medidas do fluxo integrado das linhas de \Hbeta, \oIII, \Halpha e \nII com relação
 sinal-ruído maior do que 3;
   \item medidas para as seis propriedades comparadas neste capítulo:
@@ -86,18 +87,19 @@ do bojo da galáxia (partes centrais onde as linhas são produzidas por diferent
 relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos colaboradores
 analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
 centrais. Na figura \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
-amostra sobre algumas propriedades. Em azul temos as 226176 regiões em 305 galáxias e, em vermelho,
-as 16525 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa seleção
-busca zonas mais compactas e mais jovens (maior fração de populações jovens diminuindo a idade
-média). \myojo{blue}{Qual o corte mais dramático?}
+amostra sobre algumas propriedades. Em vermelho temos as 226176 regiões em 305 galáxias e, em
+azul, as 16525 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa
+seleção busca zonas mais compactas e mais jovens (maior fração de populações jovens diminuindo a idade
+média). O corte mais brusco em nossa amostra é devido a baixa relação sinal-ruído da linha de \oIII
+($(S/N)_{\oIII} < 3$) em 91142 zonas.
 \begin{figure}
 	\centering
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/histosample.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/histosample.pdf}
 	\caption[Histogramas: densidade superficial de massa, idade média, fração de populações jovens e
 	relação axial.] 
 	{Histogramas da densidade superficial de massa, idade média, fração de populações jovens e relação
-axial. Em azul temos a distribuição de valores de 226176 regiões em 305 galáxias e, em vermelho, a
-de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da média,
+axial. Em vermelho temos a distribuição de valores de 226176 regiões em 305 galáxias e, em azul,
+a de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da média,
 mediana, desvio padrão, máximo e mínimo de cada distribuição.}
 	\label{fig:histosample}
 \end{figure}
@@ -109,9 +111,9 @@ Com tipos morfológicos variando entre Sa e Sd, massas estelares entre $10^9$ e 
 e populações estelares com idades médias entre $10^8$ e $10^{10}$ anos, podemos ver na Fig.
 \ref{fig:amostraMorf} que as galáxias se ordenam de forma interessante quando agrupadas por tipo
 morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e $t_\star$)
-e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star < 32
-milhões de anos)$). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja, são
-propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem
+e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y (t_\star <
+32 \times 10^6$ anos)). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja,
+são propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem
 quando analisamos as classes morfológicas por idade média.
 
 Esse resultado parece ser interessante visto que a classificação morfológica foi feita por
@@ -120,11 +122,9 @@ mesmas galáxias. Vemos também que as galáxias tipo Sd possuem as populações
 menos massivas na média. Por ser um fenômeno apenas de posição do referencial de observação não
 deveríamos ver preferência por valor de relação axial ($b/a$) quando dividimos em classes
 morfológicas, o que realmente acontece.
-
 \begin{figure}
 	\centering
-	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/sample_realsample_maskradius_integrated.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/sample_realsample_maskradius_integrated.pdf}
 	\caption[Classificação por morfologia.]
 	{\emph{Em sentido horário a partir do painel superior esquerdo}: gráfico da massa estelar, idade
 	estelar média, fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star < t_{SF})$) e
@@ -136,7 +136,6 @@ morfológicas, o que realmente acontece.
 	intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
 	\label{fig:amostraMorf}
 \end{figure}
-
 Estamos em fase de finalização de um artigo em que comparamos a relação entre a taxa de formação
 estelar e a massa para diferentes classes morfológicas. Esse artigo já foi submetido e deve sair
 logo agora no início de 2016.
@@ -152,7 +151,7 @@ mesma análise, a vantagem dos {\em bins} radiais vem do balanceamento da influ�
 quando analisamos todas juntas. Para que seja possível este ``empilhamento'' de galáxias, estas
 médias radiais são feitas definindo-se um raio efetivo para cada galáxia. No nosso caso utilizamos
 como raio efetivo aquele que comporta metade da luz da galáxia ({\em half-light radius} - HLR) e
-definimos 30 anéis com espessura de 0.1 HLR (ou seja, indo até 3HLR) partindo do pixel central de
+definimos 30 anéis com espessura de 0.1 HLR (ou seja, indo até 3 HLR) partindo do pixel central de
 cada galáxia.
 
 No artigo de \citet{GonzalezDelgado.etal.2014a} os autores discutem as estruturas radiais de algumas
@@ -173,8 +172,7 @@ verificar diferenças nestes tipos de abordagens.
 
 \begin{figure}
 	\centering
-	%\resizebox{0.99\textwidth}{!}{\includegraphics{Nh_logt_metBase_Padova2000_salp.pdf}}
-	\resizebox{0.99\textwidth}{!}{\includegraphics{figuras/K0140_xY_radialProfile_realsample.pdf}}
+	\includegraphics[width=0.99\textwidth]{figuras/K0140_xY_radialProfile_realsample.pdf}
 	\caption[Imagem e exemplos de mapas e perfis radiais.]
 	{Imagem do \SDSS da galáxia NGC1667 (CALIFA 140). Em cada fileira aparece o mapa e o perfil radial
 da fração de luz proveniente das populações jovens ($x_Y$ - \emph{primeira fileira}), do
