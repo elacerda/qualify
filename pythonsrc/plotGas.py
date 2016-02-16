@@ -2,28 +2,28 @@
 #
 # Lacerda@Granada - 13/Oct/2014
 #
-from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 from CALIFAUtils.scripts import get_CALIFAID_by_NEDName
 from matplotlib.backends.backend_pdf import PdfPages
-#from matplotlib.ticker import MultipleLocator
+from CALIFAUtils.scripts import mask_radius_iT
+from CALIFAUtils.scripts import mask_zones_iT
+from CALIFAUtils.plots import plot_histo_axis
+from CALIFAUtils.plots import density_contour
 from matplotlib.ticker import MaxNLocator
 from CALIFAUtils.plots import plot_text_ax
-#from CALIFAUtils.plots import plot_zbins
 from CALIFAUtils.objects import runstats
 from matplotlib import pyplot as plt
+from os.path import basename
 import matplotlib as mpl
 import CALIFAUtils as C
 import argparse as ap
 import numpy as np
 import sys
 
-#RNuc = 0.5
-
 mpl.rcParams['font.size'] = 20
-mpl.rcParams['axes.labelsize'] = 20
+mpl.rcParams['axes.labelsize'] = 16
 mpl.rcParams['axes.titlesize'] = 20
-mpl.rcParams['xtick.labelsize'] = 20
-mpl.rcParams['ytick.labelsize'] = 20 
+mpl.rcParams['xtick.labelsize'] = 16
+mpl.rcParams['ytick.labelsize'] = 16 
 mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['font.serif'] = 'Times New Roman'
 
@@ -38,7 +38,7 @@ def parser_args():
         'hdf5' : None,
         'output' : None,
         'itSF' : 11,
-        'itZ' : -1,
+        'itZ' :-1,
         'maskradius' : None,
         'slice_gals' : None,
         'dryrun' : False,
@@ -96,8 +96,10 @@ if __name__ == '__main__':
     
     C.debug_var(args.debug, args = args)
     
-    H = C.H5SFRData(args.hdf5)
+    h5file = args.hdf5
+    H = C.H5SFRData(h5file)
     iT = args.itSF
+    tSF = H.tSF__T[iT]
     iU = args.itZ
 
     fnamesuffix = '.pdf'
@@ -106,12 +108,14 @@ if __name__ == '__main__':
     minR = args.maskradius
 
     if minR is None:
+        ticks_r = [0, 1.5, 3]
         maskRadiusOk__g = np.ones_like(H.zone_dist_HLR__g, dtype = np.bool)
         maskRadiusOk__rg = np.ones((H.NRbins, H.N_gals_all), dtype = np.bool)
     else:
+        ticks_r = [0.7, 1.85, 3]
         maxR = H.Rbin__r[-1]
-        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR)
-        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * (H.RbinCenter__r >= minR)).T
+        maskRadiusOk__g = (H.zone_dist_HLR__g >= minR) & (H.zone_dist_HLR__g <= maxR) 
+        maskRadiusOk__rg = (np.ones((H.NRbins, H.N_gals_all), dtype = np.bool).T * ((H.RbinCenter__r >= minR) & (H.RbinCenter__r <= maxR))).T
         fnamesuffix = '_maskradius%s' % fnamesuffix
         
     if args.slice_gals is None:
@@ -152,12 +156,12 @@ if __name__ == '__main__':
     NgalsOkZones = len(np.unique(H.reply_arr_by_zones(H.califaIDs)[~mask__g]))  
     NgalsOkRbins = len(np.unique(H.reply_arr_by_radius(H.califaIDs_all)[~mask__rg]))
     
-    print ((~mask__g).sum()),((~mask__rg).sum()), NgalsOkZones, NgalsOkRbins
+    print ((~mask__g).sum()), ((~mask__rg).sum()), NgalsOkZones, NgalsOkRbins
     
     Area_GAL__g = (H.Mcor_GAL__g / H.McorSD_GAL__g)
     dustdim = 0.2 # md / rhod
 
-    gasnames = [ 'GRVTauVStar', 'GRVTauVNeb', 'BRTauVStar', 'BRTauVNeb', 'SKSFRSDStar', 'SKSFRSDHa' ]
+    gasnames = [ 'BRTauVStar', 'BRTauVNeb', 'SKSFRSDStar', 'SKSFRSDHa' ]
     gas_dict = {}
     
     ######################
@@ -199,113 +203,43 @@ if __name__ == '__main__':
     SK_integrated_f_gas = 1. / (1. + 1. / SK_integrated_GSR)
     SK_integrated_f_gas_Ha = 1. / (1. + 1. / SK_integrated_GSR_Ha)
     gas_dict['SKSFRSDStar'] = dict(
-        c = 'g', 
-        SigmaGas__g = SK_SigmaGas__g, 
-        SigmaGas__rg = SK_SigmaGas__rg, 
+        c = 'g',
+        SigmaGas__g = SK_SigmaGas__g,
+        SigmaGas__rg = SK_SigmaGas__rg,
         integrated_SigmaGas = SK_integrated_SigmaGas,
         SigmaGas_oneHLR = SK_SigmaGas_oneHLR__g,
-        DGR__g = SK_DGR__g, 
-        DGR__rg = SK_DGR__rg, 
+        DGR__g = SK_DGR__g,
+        DGR__rg = SK_DGR__rg,
         integrated_DGR = SK_integrated_DGR,
         DGR_oneHLR = SK_DGR_oneHLR__g,
-        GSR__g = SK_GSR__g, 
-        GSR__rg = SK_GSR__rg, 
+        GSR__g = SK_GSR__g,
+        GSR__rg = SK_GSR__rg,
         integrated_GSR = SK_integrated_GSR,
         GSR_oneHLR = SK_GSR_oneHLR__g,
-        f_gas__g = SK_f_gas__g, 
-        f_gas__rg = SK_f_gas__rg, 
+        f_gas__g = SK_f_gas__g,
+        f_gas__rg = SK_f_gas__rg,
         integrated_f_gas = SK_integrated_f_gas,
         f_gas_oneHLR = SK_f_gas_oneHLR__g,
     )
     gas_dict['SKSFRSDHa'] = dict(
         c = 'k',
-        SigmaGas__g = SK_SigmaGas_Ha__g, 
-        SigmaGas__rg = SK_SigmaGas_Ha__rg, 
+        SigmaGas__g = SK_SigmaGas_Ha__g,
+        SigmaGas__rg = SK_SigmaGas_Ha__rg,
         integrated_SigmaGas = SK_integrated_SigmaGas_Ha,
         SigmaGas_oneHLR = SK_SigmaGas_Ha_oneHLR__g,
-        DGR__g = SK_DGR_Ha__g, 
-        DGR__rg = SK_DGR_Ha__rg, 
+        DGR__g = SK_DGR_Ha__g,
+        DGR__rg = SK_DGR_Ha__rg,
         integrated_DGR = SK_integrated_DGR_Ha,
         DGR_oneHLR = SK_DGR_Ha_oneHLR__g,
-        GSR__g = SK_GSR_Ha__g, 
-        GSR__rg = SK_GSR_Ha__rg, 
+        GSR__g = SK_GSR_Ha__g,
+        GSR__rg = SK_GSR_Ha__rg,
         integrated_GSR = SK_integrated_GSR_Ha,
         GSR_oneHLR = SK_GSR_Ha_oneHLR__g,
-        f_gas__g = SK_f_gas_Ha__g, 
-        f_gas__rg = SK_f_gas_Ha__rg, 
+        f_gas__g = SK_f_gas_Ha__g,
+        f_gas__rg = SK_f_gas_Ha__rg,
         integrated_f_gas = SK_integrated_f_gas_Ha,
         f_gas_oneHLR = SK_f_gas_Ha_oneHLR__g,
     ) 
-    ######################
-    
-    ######################
-    # Guiderdoni & Rocca-Volmerange (1987)
-    # DGR Calculado para Zsun 
-    ######################
-    GRV_DGR = 1./0.059
-    GRV_SigmaGas__g = H.tau_V__Tg[iT] / GRV_DGR
-    GRV_SigmaGas_Ha__g = H.tau_V_neb__g / GRV_DGR
-    GRV_SigmaGas__rg = H.tau_V__Trg[iT] / GRV_DGR
-    GRV_SigmaGas_Ha__rg = H.tau_V_neb__Trg[iT] / GRV_DGR
-    GRV_SigmaGas_oneHLR__g = H.tau_V_oneHLR__Tg[iT] / GRV_DGR
-    GRV_SigmaGas_Ha_oneHLR__g = H.tau_V_neb_oneHLR__Tg[iT] / GRV_DGR
-    GRV_integrated_SigmaGas = H.integrated_tau_V__g / GRV_DGR
-    GRV_integrated_SigmaGas_Ha = H.integrated_tau_V_neb__g / GRV_DGR
-    GRV_GSR__g = GRV_SigmaGas__g / H.McorSD__Tg[iT]
-    GRV_GSR_Ha__g = GRV_SigmaGas_Ha__g / H.McorSD__Tg[iT]
-    GRV_GSR__rg = GRV_SigmaGas__rg / H.McorSD__Trg[iT]
-    GRV_GSR_Ha__rg = GRV_SigmaGas_Ha__rg / H.McorSD__Trg[iT]
-    GRV_GSR_oneHLR__g = GRV_SigmaGas_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    GRV_GSR_Ha_oneHLR__g = GRV_SigmaGas_Ha_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    GRV_integrated_GSR = GRV_integrated_SigmaGas / H.McorSD_GAL__g
-    GRV_integrated_GSR_Ha = GRV_integrated_SigmaGas_Ha / H.McorSD_GAL__g 
-    GRV_f_gas__g = 1. / (1. + 1. / GRV_GSR__g)
-    GRV_f_gas_Ha__g = 1. / (1. + 1. / GRV_GSR_Ha__g)
-    GRV_f_gas__rg = 1. / (1. + 1. / GRV_GSR__rg)
-    GRV_f_gas_Ha__rg = 1. / (1. + 1. / GRV_GSR_Ha__rg)
-    GRV_f_gas_oneHLR__g = 1. / (1. + 1. / GRV_GSR_oneHLR__g)
-    GRV_f_gas_Ha_oneHLR__g = 1. / (1. + 1. / GRV_GSR_Ha_oneHLR__g)
-    GRV_integrated_f_gas = 1. / (1. + 1. / GRV_integrated_GSR)
-    GRV_integrated_f_gas_Ha = 1. / (1. + 1. / GRV_integrated_GSR_Ha)
-    gas_dict['GRVTauVStar'] = dict(
-        c = 'y', 
-        SigmaGas__g = GRV_SigmaGas__g, 
-        SigmaGas__rg = GRV_SigmaGas__rg, 
-        integrated_SigmaGas = GRV_integrated_SigmaGas,
-        SigmaGas_oneHLR = GRV_SigmaGas_oneHLR__g,
-        DGR__g = GRV_DGR, 
-        DGR__rg = GRV_DGR, 
-        integrated_DGR = GRV_DGR,
-        DGR_oneHLR = GRV_DGR,
-        GSR__g = GRV_GSR__g, 
-        GSR__rg = GRV_GSR__rg, 
-        integrated_GSR = GRV_integrated_GSR,
-        GSR_oneHLR = GRV_GSR_oneHLR__g,
-        f_gas__g = GRV_f_gas__g, 
-        f_gas__rg = GRV_f_gas__rg, 
-        integrated_f_gas = GRV_integrated_f_gas,
-        f_gas_oneHLR = GRV_f_gas_oneHLR__g,
-    )
-    gas_dict['GRVTauVNeb'] = dict(
-        c = 'orange', 
-        SigmaGas__g = GRV_SigmaGas__g, 
-        SigmaGas__rg = GRV_SigmaGas__rg, 
-        integrated_SigmaGas = GRV_integrated_SigmaGas,
-        SigmaGas_oneHLR = GRV_SigmaGas_oneHLR__g,
-        DGR__g = GRV_DGR, 
-        DGR__rg = GRV_DGR, 
-        integrated_DGR = GRV_DGR,
-        DGR_oneHLR = GRV_DGR,
-        GSR__g = GRV_GSR__g, 
-        GSR__rg = GRV_GSR__rg, 
-        integrated_GSR = GRV_integrated_GSR,
-        GSR_oneHLR = GRV_GSR_oneHLR__g,
-        f_gas__g = GRV_f_gas__g, 
-        f_gas__rg = GRV_f_gas__rg, 
-        integrated_f_gas = GRV_integrated_f_gas,
-        f_gas_oneHLR = GRV_f_gas_oneHLR__g,
-    )
-
     ######################
     
     ######################
@@ -318,207 +252,258 @@ if __name__ == '__main__':
     OHSunBrinch_inv = 1 / (10.**(8.82 - 12))
     ######################
     # from OLS Bisector
-    p_ols = np.array([1.87, -6.98])
-    BR_OHBrinch_ols__g = np.ma.masked_all((H.logO3N2_M13__g.shape))
-    BR_OHBrinch_ols__g[~H.logO3N2_M13__g.mask] = np.polyval(p_ols, H.logO3N2_M13__g.compressed()) 
-    BR_OHBrinch_ols__rg = np.ma.masked_all((H.logO3N2_M13__Trg[iT].shape))
-    BR_OHBrinch_ols__rg[~H.logO3N2_M13__Trg[iT].mask] = np.polyval(p_ols, H.logO3N2_M13__Trg[iT].compressed())
-    BR_OHBrinch_ols_oneHLR__g = np.ma.masked_all((H.logO3N2_M13_oneHLR__Tg[iT].shape))
-    BR_OHBrinch_ols_oneHLR__g[~H.logO3N2_M13_oneHLR__Tg[iT].mask] = np.polyval(p_ols, H.logO3N2_M13_oneHLR__Tg[iT].compressed())
-    BR_integrated_OHBrinch_ols = np.ma.masked_all((H.integrated_logO3N2_M13__g.shape))
-    BR_integrated_OHBrinch_ols[~H.integrated_logO3N2_M13__g.mask] = np.polyval(p_ols, H.integrated_logO3N2_M13__g.compressed())
-    BR_DGR_up_ols__g = DGR_conv_lim_sup * (10 ** (BR_OHBrinch_ols__g - 12) * OHSunBrinch_inv)
-    BR_DGR_up_ols__rg = DGR_conv_lim_sup * (10 ** (BR_OHBrinch_ols__rg - 12) * OHSunBrinch_inv)
-    BR_DGR_down_ols__g = DGR_conv_lim_inf * (10 ** (BR_OHBrinch_ols__g - 12) * OHSunBrinch_inv)
-    BR_DGR_down_ols__rg = DGR_conv_lim_inf * (10 ** (BR_OHBrinch_ols__rg - 12) * OHSunBrinch_inv)
-    BR_DGR_ols__g = DGR_cte * (10 ** (BR_OHBrinch_ols__g - 12) * OHSunBrinch_inv)
-    BR_DGR_ols__rg = DGR_cte * (10 ** (BR_OHBrinch_ols__rg - 12) * OHSunBrinch_inv)
-    BR_DGR_ols_oneHLR__g = DGR_cte * (10 ** (BR_OHBrinch_ols_oneHLR__g - 12) * OHSunBrinch_inv)
-    BR_DGR_down_ols_oneHLR__g = DGR_conv_lim_inf * (10 ** (BR_OHBrinch_ols_oneHLR__g - 12) * OHSunBrinch_inv)
-    BR_DGR_up_ols_oneHLR__g = DGR_conv_lim_sup * (10 ** (BR_OHBrinch_ols_oneHLR__g - 12) * OHSunBrinch_inv)
-    BR_integrated_DGR_ols = DGR_cte * (10 ** (BR_integrated_OHBrinch_ols - 12) * OHSunBrinch_inv)
-    BR_integrated_DGR_up_ols = DGR_conv_lim_sup * (10 ** (BR_integrated_OHBrinch_ols - 12) * OHSunBrinch_inv)
-    BR_integrated_DGR_down_ols = DGR_conv_lim_inf * (10 ** (BR_integrated_OHBrinch_ols - 12) * OHSunBrinch_inv)
-    BR_SigmaGas_up_ols__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_up_ols__g
-    BR_SigmaGas_up_ols__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_up_ols__rg
-    BR_SigmaGas_Ha_up_ols__g = dustdim * H.tau_V_neb__g / BR_DGR_up_ols__g
-    BR_SigmaGas_Ha_up_ols__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_up_ols__rg
-    BR_SigmaGas_down_ols__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_down_ols__g
-    BR_SigmaGas_down_ols__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_down_ols__rg
-    BR_SigmaGas_Ha_down_ols__g = dustdim * H.tau_V_neb__g / BR_DGR_down_ols__g
-    BR_SigmaGas_Ha_down_ols__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_down_ols__rg
-    BR_SigmaGas_ols__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_ols__g
-    BR_SigmaGas_ols__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_ols__rg
-    BR_SigmaGas_Ha_ols__g = dustdim * H.tau_V_neb__g / BR_DGR_ols__g
-    BR_SigmaGas_Ha_ols__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_ols__rg
-    BR_SigmaGas_ols_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_ols_oneHLR__g
-    BR_SigmaGas_up_ols_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_up_ols_oneHLR__g
-    BR_SigmaGas_down_ols_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_down_ols_oneHLR__g
-    BR_SigmaGas_Ha_ols_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_ols_oneHLR__g
-    BR_SigmaGas_Ha_up_ols_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_up_ols_oneHLR__g
-    BR_SigmaGas_Ha_down_ols_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_down_ols_oneHLR__g
-    BR_integrated_SigmaGas_ols = dustdim * H.integrated_tau_V__g / BR_integrated_DGR_ols
-    BR_integrated_SigmaGas_up_ols = dustdim * H.integrated_tau_V__g / BR_integrated_DGR_up_ols
-    BR_integrated_SigmaGas_down_ols = dustdim * H.integrated_tau_V__g / BR_integrated_DGR_down_ols
-    BR_integrated_SigmaGas_Ha_ols = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_ols
-    BR_integrated_SigmaGas_Ha_up_ols = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_up_ols
-    BR_integrated_SigmaGas_Ha_down_ols = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_down_ols
-    BR_GSR_up_ols__g = BR_SigmaGas_up_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_up_ols__rg = BR_SigmaGas_up_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_Ha_up_ols__g = BR_SigmaGas_Ha_up_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_Ha_up_ols__rg = BR_SigmaGas_Ha_up_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_down_ols__g = BR_SigmaGas_down_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_down_ols__rg = BR_SigmaGas_down_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_Ha_down_ols__g = BR_SigmaGas_Ha_down_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_Ha_down_ols__rg = BR_SigmaGas_Ha_down_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_ols__g = BR_SigmaGas_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_ols__rg = BR_SigmaGas_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_Ha_ols__g = BR_SigmaGas_Ha_ols__g / H.McorSD__Tg[iT]
-    BR_GSR_Ha_ols__rg = BR_SigmaGas_Ha_ols__rg / H.McorSD__Trg[iT]
-    BR_GSR_ols_oneHLR__g = BR_SigmaGas_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_GSR_up_ols_oneHLR__g = BR_SigmaGas_up_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_GSR_down_ols_oneHLR__g = BR_SigmaGas_down_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_GSR_Ha_ols_oneHLR__g = BR_SigmaGas_Ha_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_GSR_Ha_up_ols_oneHLR__g = BR_SigmaGas_Ha_up_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_GSR_Ha_down_ols_oneHLR__g = BR_SigmaGas_Ha_down_ols_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
-    BR_integrated_GSR_ols = BR_integrated_SigmaGas_ols / H.McorSD_GAL__g
-    BR_integrated_GSR_up_ols = BR_integrated_SigmaGas_up_ols / H.McorSD_GAL__g
-    BR_integrated_GSR_down_ols = BR_integrated_SigmaGas_down_ols / H.McorSD_GAL__g
-    BR_integrated_GSR_Ha_ols = BR_integrated_SigmaGas_Ha_ols / H.McorSD_GAL__g
-    BR_integrated_GSR_Ha_up_ols = BR_integrated_SigmaGas_Ha_up_ols / H.McorSD_GAL__g
-    BR_integrated_GSR_Ha_down_ols = BR_integrated_SigmaGas_Ha_down_ols / H.McorSD_GAL__g
-    BR_f_gas_up_ols__g = 1. / (1. + 1. / BR_GSR_up_ols__g)
-    BR_f_gas_up_ols__rg = 1. / (1. + 1. / BR_GSR_up_ols__rg)
-    BR_f_gas_Ha_up_ols__g = 1. / (1. + 1. / BR_GSR_Ha_up_ols__g)
-    BR_f_gas_Ha_up_ols__rg = 1. / (1. + 1. / BR_GSR_Ha_up_ols__rg)
-    BR_f_gas_down_ols__g = 1. / (1. + 1. / BR_GSR_down_ols__g)
-    BR_f_gas_down_ols__rg = 1. / (1. + 1. / BR_GSR_down_ols__rg)
-    BR_f_gas_Ha_down_ols__g = 1. / (1. + 1. / BR_GSR_Ha_down_ols__g)
-    BR_f_gas_Ha_down_ols__rg = 1. / (1. + 1. / BR_GSR_Ha_down_ols__rg)
-    BR_f_gas_ols__g = 1. / (1. + 1. / BR_GSR_ols__g)
-    BR_f_gas_ols__rg = 1. / (1. + 1. / BR_GSR_ols__rg)
-    BR_f_gas_Ha_ols__g = 1. / (1. + 1. / BR_GSR_Ha_ols__g)
-    BR_f_gas_Ha_ols__rg = 1. / (1. + 1. / BR_GSR_Ha_ols__rg)
-    BR_f_gas_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_ols_oneHLR__g)
-    BR_f_gas_up_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_up_ols_oneHLR__g)
-    BR_f_gas_down_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_down_ols_oneHLR__g)
-    BR_f_gas_Ha_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_ols_oneHLR__g)
-    BR_f_gas_Ha_up_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_up_ols_oneHLR__g)
-    BR_f_gas_Ha_down_ols_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_down_ols_oneHLR__g)
-    BR_integrated_f_gas_ols = 1. / (1. + 1. / BR_integrated_GSR_ols)
-    BR_integrated_f_gas_up_ols = 1. / (1. + 1. / BR_integrated_GSR_up_ols)
-    BR_integrated_f_gas_down_ols = 1. / (1. + 1. / BR_integrated_GSR_down_ols)
-    BR_integrated_f_gas_Ha_ols = 1. / (1. + 1. / BR_integrated_GSR_Ha_ols)
-    BR_integrated_f_gas_Ha_up_ols = 1. / (1. + 1. / BR_integrated_GSR_Ha_up_ols)
-    BR_integrated_f_gas_Ha_down_ols = 1. / (1. + 1. / BR_integrated_GSR_Ha_down_ols)
+    import h5py
+    try:
+        h5 = h5py.File('/Users/lacerda/dev/latex/qualify/pythonsrc/OHcalibMPAM13.h5', 'r')
+        #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+        # x = 10**(h5['logOH_M13'].value - 8.69)
+        # y = 10**(h5['logOH_MPA'].value - 8.89)
+        #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+        x = (h5['logOH_M13'].value - 8.69)
+        y = (h5['logOH_MPA'].value - 8.89)
+        rs = C.runstats(x, y, **dict(smooth = True, sigma = 1.2, frac = 0.005, gs_prc = True, OLS = True))
+        #p = np.polyfit(rs.xS, rs.yS, 3)
+        rs.OLS_bisector()
+        p = [ rs.OLS_median_slope, rs.OLS_median_intercept ]
+        C.debug_var(args.debug, third_order_coeff = p)
+    except IOError:
+        #p = [-3.8954267, 8.32488463, -2.57174644, 0.35947907]
+        p = [ 2.01634637207, 0.425233054925 ]
+    aux = (H.logO3N2_M13__g - 8.69).compressed()
+    aux_mask = H.logO3N2_M13__g.mask
+    BR_DGR_up__g = np.ma.masked_all(aux_mask.shape)
+    BR_DGR_down__g = np.ma.copy(BR_DGR_up__g)
+    BR_DGR__g = np.ma.copy(BR_DGR_up__g)
+    BR_DGR_up__g[~aux_mask] = DGR_conv_lim_sup * 10**np.polyval(p, aux)
+    BR_DGR_down__g[~aux_mask] = DGR_conv_lim_inf * 10**np.polyval(p, aux)
+    BR_DGR__g[~aux_mask] = DGR_cte * 10**np.polyval(p, aux)
+    aux = (H.logO3N2_M13__Trg[iT] - 8.69).compressed()
+    aux_mask = H.logO3N2_M13__Trg[iT].mask
+    BR_DGR_up__rg = np.ma.masked_all(aux_mask.shape)
+    BR_DGR_down__rg = np.ma.copy(BR_DGR_up__rg)
+    BR_DGR__rg = np.ma.copy(BR_DGR_up__rg)
+    BR_DGR_up__rg[~aux_mask] = DGR_conv_lim_sup * 10**np.polyval(p, aux)
+    BR_DGR_down__rg[~aux_mask] = DGR_conv_lim_inf * 10**np.polyval(p, aux)
+    BR_DGR__rg[~aux_mask] = DGR_cte * 10**np.polyval(p, aux)
+    aux = (H.logO3N2_M13_oneHLR__Tg[iT] - 8.69).compressed()
+    aux_mask = H.logO3N2_M13_oneHLR__Tg[iT].mask
+    BR_DGR_up_oneHLR__g = np.ma.masked_all(aux_mask.shape)
+    BR_DGR_down_oneHLR__g = np.ma.copy(BR_DGR_up_oneHLR__g)
+    BR_DGR_oneHLR__g = np.ma.copy(BR_DGR_up_oneHLR__g)
+    BR_DGR_up_oneHLR__g[~aux_mask] = DGR_conv_lim_sup * 10**np.polyval(p, aux)
+    BR_DGR_down_oneHLR__g[~aux_mask] = DGR_conv_lim_inf * 10**np.polyval(p, aux)
+    BR_DGR_oneHLR__g[~aux_mask] = DGR_cte * 10**np.polyval(p, aux)
+    aux = (H.integrated_logO3N2_M13__g[iT] - 8.69)
+    aux_mask = np.ones_like(aux, dtype = np.bool_)
+    BR_integrated_DGR_up = np.ma.masked_all(aux_mask.shape)
+    BR_integrated_DGR_down = np.ma.copy(BR_integrated_DGR_up)
+    BR_integrated_DGR = np.ma.copy(BR_integrated_DGR_up)
+    BR_integrated_DGR_up[~aux_mask] = DGR_conv_lim_sup * 10**np.polyval(p, aux)
+    BR_integrated_DGR_down[~aux_mask] = DGR_conv_lim_inf * 10**np.polyval(p, aux)
+    BR_integrated_DGR[~aux_mask] = DGR_cte * 10**np.polyval(p, aux)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # p = np.array([1.87, -6.98])
+    # BR_OHBrinch__g = np.ma.masked_all((H.logO3N2_M13__g.shape))
+    # BR_OHBrinch__g[~H.logO3N2_M13__g.mask] = np.polyval(p, H.logO3N2_M13__g.compressed()) 
+    # BR_OHBrinch__rg = np.ma.masked_all((H.logO3N2_M13__Trg[iT].shape))
+    # BR_OHBrinch__rg[~H.logO3N2_M13__Trg[iT].mask] = np.polyval(p, H.logO3N2_M13__Trg[iT].compressed())
+    # BR_OHBrinch_oneHLR__g = np.ma.masked_all((H.logO3N2_M13_oneHLR__Tg[iT].shape))
+    # BR_OHBrinch_oneHLR__g[~H.logO3N2_M13_oneHLR__Tg[iT].mask] = np.polyval(p, H.logO3N2_M13_oneHLR__Tg[iT].compressed())
+    # BR_integrated_OHBrinch = np.ma.masked_all((H.integrated_logO3N2_M13__g.shape))
+    # BR_integrated_OHBrinch[~H.integrated_logO3N2_M13__g.mask] = np.polyval(p, H.integrated_logO3N2_M13__g.compressed())
+    # BR_DGR_up__g = DGR_conv_lim_sup * (10 ** (BR_OHBrinch__g - 12) * OHSunBrinch_inv)
+    # BR_DGR_up__rg = DGR_conv_lim_sup * (10 ** (BR_OHBrinch__rg - 12) * OHSunBrinch_inv)
+    # BR_DGR_down__g = DGR_conv_lim_inf * (10 ** (BR_OHBrinch__g - 12) * OHSunBrinch_inv)
+    # BR_DGR_down__rg = DGR_conv_lim_inf * (10 ** (BR_OHBrinch__rg - 12) * OHSunBrinch_inv)
+    # BR_DGR__g = DGR_cte * (10 ** (BR_OHBrinch__g - 12) * OHSunBrinch_inv)
+    # BR_DGR__rg = DGR_cte * (10 ** (BR_OHBrinch__rg - 12) * OHSunBrinch_inv)
+    # BR_DGR_oneHLR__g = DGR_cte * (10 ** (BR_OHBrinch_oneHLR__g - 12) * OHSunBrinch_inv)
+    # BR_DGR_down_oneHLR__g = DGR_conv_lim_inf * (10 ** (BR_OHBrinch_oneHLR__g - 12) * OHSunBrinch_inv)
+    # BR_DGR_up_oneHLR__g = DGR_conv_lim_sup * (10 ** (BR_OHBrinch_oneHLR__g - 12) * OHSunBrinch_inv)
+    # BR_integrated_DGR = DGR_cte * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
+    # BR_integrated_DGR_up = DGR_conv_lim_sup * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
+    # BR_integrated_DGR_down = DGR_conv_lim_inf * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    BR_SigmaGas_up__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_up__g
+    BR_SigmaGas_up__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_up__rg
+    BR_SigmaGas_Ha_up__g = dustdim * H.tau_V_neb__g / BR_DGR_up__g
+    BR_SigmaGas_Ha_up__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_up__rg
+    BR_SigmaGas_down__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_down__g
+    BR_SigmaGas_down__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_down__rg
+    BR_SigmaGas_Ha_down__g = dustdim * H.tau_V_neb__g / BR_DGR_down__g
+    BR_SigmaGas_Ha_down__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_down__rg
+    BR_SigmaGas__g = dustdim * H.tau_V__Tg[iT] / BR_DGR__g
+    BR_SigmaGas__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR__rg
+    BR_SigmaGas_Ha__g = dustdim * H.tau_V_neb__g / BR_DGR__g
+    BR_SigmaGas_Ha__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR__rg
+    BR_SigmaGas_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_oneHLR__g
+    BR_SigmaGas_up_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_up_oneHLR__g
+    BR_SigmaGas_down_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_down_oneHLR__g
+    BR_SigmaGas_Ha_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_oneHLR__g
+    BR_SigmaGas_Ha_up_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_up_oneHLR__g
+    BR_SigmaGas_Ha_down_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_down_oneHLR__g
+    BR_integrated_SigmaGas = dustdim * H.integrated_tau_V__g / BR_integrated_DGR
+    BR_integrated_SigmaGas_up = dustdim * H.integrated_tau_V__g / BR_integrated_DGR_up
+    BR_integrated_SigmaGas_down = dustdim * H.integrated_tau_V__g / BR_integrated_DGR_down
+    BR_integrated_SigmaGas_Ha = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR
+    BR_integrated_SigmaGas_Ha_up = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_up
+    BR_integrated_SigmaGas_Ha_down = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_down
+    BR_GSR_up__g = BR_SigmaGas_up__g / H.McorSD__Tg[iT]
+    BR_GSR_up__rg = BR_SigmaGas_up__rg / H.McorSD__Trg[iT]
+    BR_GSR_Ha_up__g = BR_SigmaGas_Ha_up__g / H.McorSD__Tg[iT]
+    BR_GSR_Ha_up__rg = BR_SigmaGas_Ha_up__rg / H.McorSD__Trg[iT]
+    BR_GSR_down__g = BR_SigmaGas_down__g / H.McorSD__Tg[iT]
+    BR_GSR_down__rg = BR_SigmaGas_down__rg / H.McorSD__Trg[iT]
+    BR_GSR_Ha_down__g = BR_SigmaGas_Ha_down__g / H.McorSD__Tg[iT]
+    BR_GSR_Ha_down__rg = BR_SigmaGas_Ha_down__rg / H.McorSD__Trg[iT]
+    BR_GSR__g = BR_SigmaGas__g / H.McorSD__Tg[iT]
+    BR_GSR__rg = BR_SigmaGas__rg / H.McorSD__Trg[iT]
+    BR_GSR_Ha__g = BR_SigmaGas_Ha__g / H.McorSD__Tg[iT]
+    BR_GSR_Ha__rg = BR_SigmaGas_Ha__rg / H.McorSD__Trg[iT]
+    BR_GSR_oneHLR__g = BR_SigmaGas_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_GSR_up_oneHLR__g = BR_SigmaGas_up_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_GSR_down_oneHLR__g = BR_SigmaGas_down_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_GSR_Ha_oneHLR__g = BR_SigmaGas_Ha_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_GSR_Ha_up_oneHLR__g = BR_SigmaGas_Ha_up_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_GSR_Ha_down_oneHLR__g = BR_SigmaGas_Ha_down_oneHLR__g / H.McorSD_oneHLR__Tg[iT]
+    BR_integrated_GSR = BR_integrated_SigmaGas / H.McorSD_GAL__g
+    BR_integrated_GSR_up = BR_integrated_SigmaGas_up / H.McorSD_GAL__g
+    BR_integrated_GSR_down = BR_integrated_SigmaGas_down / H.McorSD_GAL__g
+    BR_integrated_GSR_Ha = BR_integrated_SigmaGas_Ha / H.McorSD_GAL__g
+    BR_integrated_GSR_Ha_up = BR_integrated_SigmaGas_Ha_up / H.McorSD_GAL__g
+    BR_integrated_GSR_Ha_down = BR_integrated_SigmaGas_Ha_down / H.McorSD_GAL__g
+    BR_f_gas_up__g = 1. / (1. + 1. / BR_GSR_up__g)
+    BR_f_gas_up__rg = 1. / (1. + 1. / BR_GSR_up__rg)
+    BR_f_gas_Ha_up__g = 1. / (1. + 1. / BR_GSR_Ha_up__g)
+    BR_f_gas_Ha_up__rg = 1. / (1. + 1. / BR_GSR_Ha_up__rg)
+    BR_f_gas_down__g = 1. / (1. + 1. / BR_GSR_down__g)
+    BR_f_gas_down__rg = 1. / (1. + 1. / BR_GSR_down__rg)
+    BR_f_gas_Ha_down__g = 1. / (1. + 1. / BR_GSR_Ha_down__g)
+    BR_f_gas_Ha_down__rg = 1. / (1. + 1. / BR_GSR_Ha_down__rg)
+    BR_f_gas__g = 1. / (1. + 1. / BR_GSR__g)
+    BR_f_gas__rg = 1. / (1. + 1. / BR_GSR__rg)
+    BR_f_gas_Ha__g = 1. / (1. + 1. / BR_GSR_Ha__g)
+    BR_f_gas_Ha__rg = 1. / (1. + 1. / BR_GSR_Ha__rg)
+    BR_f_gas_oneHLR__g = 1. / (1. + 1. / BR_GSR_oneHLR__g)
+    BR_f_gas_up_oneHLR__g = 1. / (1. + 1. / BR_GSR_up_oneHLR__g)
+    BR_f_gas_down_oneHLR__g = 1. / (1. + 1. / BR_GSR_down_oneHLR__g)
+    BR_f_gas_Ha_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_oneHLR__g)
+    BR_f_gas_Ha_up_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_up_oneHLR__g)
+    BR_f_gas_Ha_down_oneHLR__g = 1. / (1. + 1. / BR_GSR_Ha_down_oneHLR__g)
+    BR_integrated_f_gas = 1. / (1. + 1. / BR_integrated_GSR)
+    BR_integrated_f_gas_up = 1. / (1. + 1. / BR_integrated_GSR_up)
+    BR_integrated_f_gas_down = 1. / (1. + 1. / BR_integrated_GSR_down)
+    BR_integrated_f_gas_Ha = 1. / (1. + 1. / BR_integrated_GSR_Ha)
+    BR_integrated_f_gas_Ha_up = 1. / (1. + 1. / BR_integrated_GSR_Ha_up)
+    BR_integrated_f_gas_Ha_down = 1. / (1. + 1. / BR_integrated_GSR_Ha_down)
     gas_dict['BRTauVStar'] = dict(
-        c = 'b', 
-        SigmaGas__g = BR_SigmaGas_ols__g, 
-        SigmaGas__rg = BR_SigmaGas_ols__rg, 
-        integrated_SigmaGas = BR_integrated_SigmaGas_ols,
-        SigmaGas_oneHLR = BR_SigmaGas_ols_oneHLR__g,
-        DGR__g = BR_DGR_ols__g, 
-        DGR__rg = BR_DGR_ols__rg, 
-        integrated_DGR = BR_integrated_DGR_ols,
-        DGR_oneHLR = BR_DGR_ols_oneHLR__g,
-        GSR__g = BR_GSR_ols__g, 
-        GSR__rg = BR_GSR_ols__rg, 
-        integrated_GSR = BR_integrated_GSR_ols,
-        GSR_oneHLR = BR_GSR_ols_oneHLR__g,
-        f_gas__g = BR_f_gas_ols__g, 
-        f_gas__rg = BR_f_gas_ols__rg, 
-        integrated_f_gas = BR_integrated_f_gas_ols,
-        f_gas_oneHLR = BR_f_gas_ols_oneHLR__g,
-        up = dict( 
-            SigmaGas__g = BR_SigmaGas_up_ols__g, 
-            SigmaGas__rg = BR_SigmaGas_up_ols__rg, 
-            integrated_SigmaGas = BR_integrated_SigmaGas_up_ols,
-            SigmaGas_oneHLR = BR_SigmaGas_up_ols_oneHLR__g,
-            DGR__g = BR_DGR_up_ols__g, 
-            DGR__rg = BR_DGR_up_ols__rg, 
-            integrated_DGR = BR_integrated_DGR_up_ols,
-            DGR_oneHLR = BR_DGR_up_ols_oneHLR__g,
-            GSR__g = BR_GSR_up_ols__g, 
-            GSR__rg = BR_GSR_up_ols__rg, 
-            integrated_GSR = BR_integrated_GSR_up_ols,
-            GSR_oneHLR = BR_GSR_up_ols_oneHLR__g,
-            f_gas__g = BR_f_gas_up_ols__g, 
-            f_gas__rg = BR_f_gas_up_ols__rg, 
-            integrated_f_gas = BR_integrated_f_gas_up_ols,
-            f_gas_oneHLR = BR_f_gas_up_ols_oneHLR__g,
+        c = 'b',
+        SigmaGas__g = BR_SigmaGas__g,
+        SigmaGas__rg = BR_SigmaGas__rg,
+        integrated_SigmaGas = BR_integrated_SigmaGas,
+        SigmaGas_oneHLR = BR_SigmaGas_oneHLR__g,
+        DGR__g = BR_DGR__g,
+        DGR__rg = BR_DGR__rg,
+        integrated_DGR = BR_integrated_DGR,
+        DGR_oneHLR = BR_DGR_oneHLR__g,
+        GSR__g = BR_GSR__g,
+        GSR__rg = BR_GSR__rg,
+        integrated_GSR = BR_integrated_GSR,
+        GSR_oneHLR = BR_GSR_oneHLR__g,
+        f_gas__g = BR_f_gas__g,
+        f_gas__rg = BR_f_gas__rg,
+        integrated_f_gas = BR_integrated_f_gas,
+        f_gas_oneHLR = BR_f_gas_oneHLR__g,
+        up = dict(
+            SigmaGas__g = BR_SigmaGas_up__g,
+            SigmaGas__rg = BR_SigmaGas_up__rg,
+            integrated_SigmaGas = BR_integrated_SigmaGas_up,
+            SigmaGas_oneHLR = BR_SigmaGas_up_oneHLR__g,
+            DGR__g = BR_DGR_up__g,
+            DGR__rg = BR_DGR_up__rg,
+            integrated_DGR = BR_integrated_DGR_up,
+            DGR_oneHLR = BR_DGR_up_oneHLR__g,
+            GSR__g = BR_GSR_up__g,
+            GSR__rg = BR_GSR_up__rg,
+            integrated_GSR = BR_integrated_GSR_up,
+            GSR_oneHLR = BR_GSR_up_oneHLR__g,
+            f_gas__g = BR_f_gas_up__g,
+            f_gas__rg = BR_f_gas_up__rg,
+            integrated_f_gas = BR_integrated_f_gas_up,
+            f_gas_oneHLR = BR_f_gas_up_oneHLR__g,
         ),
-        down = dict( 
-            SigmaGas__g = BR_SigmaGas_down_ols__g, 
-            SigmaGas__rg = BR_SigmaGas_down_ols__rg, 
-            integrated_SigmaGas = BR_integrated_SigmaGas_down_ols,
-            SigmaGas_oneHLR = BR_SigmaGas_down_ols_oneHLR__g,
-            DGR__g = BR_DGR_down_ols__g, 
-            DGR__rg = BR_DGR_down_ols__rg, 
-            integrated_DGR = BR_integrated_DGR_down_ols,
-            DGR_oneHLR = BR_DGR_down_ols_oneHLR__g,
-            GSR__g = BR_GSR_down_ols__g, 
-            GSR__rg = BR_GSR_down_ols__rg, 
-            integrated_GSR = BR_integrated_GSR_down_ols,
-            GSR_oneHLR = BR_GSR_down_ols_oneHLR__g,
-            f_gas__g = BR_f_gas_down_ols__g, 
-            f_gas__rg = BR_f_gas_down_ols__rg, 
-            integrated_f_gas = BR_integrated_f_gas_down_ols,
-            f_gas_oneHLR = BR_f_gas_down_ols_oneHLR__g,
+        down = dict(
+            SigmaGas__g = BR_SigmaGas_down__g,
+            SigmaGas__rg = BR_SigmaGas_down__rg,
+            integrated_SigmaGas = BR_integrated_SigmaGas_down,
+            SigmaGas_oneHLR = BR_SigmaGas_down_oneHLR__g,
+            DGR__g = BR_DGR_down__g,
+            DGR__rg = BR_DGR_down__rg,
+            integrated_DGR = BR_integrated_DGR_down,
+            DGR_oneHLR = BR_DGR_down_oneHLR__g,
+            GSR__g = BR_GSR_down__g,
+            GSR__rg = BR_GSR_down__rg,
+            integrated_GSR = BR_integrated_GSR_down,
+            GSR_oneHLR = BR_GSR_down_oneHLR__g,
+            f_gas__g = BR_f_gas_down__g,
+            f_gas__rg = BR_f_gas_down__rg,
+            integrated_f_gas = BR_integrated_f_gas_down,
+            f_gas_oneHLR = BR_f_gas_down_oneHLR__g,
         ),
     )
     gas_dict['BRTauVNeb'] = dict(
-        c = 'r', 
-        SigmaGas__g = BR_SigmaGas_Ha_ols__g, 
-        SigmaGas__rg = BR_SigmaGas_Ha_ols__rg, 
-        integrated_SigmaGas = BR_integrated_SigmaGas_Ha_ols,
-        SigmaGas_oneHLR = BR_SigmaGas_Ha_ols_oneHLR__g,
-        DGR__g = BR_DGR_ols__g, 
-        DGR__rg = BR_DGR_ols__rg, 
-        integrated_DGR = BR_integrated_DGR_ols,
-        DGR_oneHLR = BR_DGR_ols_oneHLR__g,
-        GSR__g = BR_GSR_Ha_ols__g, 
-        GSR__rg = BR_GSR_Ha_ols__rg, 
-        integrated_GSR = BR_integrated_GSR_Ha_ols,
-        GSR_oneHLR = BR_GSR_Ha_ols_oneHLR__g,
-        f_gas__g = BR_f_gas_Ha_ols__g, 
-        f_gas__rg = BR_f_gas_Ha_ols__rg, 
-        integrated_f_gas = BR_integrated_f_gas_Ha_ols,
-        f_gas_oneHLR = BR_f_gas_Ha_ols_oneHLR__g,
-        up = dict( 
-            SigmaGas__g = BR_SigmaGas_Ha_up_ols__g, 
-            SigmaGas__rg = BR_SigmaGas_Ha_up_ols__rg, 
-            integrated_SigmaGas = BR_integrated_SigmaGas_Ha_up_ols,
-            SigmaGas_oneHLR = BR_SigmaGas_Ha_up_ols_oneHLR__g,
-            DGR__g = BR_DGR_up_ols__g, 
-            DGR__rg = BR_DGR_up_ols__rg, 
-            integrated_DGR = BR_integrated_DGR_up_ols,
-            DGR_oneHLR = BR_DGR_up_ols_oneHLR__g,
-            GSR__g = BR_GSR_Ha_up_ols__g, 
-            GSR__rg = BR_GSR_Ha_up_ols__rg, 
-            integrated_GSR = BR_integrated_GSR_Ha_up_ols,
-            GSR_oneHLR = BR_GSR_Ha_up_ols_oneHLR__g,
-            f_gas__g = BR_f_gas_Ha_up_ols__g, 
-            f_gas__rg = BR_f_gas_Ha_up_ols__rg, 
-            integrated_f_gas = BR_integrated_f_gas_Ha_up_ols,
-            f_gas_oneHLR = BR_f_gas_Ha_up_ols_oneHLR__g,
+        c = 'r',
+        SigmaGas__g = BR_SigmaGas_Ha__g,
+        SigmaGas__rg = BR_SigmaGas_Ha__rg,
+        integrated_SigmaGas = BR_integrated_SigmaGas_Ha,
+        SigmaGas_oneHLR = BR_SigmaGas_Ha_oneHLR__g,
+        DGR__g = BR_DGR__g,
+        DGR__rg = BR_DGR__rg,
+        integrated_DGR = BR_integrated_DGR,
+        DGR_oneHLR = BR_DGR_oneHLR__g,
+        GSR__g = BR_GSR_Ha__g,
+        GSR__rg = BR_GSR_Ha__rg,
+        integrated_GSR = BR_integrated_GSR_Ha,
+        GSR_oneHLR = BR_GSR_Ha_oneHLR__g,
+        f_gas__g = BR_f_gas_Ha__g,
+        f_gas__rg = BR_f_gas_Ha__rg,
+        integrated_f_gas = BR_integrated_f_gas_Ha,
+        f_gas_oneHLR = BR_f_gas_Ha_oneHLR__g,
+        up = dict(
+            SigmaGas__g = BR_SigmaGas_Ha_up__g,
+            SigmaGas__rg = BR_SigmaGas_Ha_up__rg,
+            integrated_SigmaGas = BR_integrated_SigmaGas_Ha_up,
+            SigmaGas_oneHLR = BR_SigmaGas_Ha_up_oneHLR__g,
+            DGR__g = BR_DGR_up__g,
+            DGR__rg = BR_DGR_up__rg,
+            integrated_DGR = BR_integrated_DGR_up,
+            DGR_oneHLR = BR_DGR_up_oneHLR__g,
+            GSR__g = BR_GSR_Ha_up__g,
+            GSR__rg = BR_GSR_Ha_up__rg,
+            integrated_GSR = BR_integrated_GSR_Ha_up,
+            GSR_oneHLR = BR_GSR_Ha_up_oneHLR__g,
+            f_gas__g = BR_f_gas_Ha_up__g,
+            f_gas__rg = BR_f_gas_Ha_up__rg,
+            integrated_f_gas = BR_integrated_f_gas_Ha_up,
+            f_gas_oneHLR = BR_f_gas_Ha_up_oneHLR__g,
         ),
-        down = dict( 
-            SigmaGas__g = BR_SigmaGas_Ha_down_ols__g, 
-            SigmaGas__rg = BR_SigmaGas_Ha_down_ols__rg, 
-            integrated_SigmaGas = BR_integrated_SigmaGas_Ha_down_ols,
-            SigmaGas_oneHLR = BR_SigmaGas_Ha_down_ols_oneHLR__g,
-            DGR__g = BR_DGR_down_ols__g, 
-            DGR__rg = BR_DGR_down_ols__rg, 
-            integrated_DGR = BR_integrated_DGR_down_ols,
-            DGR_oneHLR = BR_DGR_down_ols_oneHLR__g,
-            GSR__g = BR_GSR_Ha_down_ols__g, 
-            GSR__rg = BR_GSR_Ha_down_ols__rg, 
-            integrated_GSR = BR_integrated_GSR_Ha_down_ols,
-            GSR_oneHLR = BR_GSR_Ha_down_ols_oneHLR__g,
-            f_gas__g = BR_f_gas_Ha_down_ols__g, 
-            f_gas__rg = BR_f_gas_Ha_down_ols__rg, 
-            integrated_f_gas = BR_integrated_f_gas_Ha_down_ols,
-            f_gas_oneHLR = BR_f_gas_Ha_down_ols_oneHLR__g,
+        down = dict(
+            SigmaGas__g = BR_SigmaGas_Ha_down__g,
+            SigmaGas__rg = BR_SigmaGas_Ha_down__rg,
+            integrated_SigmaGas = BR_integrated_SigmaGas_Ha_down,
+            SigmaGas_oneHLR = BR_SigmaGas_Ha_down_oneHLR__g,
+            DGR__g = BR_DGR_down__g,
+            DGR__rg = BR_DGR_down__rg,
+            integrated_DGR = BR_integrated_DGR_down,
+            DGR_oneHLR = BR_DGR_down_oneHLR__g,
+            GSR__g = BR_GSR_Ha_down__g,
+            GSR__rg = BR_GSR_Ha_down__rg,
+            integrated_GSR = BR_integrated_GSR_Ha_down,
+            GSR_oneHLR = BR_GSR_Ha_down_oneHLR__g,
+            f_gas__g = BR_f_gas_Ha_down__g,
+            f_gas__rg = BR_f_gas_Ha_down__rg,
+            integrated_f_gas = BR_integrated_f_gas_Ha_down,
+            f_gas_oneHLR = BR_f_gas_Ha_down_oneHLR__g,
         ),
     )
 
@@ -585,7 +570,7 @@ if __name__ == '__main__':
     #integrated_f_gas_angel = 1./(1. + 1/((10. ** integrated_log_M_gas_angel__g) / H.Mcor_GAL__g))
 
     default_sc_kwargs = dict(marker = 'o', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-    default_rs_kwargs = dict(smooth = True, sigma = 1.2, overlap = 0.4)
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, frac = 0.05, gs_prc = True)
     
     if args.dryrun is True:
         sys.exit('dryrun')
@@ -598,404 +583,437 @@ if __name__ == '__main__':
     else:
         output = args.output
           
-    with PdfPages(output) as pdf:
-        ##########################
-        ######### PAGE 1 #########
-        ##########################
-        NRows = 3
-        NCols = 2
-        f = plt.figure()
-        page_size_inches = A4Size_inches[::-1]
-        f.set_size_inches(page_size_inches)
-        grid_shape = (NRows, NCols)
-         
-        ax = plt.subplot2grid(grid_shape, loc = (0, 0))
-        ax.set_axis_on()
+#    with PdfPages(output) as pdf:
+    ##########################
+    ######### PAGE 1 #########
+    ##########################
+    NRows = 3
+    NCols = 3
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+     
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    ax.set_axis_on()
+    rs_kwargs = default_rs_kwargs.copy()
+    sc_kwargs = default_sc_kwargs.copy()
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
+    rs_BR_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    m_aux = mask__rg | BR_DGR_up__rg.mask | BR_DGR_up__rg.mask
+    xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_up__rg, mask = m_aux)
+    rs_BR_DGR_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_down__rg, mask = m_aux)
+    rs_BR_DGR_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR__rg, mask = mask__rg) 
+    rs_SK_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR_Ha__rg, mask = mask__rg) 
+    rs_SK_DGR_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    if args.scatter is True:
+        ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = 'b', **sc_kwargs)
+        ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, c = 'g', **sc_kwargs)
+        ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, c = 'g', **sc_kwargs)
+    ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = 'b')
+    ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
+    ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
+    ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
+    ax.set_xlim(minR, H.RbinFin)
+    #ax.set_ylim(0, .5)
+    ax.set_title('Radial bins')
+    ax.set_ylabel(r'$\delta_{DGR}$')
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.grid()
+    plt.setp(ax.get_xticklabels(), visible = False)
+      
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    ax.set_axis_on()
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas__rg), mask = mask__rg) 
+    rs_BR_SigmaGas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_up__rg), mask = mask__rg) 
+    rs_BR_SigmaGas_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_down__rg), mask = yup.mask) 
+    rs_BR_SigmaGas_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha__rg), mask = mask__rg)
+    rs_BR_SigmaGas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha_up__rg), mask = mask__rg) 
+    rs_BR_SigmaGas_Ha_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha_down__rg), mask = yup.mask) 
+    rs_BR_SigmaGas_Ha_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(SK_SigmaGas__rg), mask = mask__rg)
+    rs_SK_SigmaGas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
+    rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    if args.scatter is True:
+        ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, c = 'b', **sc_kwargs)
+        ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, c = 'r', **sc_kwargs)
+        ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, c = 'g', **sc_kwargs)
+        ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, c = 'black', **sc_kwargs)
+    ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b', label = r'BR from $\tau_V^\star$')
+    ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r', label = r'BR from $\tau_V^{neb}$')
+    ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g', label = r'SK from synt.')
+    ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black', label = r'SK from H$\alpha$')
+    ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
+    ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
+    ax.set_xlim(minR, H.RbinFin)
+    ax.set_ylim(0.4, 2)
+    #ax.legend(loc = 'upper right')
+    ax.legend(bbox_to_anchor = (2.2, 2), fontsize = 12, frameon = False, ncol = 2)#, loc = 'upper right')
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.grid()
+    plt.setp(ax.get_xticklabels(), visible = False)
+    ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
+     
+    ax = plt.subplot2grid(grid_shape, loc = (2, 0))
+    ax.set_axis_on()
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas__rg, mask = mask__rg) 
+    rs_BR_f_gas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_up__rg, mask = mask__rg) 
+    rs_BR_f_gas_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_down__rg, mask = yup.mask) 
+    rs_BR_f_gas_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha__rg, mask = mask__rg)
+    rs_BR_f_gas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha_up__rg, mask = mask__rg) 
+    rs_BR_f_gas_Ha_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha_down__rg, mask = yup.mask) 
+    rs_BR_f_gas_Ha_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_f_gas__rg, mask = mask__rg)
+    rs_SK_f_gas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_f_gas_Ha__rg, mask = mask__rg)
+    rs_SK_f_gas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    if args.scatter is True:
+        ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, c = 'b', **sc_kwargs)
+        ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, c = 'r', **sc_kwargs)
+        ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, c = 'g', **sc_kwargs)
+        ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, c = 'black', **sc_kwargs)
+    ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b')
+    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r')
+    ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g')
+    ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black')
+    ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
+    ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
+    ax.set_xlim(minR, H.RbinFin)
+    ax.set_ylim(0, .4)
+    ax.set_xlabel(r'R [HLR]')
+    ax.set_ylabel(r'f${}_{gas}$')
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.grid()
+                 
+    ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 2), rowspan = NRows)
+    ax.set_axis_off()
+    txt = r'NGals:%d  tSF:%.2f Myr  $(\frac{m_d}{\sigma_d})$ = %.1f' % (N_gals, (H.tSF__T[iT] / 1e6), dustdim)
+    kw_text = dict(pos_x = 0, pos_y = 0.65, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$x_Y$(min):%.0f%%  $\tau_V^\star $(min):%.2f  $\tau_V^{neb}$(min):%.2f  $\epsilon\tau_V^{neb}$(max):%.2f' % (H.xOkMin * 100., H.tauVOkMin, H.tauVNebOkMin, H.tauVNebErrMax)
+    kw_text = dict(pos_x = 0, pos_y = 0.60, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, txt, **kw_text)
+
+    txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
+    kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
+    kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{gas}})$'
+    kw_text = dict(pos_x = 0, pos_y = 0.44, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, txt, **kw_text)
+
+    txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
+    kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
+    kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'r')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+    kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, txt, **kw_text)
+    txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+    kw_text = dict(pos_x = 0, pos_y = 0.16, fs = 12, va = 'bottom', ha = 'left', c = 'g')
+    plot_text_ax(ax, txt, **kw_text)
+
+    txt = r'$f_{gas}\ =\ \frac{\Sigma_{gas}}{\mu_\star + \Sigma_{gas}}$'
+    kw_text = dict(pos_x = 0, pos_y = 0.08, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, txt, **kw_text)
+    f.subplots_adjust(hspace = 0.2, wspace = 0.3)
+    f.savefig('gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ######### PAGE 2 #########
+    ##########################
+    NRows = 3
+    NCols = 3
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    yaxis = [ 'alogSFRSDHakpcR', 'alogSFRSDkpcR', 'atfluxR', 'logO3N2M13R', 'xYR', 'logMcorSDR', 'alogZmassR', 'logtauVR', 'logtauVNebR' ]
+    row, col = 0, 0
+    bins = (20,20)
+    for yk in yaxis:
         rs_kwargs = default_rs_kwargs.copy()
         sc_kwargs = default_sc_kwargs.copy()
-        ax.axhline(y = GRV_DGR, c = 'y')
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_ols__rg, mask = mask__rg)
-        rs_BR_DGR_ols = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        m_aux = mask__rg | BR_DGR_up_ols__rg.mask | BR_DGR_up_ols__rg.mask
-        xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_up_ols__rg, mask = m_aux)
-        rs_BR_DGR_up_ols = runstats(xm.compressed(), yup.compressed(), nBox = 20, **rs_kwargs)
-        xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_down_ols__rg, mask = m_aux)
-        rs_BR_DGR_down_ols = runstats(xm.compressed(), ydown.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR__rg, mask = mask__rg) 
-        rs_SK_DGR = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR_Ha__rg, mask = mask__rg) 
-        rs_SK_DGR_Ha = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        _, ydict = H.get_plot_dict(iT, -1, yk)
+        x = H.Rtoplot()
+        y = ydict['v']
+        xm, ym = C.ma_mask_xyz(x = x, y = y, mask = mask__rg)
+        #rs_kwargs['sigma'] = 1.2
+        rs = runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r >= 0.7], **rs_kwargs)
+        for i, p in enumerate(rs.xPrc):
+            ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+        #if args.scatter is True:
+        density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [[minR, H.RbinFin], ydict['lim']], colors = [ 'b', 'y', 'r' ])
+        ax.scatter(rs.x, rs.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+        ax.plot(rs.xS, rs.yS, '.-', c = 'k')
+        ax.set_xlim(minR, H.RbinFin)
+        ax.set_ylim(ydict['lim'])
+        ax.set_xlabel(r'R [HLR]')
+        ax.set_ylabel(ydict['label'])
+        ax.yaxis.set_major_locator(MaxNLocator(4))
+        #ax.grid()
+        #plt.setp(ax.get_yticklabels(), visible = False)
+        if col == (NCols - 1):
+            row += 1
+            col = 0
+        else:
+            col += 1
+    f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.1, right = 0.95, top = 0.95)
+    f.savefig('propGas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    NRows = 3
+    NCols = 3
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    row, col = 0, 0
+    bins = (20,20)
+    for yk in yaxis:
+        rs_kwargs = default_rs_kwargs.copy()
+        sc_kwargs = default_sc_kwargs.copy()
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        _, ydict = H.get_plot_dict(iT, -1, yk)
+        y = ydict['v']
+        mask_aux = (mask__rg | y.mask)
+        plot_histo_axis(ax, np.ma.masked_array(y, mask = mask_aux).compressed())
+        ax.set_xlim(ydict['lim'])
+        ax.set_xlabel(ydict['label'])
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        plt.setp(ax.get_yticklabels(), visible = False)
+        if col == (NCols - 1):
+            row += 1
+            col = 0
+        else:
+            col += 1
+    f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
+    f.savefig('Histo_propGas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ######### PAGE 3 #########
+    ##########################
+    NRows = 2
+    NCols = 3
+    f = plt.figure()
+    #f, axArr = plt.subplots(NRows, NCols)
+    #f.set_size_inches((NCols * 3, NRows * 1.5))
+    #page_size_inches = (NCols * 3, NRows * 2.5)
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    xaxis = [ 'atfluxR', 'xYR', 'logMcorSDR', 'baR', 'alogZmassR', 'logO3N2M13R' ]
+    #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR' ]
+    row, col = 0, 0
+    for xk in xaxis:
+        rs_kwargs = default_rs_kwargs.copy()
+        sc_kwargs = default_sc_kwargs.copy()
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        _, xdict = H.get_plot_dict(iT, -1, xk)
+        x = xdict['v']
+        xm, ym_BR_DGR = C.ma_mask_xyz(x = x, y = BR_DGR__rg, mask = mask__rg)
+        rs_BR_DGR = runstats(xm.compressed(), ym_BR_DGR.compressed(), **rs_kwargs)
+        xm, ym_BR_DGR_up = C.ma_mask_xyz(x = x, y = BR_DGR_up__rg, mask = mask__rg)
+        rs_BR_DGR_up = runstats(xm.compressed(), ym_BR_DGR_up.compressed(), **rs_kwargs)
+        xm, ym_BR_DGR_down = C.ma_mask_xyz(x = x, y = BR_DGR_down__rg, mask = mask__rg)
+        rs_BR_DGR_down = runstats(xm.compressed(), ym_BR_DGR_down.compressed(), **rs_kwargs)
+        xm, ym_SK_DGR = C.ma_mask_xyz(x = x, y = SK_DGR__rg, mask = mask__rg)
+        rs_SK_DGR = runstats(xm.compressed(), ym_SK_DGR.compressed(), **rs_kwargs)
+        xm, ym_SK_DGR_Ha = C.ma_mask_xyz(x = x, y = SK_DGR_Ha__rg, mask = mask__rg)
+        rs_SK_DGR_Ha = runstats(xm.compressed(), ym_SK_DGR_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_DGR_ols.x, rs_BR_DGR_ols.y, c = 'b', **sc_kwargs)
-            ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, c = 'g', **sc_kwargs)
-            ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, c = 'g', **sc_kwargs)
-        ax.plot(rs_BR_DGR_ols.xS, rs_BR_DGR_ols.yS, '.-', c = 'b')
+            ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+        ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = 'b')
         ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
         ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
-        ax.fill_between(rs_BR_DGR_up_ols.xS, rs_BR_DGR_up_ols.yS, rs_BR_DGR_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
-        ax.set_xlim(minR, H.RbinFin)
-        #ax.set_ylim(0, .5)
-        ax.set_title('Radial bins')
-        ax.set_ylabel(r'$\delta_{DGR}$')
-        ax.yaxis.set_major_locator(MaxNLocator(6))
+        ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
+        ax.yaxis.set_major_locator(MaxNLocator(4))
         ax.grid()
-        plt.setp(ax.get_xticklabels(), visible = False)
-          
-        ax = plt.subplot2grid(grid_shape, loc = (1, 0))
-        ax.set_axis_on()
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_ols__rg), mask = mask__rg) 
-        rs_BR_SigmaGas_ols = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_up_ols__rg), mask = mask__rg) 
-        rs_BR_SigmaGas_up_ols = runstats(xm.compressed(), yup.compressed(), nBox = 20, **rs_kwargs)
-        xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_down_ols__rg), mask = yup.mask) 
-        rs_BR_SigmaGas_down_ols = runstats(xm.compressed(), ydown.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha_ols__rg), mask = mask__rg)
-        rs_BR_SigmaGas_Ha_ols = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha_up_ols__rg), mask = mask__rg) 
-        rs_BR_SigmaGas_Ha_up_ols = runstats(xm.compressed(), yup.compressed(), nBox = 20, **rs_kwargs)
-        xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_Ha_down_ols__rg), mask = yup.mask) 
-        rs_BR_SigmaGas_Ha_down_ols = runstats(xm.compressed(), ydown.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(SK_SigmaGas__rg), mask = mask__rg)
-        rs_SK_SigmaGas = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
-        rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(GRV_SigmaGas__rg), mask = mask__rg) 
-        rs_GRV_SigmaGas = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
+        ax.set_xlabel(xdict['label'])
+        ax.set_ylim(0, 16e-3)
+        ax.set_xlim(xdict['lim'])
+        if col != 0:
+            plt.setp(ax.get_yticklabels(), visible = False)
+        if col == 0:
+            ax.set_ylabel(r'$\delta_{DGR}$')
+        if col == (NCols - 1):
+            row += 1
+            col = 0
+            prune = None
+        else:
+            col += 1
+            prune = 'upper'
+        ax.xaxis.set_major_locator(MaxNLocator(5, prune = prune))
+    f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
+    f.savefig('props_DGR_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ######### PAGE 4 #########
+    ##########################
+    NRows = 2
+    NCols = 3
+    f = plt.figure()
+    #f, axArr = plt.subplots(NRows, NCols)
+    #f.set_size_inches((NCols * 3, NRows * 1.5))
+    #page_size_inches = (NCols * 3, NRows * 2.5)
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    xaxis = [ 'atfluxR', 'xYR', 'logMcorSDR', 'baR', 'alogZmassR', 'logO3N2M13R' ]
+    #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR', ]
+    row, col = 0, 0
+    for xk in xaxis:
+        rs_kwargs = default_rs_kwargs.copy()
+        sc_kwargs = default_sc_kwargs.copy()
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        _, xdict = H.get_plot_dict(iT, -1, xk)
+        x = xdict['v']
+        xm, ym_BR_SigmaGas = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas__rg), mask = mask__rg)
+        rs_BR_SigmaGas = runstats(xm.compressed(), ym_BR_SigmaGas.compressed(), **rs_kwargs)
+        xm, ym_BR_SigmaGas_up = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_up__rg), mask = mask__rg)
+        rs_BR_SigmaGas_up = runstats(xm.compressed(), ym_BR_SigmaGas_up.compressed(), **rs_kwargs)
+        xm, ym_BR_SigmaGas_down = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_down__rg), mask = mask__rg)
+        rs_BR_SigmaGas_down = runstats(xm.compressed(), ym_BR_SigmaGas_down.compressed(), **rs_kwargs)
+        xm, ym_BR_SigmaGas_Ha = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha__rg), mask = mask__rg)
+        rs_BR_SigmaGas_Ha = runstats(xm.compressed(), ym_BR_SigmaGas_Ha.compressed(), **rs_kwargs)
+        xm, ym_BR_SigmaGas_Ha_up = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha_up__rg), mask = mask__rg)
+        rs_BR_SigmaGas_Ha_up = runstats(xm.compressed(), ym_BR_SigmaGas_Ha_up.compressed(), **rs_kwargs)
+        xm, ym_BR_SigmaGas_Ha_down = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha_down__rg), mask = mask__rg)
+        rs_BR_SigmaGas_Ha_down = runstats(xm.compressed(), ym_BR_SigmaGas_Ha_down.compressed(), **rs_kwargs)
+        xm, ym_SK_SigmaGas = C.ma_mask_xyz(x = x, y = np.log10(SK_SigmaGas__rg), mask = mask__rg)
+        rs_SK_SigmaGas = runstats(xm.compressed(), ym_SK_SigmaGas.compressed(), **rs_kwargs)
+        xm, ym_SK_SigmaGas_Ha = C.ma_mask_xyz(x = x, y = np.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
+        rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym_SK_SigmaGas_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_SigmaGas_ols.x, rs_BR_SigmaGas_ols.y, c = 'b', **sc_kwargs)
-            ax.scatter(rs_BR_SigmaGas_Ha_ols.x, rs_BR_SigmaGas_Ha_ols.y, c = 'r', **sc_kwargs)
-            ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, c = 'g', **sc_kwargs)
-            ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, c = 'black', **sc_kwargs)
-            ax.scatter(rs_GRV_SigmaGas.x, rs_GRV_SigmaGas.y, c = 'y', **sc_kwargs)
-        ax.plot(rs_BR_SigmaGas_ols.xS, rs_BR_SigmaGas_ols.yS, '.-', c = 'b', label = r'BR from $\tau_V^\star$')
-        ax.plot(rs_BR_SigmaGas_Ha_ols.xS, rs_BR_SigmaGas_Ha_ols.yS, '.-', c = 'r', label = r'BR from $\tau_V^{neb}$')
-        ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g', label = r'SK from synt.')
-        ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black', label = r'SK from H$\alpha$')
-        ax.plot(rs_GRV_SigmaGas.xS, rs_GRV_SigmaGas.yS, '.-', c = 'y', label = r'RR (DGR const.)')
-        ax.fill_between(rs_BR_SigmaGas_up_ols.xS, rs_BR_SigmaGas_up_ols.yS, rs_BR_SigmaGas_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
-        ax.fill_between(rs_BR_SigmaGas_Ha_up_ols.xS, rs_BR_SigmaGas_Ha_up_ols.yS, rs_BR_SigmaGas_Ha_down_ols.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
-        ax.set_xlim(minR, H.RbinFin)
+            ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+        ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b')
+        ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r')
+        ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g')
+        ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black')
+        ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
+        ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4))
+        ax.grid()
+        ax.set_xlabel(xdict['label'])
         ax.set_ylim(0.4, 2)
-        #ax.legend(loc = 'upper right')
-        ax.legend(bbox_to_anchor = (2.2, 2), fontsize = 12, frameon = False, ncol = 2)#, loc = 'upper right')
-        ax.yaxis.set_major_locator(MaxNLocator(6))
-        ax.grid()
-        plt.setp(ax.get_xticklabels(), visible = False)
-        ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
-         
-        ax = plt.subplot2grid(grid_shape, loc = (2, 0))
-        ax.set_axis_on()
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_ols__rg, mask = mask__rg) 
-        rs_BR_f_gas_ols = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_up_ols__rg, mask = mask__rg) 
-        rs_BR_f_gas_up_ols = runstats(xm.compressed(), yup.compressed(), nBox = 20, **rs_kwargs)
-        xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_down_ols__rg, mask = yup.mask) 
-        rs_BR_f_gas_down_ols = runstats(xm.compressed(), ydown.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha_ols__rg, mask = mask__rg)
-        rs_BR_f_gas_Ha_ols = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha_up_ols__rg, mask = mask__rg) 
-        rs_BR_f_gas_Ha_up_ols = runstats(xm.compressed(), yup.compressed(), nBox = 20, **rs_kwargs)
-        xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_Ha_down_ols__rg, mask = yup.mask) 
-        rs_BR_f_gas_Ha_down_ols = runstats(xm.compressed(), ydown.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_f_gas__rg, mask = mask__rg)
-        rs_SK_f_gas = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_f_gas_Ha__rg, mask = mask__rg)
-        rs_SK_f_gas_Ha = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-        xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = GRV_f_gas__rg, mask = mask__rg) 
-        rs_GRV_f_gas = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
+        ax.set_xlim(xdict['lim'])
+        if col != 0:
+            plt.setp(ax.get_yticklabels(), visible = False)
+        if col == 0:
+            ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
+        if col == (NCols - 1):
+            row += 1
+            col = 0
+            prune = None
+        else:
+            col += 1
+            prune = 'upper'
+        ax.xaxis.set_major_locator(MaxNLocator(5, prune = prune))
+    f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
+    f.savefig('props_SigmaGas_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ######### PAGE 5 #########
+    ##########################
+    NRows = 2
+    NCols = 3
+    f = plt.figure()
+    #f, axArr = plt.subplots(NRows, NCols)
+    #f.set_size_inches((NCols * 3, NRows * 1.5))
+    #page_size_inches = (NCols * 3, NRows * 2.5)
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    xaxis = [ 'atfluxR', 'xYR', 'logMcorSDR', 'baR', 'alogZmassR', 'logO3N2M13R' ]
+    #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR' ]
+    row, col = 0, 0
+    for xk in xaxis:
+        rs_kwargs = default_rs_kwargs.copy()
+        sc_kwargs = default_sc_kwargs.copy()
+        ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        _, xdict = H.get_plot_dict(iT, -1, xk)
+        x = xdict['v']
+        xm, ym_BR_f_gas = C.ma_mask_xyz(x = x, y = BR_f_gas__rg, mask = mask__rg)
+        rs_BR_f_gas = runstats(xm.compressed(), ym_BR_f_gas.compressed(), **rs_kwargs)
+        xm, ym_BR_f_gas_up = C.ma_mask_xyz(x = x, y = BR_f_gas_up__rg, mask = mask__rg)
+        rs_BR_f_gas_up = runstats(xm.compressed(), ym_BR_f_gas_up.compressed(), **rs_kwargs)
+        xm, ym_BR_f_gas_down = C.ma_mask_xyz(x = x, y = BR_f_gas_down__rg, mask = mask__rg)
+        rs_BR_f_gas_down = runstats(xm.compressed(), ym_BR_f_gas_down.compressed(), **rs_kwargs)
+        xm, ym_BR_f_gas_Ha = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha__rg, mask = mask__rg)
+        rs_BR_f_gas_Ha = runstats(xm.compressed(), ym_BR_f_gas_Ha.compressed(), **rs_kwargs)
+        xm, ym_BR_f_gas_Ha_up = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha_up__rg, mask = mask__rg)
+        rs_BR_f_gas_Ha_up = runstats(xm.compressed(), ym_BR_f_gas_Ha_up.compressed(), **rs_kwargs)
+        xm, ym_BR_f_gas_Ha_down = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha_down__rg, mask = mask__rg)
+        rs_BR_f_gas_Ha_down = runstats(xm.compressed(), ym_BR_f_gas_Ha_down.compressed(), **rs_kwargs)
+        xm, ym_SK_f_gas = C.ma_mask_xyz(x = x, y = SK_f_gas__rg, mask = mask__rg)
+        rs_SK_f_gas = runstats(xm.compressed(), ym_SK_f_gas.compressed(), **rs_kwargs)
+        xm, ym_SK_f_gas_Ha = C.ma_mask_xyz(x = x, y = SK_f_gas_Ha__rg, mask = mask__rg)
+        rs_SK_f_gas_Ha = runstats(xm.compressed(), ym_SK_f_gas_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_f_gas_ols.x, rs_BR_f_gas_ols.y, c = 'b', **sc_kwargs)
-            ax.scatter(rs_BR_f_gas_Ha_ols.x, rs_BR_f_gas_Ha_ols.y, c = 'r', **sc_kwargs)
-            ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, c = 'g', **sc_kwargs)
-            ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, c = 'black', **sc_kwargs)
-            ax.scatter(rs_GRV_f_gas.x, rs_GRV_f_gas.y, c = 'y', **sc_kwargs)
-        ax.plot(rs_BR_f_gas_ols.xS, rs_BR_f_gas_ols.yS, '.-', c = 'b')
-        ax.plot(rs_BR_f_gas_Ha_ols.xS, rs_BR_f_gas_Ha_ols.yS, '.-', c = 'r')
+            ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+        ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b')
+        ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r')
         ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g')
         ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black')
-        ax.plot(rs_GRV_f_gas.xS, rs_GRV_f_gas.yS, '.-', c = 'y')
-        ax.fill_between(rs_BR_f_gas_up_ols.xS, rs_BR_f_gas_up_ols.yS, rs_BR_f_gas_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
-        ax.fill_between(rs_BR_f_gas_Ha_up_ols.xS, rs_BR_f_gas_Ha_up_ols.yS, rs_BR_f_gas_Ha_down_ols.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
-        ax.set_xlim(minR, H.RbinFin)
-        ax.set_ylim(0, .4)
-        ax.set_xlabel(r'R [HLR]')
-        ax.set_ylabel(r'f${}_{gas}$')
-        ax.yaxis.set_major_locator(MaxNLocator(6))
+        ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
+        ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4))
         ax.grid()
-                     
-        ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 1), rowspan = NRows)
-        ax.set_axis_off()
-        txt = r'NGals:%d  tSF:%.2f Myr  $(\frac{m_d}{\sigma_d})$ = %.1f' % (N_gals, (H.tSF__T[iT] / 1e6), dustdim)
-        kw_text = dict(pos_x = 0, pos_y = 0.65, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$x_Y$(min):%.0f%%  $\tau_V^\star $(min):%.2f  $\tau_V^{neb}$(min):%.2f  $\epsilon\tau_V^{neb}$(max):%.2f' % (H.xOkMin * 100., H.tauVOkMin, H.tauVNebOkMin, H.tauVNebErrMax)
-        kw_text = dict(pos_x = 0, pos_y = 0.60, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-        plot_text_ax(ax, txt, **kw_text)
+        ax.set_xlabel(xdict['label'])
+        ax.set_ylim(0, 0.4)
+        ax.set_xlim(xdict['lim'])
+        if col != 0:
+            plt.setp(ax.get_yticklabels(), visible = False)
+        if col == 0:
+            ax.set_ylabel(r'f${}_{gas}$')
+        if col == (NCols - 1):
+            row += 1
+            col = 0
+            prune = None
+        else:
+            col += 1
+            prune = 'upper'
+        ax.xaxis.set_major_locator(MaxNLocator(5, prune = prune))
+    f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
+    f.savefig('props_fGas_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
 
-        txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
-        kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = 'b')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
-        kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{gas}})$'
-        kw_text = dict(pos_x = 0, pos_y = 0.44, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\delta_{DGR} = %.4f$' % GRV_DGR
-        kw_text = dict(pos_x = 0, pos_y = 0.39, fs = 12, va = 'bottom', ha = 'left', c = 'y')
-        plot_text_ax(ax, txt, **kw_text)
-
-        txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
-        kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = 'b')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
-        kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'r')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
-        kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-        plot_text_ax(ax, txt, **kw_text)
-        txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
-        kw_text = dict(pos_x = 0, pos_y = 0.16, fs = 12, va = 'bottom', ha = 'left', c = 'g')
-        plot_text_ax(ax, txt, **kw_text)
-
-        txt = r'$f_{gas}\ =\ \frac{\Sigma_{gas}}{\mu_\star + \Sigma_{gas}}$'
-        kw_text = dict(pos_x = 0, pos_y = 0.08, fs = 15, va = 'bottom', ha = 'left', c = 'k')
-        plot_text_ax(ax, txt, **kw_text)
-        f.subplots_adjust(hspace = 0.2, wspace = 0.3)
-        pdf.savefig(f)
-        plt.close(f)
-
-        ##########################
-        ######### PAGE 2 #########
-        ##########################
-        NRows = 3
-        NCols = 3
-        f = plt.figure()
-        #page_size_inches = (NCols * 3, NRows * 2.5)
-        page_size_inches = A4Size_inches[::-1]
-        f.set_size_inches(page_size_inches)
-        grid_shape = (NRows, NCols)
-        yaxis = [ 'alogSFRSDHakpcR', 'alogSFRSDkpcR', 'atfluxR', 'xYR', 'logO3N2M13R', 'alogZmassR', 'logMcorSDR' ]
-        row, col = 0, 0
-        for yk in yaxis:
-            rs_kwargs = default_rs_kwargs.copy()
-            sc_kwargs = default_sc_kwargs.copy()
-            ax = plt.subplot2grid(grid_shape, loc = (row, col))
-            _, ydict = H.get_plot_dict(iT, -1, yk)
-            x = H.Rtoplot()
-            y = ydict['v']
-            xm, ym = C.ma_mask_xyz(x = x, y = y, mask = mask__rg)
-            #rs_kwargs['sigma'] = 1.2
-            rs_kwargs['overlap'] = 0.1
-            rs = runstats(xm.compressed(), ym.compressed(), nBox = 20, **rs_kwargs)
-            #if args.scatter is True:
-            ax.scatter(rs.x, rs.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.plot(rs.xS, rs.yS, '.-', c = 'k')
-            ax.set_xlim(minR, H.RbinFin)
-            ax.set_ylim(ydict['lim'])
-            ax.set_xlabel(r'R [HLR]')
-            ax.set_ylabel(ydict['label'])
-            ax.yaxis.set_major_locator(MaxNLocator(6))
-            ax.grid()
-            #plt.setp(ax.get_yticklabels(), visible = False)
-            if col == (NCols - 1):
-                row += 1
-                col = 0
-            else:
-                col += 1
-        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
-        pdf.savefig(f)
-        plt.close(f)
-
-        ##########################
-        ######### PAGE 3 #########
-        ##########################
-        NRows = 2
-        NCols = 3
-        f = plt.figure()
-        #f, axArr = plt.subplots(NRows, NCols)
-        #f.set_size_inches((NCols * 3, NRows * 1.5))
-        #page_size_inches = (NCols * 3, NRows * 2.5)
-        page_size_inches = A4Size_inches[::-1]
-        f.set_size_inches(page_size_inches)
-        grid_shape = (NRows, NCols)
-        xaxis = [ 'atfluxR', 'xYR', 'morfTypeR', 'baR', 'alogZmassR', 'logMcorSDR' ]
-        #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR' ]
-        row, col = 0, 0
-        for xk in xaxis:
-            rs_kwargs = default_rs_kwargs.copy()
-            sc_kwargs = default_sc_kwargs.copy()
-            ax = plt.subplot2grid(grid_shape, loc = (row, col))
-            _, xdict = H.get_plot_dict(iT, -1, xk)
-            x = xdict['v']
-            xm, ym_BR_DGR_ols = C.ma_mask_xyz(x = x, y = BR_DGR_ols__rg, mask = mask__rg)
-            rs_BR_DGR_ols = runstats(xm.compressed(), ym_BR_DGR_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_DGR_up_ols = C.ma_mask_xyz(x = x, y = BR_DGR_up_ols__rg, mask = mask__rg)
-            rs_BR_DGR_up_ols = runstats(xm.compressed(), ym_BR_DGR_up_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_DGR_down_ols = C.ma_mask_xyz(x = x, y = BR_DGR_down_ols__rg, mask = mask__rg)
-            rs_BR_DGR_down_ols = runstats(xm.compressed(), ym_BR_DGR_down_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_DGR = C.ma_mask_xyz(x = x, y = SK_DGR__rg, mask = mask__rg)
-            rs_SK_DGR = runstats(xm.compressed(), ym_SK_DGR.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_DGR_Ha = C.ma_mask_xyz(x = x, y = SK_DGR_Ha__rg, mask = mask__rg)
-            rs_SK_DGR_Ha = runstats(xm.compressed(), ym_SK_DGR_Ha.compressed(), nBox = 20, **rs_kwargs)
-            if args.scatter is True:
-                ax.scatter(rs_BR_DGR_ols.x, rs_BR_DGR_ols.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.plot(rs_BR_DGR_ols.xS, rs_BR_DGR_ols.yS, '.-', c = 'b')
-            ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
-            ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
-            ax.fill_between(rs_BR_DGR_up_ols.xS, rs_BR_DGR_up_ols.yS, rs_BR_DGR_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
-            ax.xaxis.set_major_locator(MaxNLocator(6))
-            ax.yaxis.set_major_locator(MaxNLocator(6))
-            ax.grid()
-            ax.set_xlabel(xdict['label'])
-            ax.set_ylim(0, 30e-3)
-            if col == 0:
-                ax.set_ylabel(r'$\delta_{DGR}$')
-            if col == (NCols - 1):
-                row += 1
-                col = 0
-            else:
-                col += 1
-        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
-        pdf.savefig(f)
-        plt.close(f)
-
-        ##########################
-        ######### PAGE 4 #########
-        ##########################
-        NRows = 2
-        NCols = 3
-        f = plt.figure()
-        #f, axArr = plt.subplots(NRows, NCols)
-        #f.set_size_inches((NCols * 3, NRows * 1.5))
-        #page_size_inches = (NCols * 3, NRows * 2.5)
-        page_size_inches = A4Size_inches[::-1]
-        f.set_size_inches(page_size_inches)
-        grid_shape = (NRows, NCols)
-        xaxis = [ 'atfluxR', 'xYR', 'morfTypeR', 'baR', 'alogZmassR', 'logMcorSDR', ]
-        #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR', ]
-        row, col = 0, 0
-        for xk in xaxis:
-            rs_kwargs = default_rs_kwargs.copy()
-            sc_kwargs = default_sc_kwargs.copy()
-            ax = plt.subplot2grid(grid_shape, loc = (row, col))
-            _, xdict = H.get_plot_dict(iT, -1, xk)
-            x = xdict['v']
-            xm, ym_BR_SigmaGas_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_ols = runstats(xm.compressed(), ym_BR_SigmaGas_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_SigmaGas_up_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_up_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_up_ols = runstats(xm.compressed(), ym_BR_SigmaGas_up_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_SigmaGas_down_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_down_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_down_ols = runstats(xm.compressed(), ym_BR_SigmaGas_down_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_SigmaGas_Ha_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_Ha_ols = runstats(xm.compressed(), ym_BR_SigmaGas_Ha_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_SigmaGas_Ha_up_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha_up_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_Ha_up_ols = runstats(xm.compressed(), ym_BR_SigmaGas_Ha_up_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_SigmaGas_Ha_down_ols = C.ma_mask_xyz(x = x, y = np.log10(BR_SigmaGas_Ha_down_ols__rg), mask = mask__rg)
-            rs_BR_SigmaGas_Ha_down_ols = runstats(xm.compressed(), ym_BR_SigmaGas_Ha_down_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_SigmaGas = C.ma_mask_xyz(x = x, y = np.log10(SK_SigmaGas__rg), mask = mask__rg)
-            rs_SK_SigmaGas = runstats(xm.compressed(), ym_SK_SigmaGas.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_SigmaGas_Ha = C.ma_mask_xyz(x = x, y = np.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
-            rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym_SK_SigmaGas_Ha.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_GRV_SigmaGas = C.ma_mask_xyz(x = x, y = np.log10(GRV_SigmaGas__rg), mask = mask__rg)
-            rs_GRV_SigmaGas = runstats(xm.compressed(), ym_GRV_SigmaGas.compressed(), nBox = 20, **rs_kwargs)
-            if args.scatter is True:
-                ax.scatter(rs_BR_SigmaGas_ols.x, rs_BR_SigmaGas_ols.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_BR_SigmaGas_Ha_ols.x, rs_BR_SigmaGas_Ha_ols.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_GRV_SigmaGas.x, rs_GRV_SigmaGas.y, marker = 'o', c = 'y', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.plot(rs_BR_SigmaGas_ols.xS, rs_BR_SigmaGas_ols.yS, '.-', c = 'b')
-            ax.plot(rs_BR_SigmaGas_Ha_ols.xS, rs_BR_SigmaGas_Ha_ols.yS, '.-', c = 'r')
-            ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g')
-            ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black')
-            ax.plot(rs_GRV_SigmaGas.xS, rs_GRV_SigmaGas.yS, '.-', c = 'y')
-            ax.fill_between(rs_BR_SigmaGas_up_ols.xS, rs_BR_SigmaGas_up_ols.yS, rs_BR_SigmaGas_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
-            ax.fill_between(rs_BR_SigmaGas_Ha_up_ols.xS, rs_BR_SigmaGas_Ha_up_ols.yS, rs_BR_SigmaGas_Ha_down_ols.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
-            ax.xaxis.set_major_locator(MaxNLocator(6))
-            ax.yaxis.set_major_locator(MaxNLocator(6))
-            ax.grid()
-            ax.set_xlabel(xdict['label'])
-            ax.set_ylim(0.4, 2)
-            #ax.set_ylim(0,15e-3)
-            if col == 0:
-                ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
-            if col == (NCols - 1):
-                row += 1
-                col = 0
-            else:
-                col += 1
-        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
-        pdf.savefig(f)
-        plt.close(f)
-
-        ##########################
-        ######### PAGE 5 #########
-        ##########################
-        NRows = 2
-        NCols = 3
-        f = plt.figure()
-        #f, axArr = plt.subplots(NRows, NCols)
-        #f.set_size_inches((NCols * 3, NRows * 1.5))
-        #page_size_inches = (NCols * 3, NRows * 2.5)
-        page_size_inches = A4Size_inches[::-1]
-        f.set_size_inches(page_size_inches)
-        grid_shape = (NRows, NCols)
-        xaxis = [ 'atfluxR', 'xYR', 'morfTypeR', 'baR', 'alogZmassR', 'logMcorSDR' ]
-        #xaxis = [ 'atfluxR', 'xYR', 'baR', 'alogZmassR', 'logMcorSDR' ]
-        row, col = 0, 0
-        for xk in xaxis:
-            rs_kwargs = default_rs_kwargs.copy()
-            sc_kwargs = default_sc_kwargs.copy()
-            ax = plt.subplot2grid(grid_shape, loc = (row, col))
-            _, xdict = H.get_plot_dict(iT, -1, xk)
-            x = xdict['v']
-            xm, ym_BR_f_gas_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_ols = runstats(xm.compressed(), ym_BR_f_gas_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_f_gas_up_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_up_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_up_ols = runstats(xm.compressed(), ym_BR_f_gas_up_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_f_gas_down_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_down_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_down_ols = runstats(xm.compressed(), ym_BR_f_gas_down_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_f_gas_Ha_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_Ha_ols = runstats(xm.compressed(), ym_BR_f_gas_Ha_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_f_gas_Ha_up_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha_up_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_Ha_up_ols = runstats(xm.compressed(), ym_BR_f_gas_Ha_up_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_BR_f_gas_Ha_down_ols = C.ma_mask_xyz(x = x, y = BR_f_gas_Ha_down_ols__rg, mask = mask__rg)
-            rs_BR_f_gas_Ha_down_ols = runstats(xm.compressed(), ym_BR_f_gas_Ha_down_ols.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_f_gas = C.ma_mask_xyz(x = x, y = SK_f_gas__rg, mask = mask__rg)
-            rs_SK_f_gas = runstats(xm.compressed(), ym_SK_f_gas.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_SK_f_gas_Ha = C.ma_mask_xyz(x = x, y = SK_f_gas_Ha__rg, mask = mask__rg)
-            rs_SK_f_gas_Ha = runstats(xm.compressed(), ym_SK_f_gas_Ha.compressed(), nBox = 20, **rs_kwargs)
-            xm, ym_GRV_f_gas = C.ma_mask_xyz(x = x, y = GRV_f_gas__rg, mask = mask__rg)
-            rs_GRV_f_gas = runstats(xm.compressed(), ym_GRV_f_gas.compressed(), nBox = 20, **rs_kwargs)
-            if args.scatter is True:
-                ax.scatter(rs_BR_f_gas_ols.x, rs_BR_f_gas_ols.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_BR_f_gas_Ha_ols.x, rs_BR_f_gas_Ha_ols.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-                ax.scatter(rs_GRV_f_gas.x, rs_GRV_f_gas.y, marker = 'o', c = 'y', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.plot(rs_BR_f_gas_ols.xS, rs_BR_f_gas_ols.yS, '.-', c = 'b')
-            ax.plot(rs_BR_f_gas_Ha_ols.xS, rs_BR_f_gas_Ha_ols.yS, '.-', c = 'r')
-            ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g')
-            ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black')
-            ax.plot(rs_GRV_f_gas.xS, rs_GRV_f_gas.yS, '.-', c = 'y')
-            ax.fill_between(rs_BR_f_gas_up_ols.xS, rs_BR_f_gas_up_ols.yS, rs_BR_f_gas_down_ols.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
-            ax.fill_between(rs_BR_f_gas_Ha_up_ols.xS, rs_BR_f_gas_Ha_up_ols.yS, rs_BR_f_gas_Ha_down_ols.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
-            ax.xaxis.set_major_locator(MaxNLocator(6))
-            ax.yaxis.set_major_locator(MaxNLocator(6))
-            ax.grid()
-            ax.set_xlabel(xdict['label'])
-            ax.set_ylim(0, 0.4)
-            #ax.set_ylim(0,15e-3)
-            if col == 0:
-                ax.set_ylabel(r'f${}_{gas}$')
-            if col == (NCols - 1):
-                row += 1
-                col = 0
-            else:
-                col += 1
-        f.subplots_adjust(hspace = 0.4, wspace = 0.4)
-        pdf.savefig(f)
-        plt.close(f)

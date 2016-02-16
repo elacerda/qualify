@@ -40,7 +40,8 @@ gerar as imagens que usamos para avaliar a qualidade da síntese de populações
 resultados para a amostra do primeiro {\em data-release} (DR1). Durante a análise dos resíduos vimos
 que os mesmos reduziram sensivelmente desde a última versão, além de nos ajudar a melhorar a máscara
 de remoção de linhas telúricas dos espectros. Também verificamos que os erros relacionados aos
-espectros observados possuem uma distribuição muito próxima a uma gaussiana.
+espectros observados possuem uma distribuição muito próxima a uma gaussiana. Todas os dados
+presentes nesse trabalho receberam passaram pelo mesmo pré-processamento detalhado neste artigo.
 
 \section{Definição da amostra deste trabalho}
 \label{sec:amostra:definicao}
@@ -88,7 +89,7 @@ relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos c
 analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
 centrais. Na figura \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
 amostra sobre algumas propriedades. Em vermelho temos as 226176 regiões em 305 galáxias e, em
-azul, as 16525 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa
+azul, as 16479 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa
 seleção busca zonas mais compactas e mais jovens (maior fração de populações jovens diminuindo a idade
 média). O corte mais brusco em nossa amostra é devido a baixa relação sinal-ruído da linha de \oIII
 ($(S/N)_{\oIII} < 3$) em 91142 zonas.
@@ -122,6 +123,7 @@ mesmas galáxias. Vemos também que as galáxias tipo Sd possuem as populações
 menos massivas na média. Por ser um fenômeno apenas de posição do referencial de observação não
 deveríamos ver preferência por valor de relação axial ($b/a$) quando dividimos em classes
 morfológicas, o que realmente acontece.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/sample_realsample_maskradius_integrated.pdf}
@@ -136,6 +138,7 @@ morfológicas, o que realmente acontece.
 	intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
 	\label{fig:amostraMorf}
 \end{figure}
+
 Estamos em fase de finalização de um artigo em que comparamos a relação entre a taxa de formação
 estelar e a massa para diferentes classes morfológicas. Esse artigo já foi submetido e deve sair
 logo agora no início de 2016.
@@ -184,7 +187,42 @@ distribuição ao longo do raio e em azul tracejado o valor integrado para a gal
 radial (linha preta contínua).}
 	\label{fig:K0140xYRadProf}
 \end{figure}
- 
+
+O perfil radial (entre 0.7 e 3 HLR) das principais propriedaes utilizadas neste trabalho podem ser
+vistas na Fig. \ref{fig:RadProfProps} juntamente com seus histogramas na Fig.
+\ref{fig:HistoRadProfProps}. Elas são muito importantes em todos os aspectos que abordaremos:
+formação estelar, poeira e a conversão de densidade superficial de poeira em densidade superficial
+de gás em discos de galáxias espirais. Podemos ver que existem alguns gradientes negativos (crescem
+de fora para dentro) bem definidos de densidade superficial da taxa de formação estelar
+($\Sigma_{\mathrm{SFR}}$), abundância relativa de oxigênio (metalicidade nebular, $O/H$), densidade
+superficial de massa estelar ($\mu_\star$). Outras propriedaes parecem não variarem muito dentro do
+disco. Alguns perfis mudam de tendência ao passar de 2 HLR, mas vale ressaltar que na maioria das
+distribuições, os pontos acima de 2 HLR ultrapassam $1\sigma$. Embora não seja tão forte, existe um
+gradiente positivo na fração em luz de populações jovens. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{figuras/props_R.pdf}
+	\caption[Perfis radiais das propriedades físicas.]
+	{Perfis radiais das principais propriedades físicas abordadas neste trabalho. Da esquerda para
+direita e de cima para baixo temos: densidade superficial da taxa de formação estelar detectada por
+\Halpha e pela síntese, idade média das populações estelares, metalicidade nebular, fração em luz de
+populações jovens, densidade superficial de massa estelar, metalicidade média das populações
+estelares, coeficiente de extinção da síntese e do decremento de Balmer. Em cada painel vemos também
+os contornos definindo $1\sigma$, $2\sigma$ e $3\sigma$ da distribuição. As linhas marcam a mediana
+(linha contínua) e os 5,16,64,95 percentis (linhas tracejadas).}
+	\label{fig:RadProfProps}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/Histo_props_R.pdf}
+	\caption[Histogramas dos perfis radiais das propriedades físicas.]
+	{Histogramas para todas as propriedades físicas da Fig. \ref{fig:RadProfProps}. Os valores no canto
+superior direito marcam a média, mediana, desvio padrão, máximo e mínimo das distribuições.}
+	\label{fig:HistoRadProfProps}
+\end{figure}
+
 % Figuras:
 % - histograma tipos - histograma massa - influências dos cortes em tauV, raio e x_Y - Anexo: Lista
 % de galáxias com massa, redshift, idade, etc ...

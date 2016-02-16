@@ -7,13 +7,6 @@ import numpy as np
 import CALIFAUtils as C
 import matplotlib as mpl
 from matplotlib.cm import cmap_d
-mpl.rcParams['font.size'] = 20
-mpl.rcParams['axes.labelsize'] = 20
-mpl.rcParams['axes.titlesize'] = 20
-mpl.rcParams['xtick.labelsize'] = 16
-mpl.rcParams['ytick.labelsize'] = 16 
-mpl.rcParams['font.family'] = 'serif'
-mpl.rcParams['font.serif'] = 'Times New Roman'
 from os.path import basename
 import argparse as ap
 from CALIFAUtils.lines import Lines
@@ -25,6 +18,14 @@ from CALIFAUtils.plots import density_contour
 from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 from CALIFAUtils.plots import plotOLSbisectorAxis, plot_text_ax, next_row_col
 from scipy.stats import spearmanr
+
+mpl.rcParams['font.size'] = 20
+mpl.rcParams['axes.labelsize'] = 16
+mpl.rcParams['axes.titlesize'] = 20
+mpl.rcParams['xtick.labelsize'] = 16
+mpl.rcParams['ytick.labelsize'] = 16 
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.serif'] = 'Times New Roman'
 
 def parser_args():        
     parser = ap.ArgumentParser(description = '%s' % sys.argv[0])
@@ -153,8 +154,8 @@ if __name__ == '__main__':
     default_plot_rs_kwargs = dict(c = 'k', lw = 2, label = 'Median (run. stats)', alpha = 0.9)
     default_figure_kwargs = dict(figsize = (10, 8), dpi = 100)
     default_scatter_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', alpha = 0.45, label = '')
-    default_ols_plot_kwargs = dict(c = 'r', ls = '--', lw = 2, label = 'OLS')
-    default_ols_kwargs = dict(c = 'k', pos_x = 0.01, pos_y = 0.01, fs = 10, ha = 'left', va = 'bottom', rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
+    default_ols_plot_kwargs = dict(c = 'r', ls = '--', lw = 2)
+    default_ols_kwargs = dict(c = 'k', pos_x = 0.01, pos_y = 0.01, fs = 15, ha = 'left', va = 'bottom', rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
     default_zbins_kwargs = dict(
         ols = True,
         zmask = None,
@@ -176,7 +177,7 @@ if __name__ == '__main__':
     f = plt.figure()
     NCols = 3
     NRows = 2
-    page_size_inches = [15, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -190,37 +191,34 @@ if __name__ == '__main__':
     row, col = 0, 0
     for iU, tZ in enumerate(H.tZ__U):
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
-        xran = [-1.4, 0.25]
-        yran = (-0.5, 0)
+        xran = [-1.4, 0.4]
+        yran = [-0.6, 0.]
         ax.set_xlim(xran)
         ax.set_ylim(yran)
         xm, ym = C.ma_mask_xyz(H.alogZ_mass__Ug[iU], y = y, mask = mask__g)
         density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-        if (row == 0) and (col == 0):
-            kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
-            plot_text_ax(ax, '%s' % xm.count(), **kw_text)
-            pos_y = .92
-        else:
-            pos_y = .99
-        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 12, va = 'top', ha = 'left', c = 'k')
+        pos_y = .99
+        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 15, va = 'top', ha = 'left', c = 'k')
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         ax.plot(rs.xS, rs.yS, 'k-')
         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **default_ols_kwargs)
-        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 12, va = 'top', ha = 'center', c = 'k')
+        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 15, va = 'top', ha = 'center', c = 'k')
         plot_text_ax(ax, '%.2f Ganos' % (tZ / 1e9), **kw_text)
         ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--')
-        ax.xaxis.set_major_locator(MaxNLocator(4))
-        ax.yaxis.set_major_locator(MaxNLocator(4))
         if col == 0:
             ax.set_ylabel(r'$\log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)$')
         else:
             plt.setp(ax.get_yticklabels(), visible = False)
+        prune = None
         if row == 1:
             if col == 0:
                 ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M$ [$Z_\odot$]')
+                prune = 'upper'
         else:
             plt.setp(ax.get_xticklabels(), visible = False)
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4, prune = prune))
         row, col = next_row_col(row, col, NRows, NCols)
     f.subplots_adjust(bottom = 0.15, top = 0.95, hspace = 0, wspace = 0, right = 0.95, left = 0.1)
     #pdf.savefig(f)
@@ -232,7 +230,7 @@ if __name__ == '__main__':
     f = plt.figure()
     NCols = 3
     NRows = 2
-    page_size_inches = [15, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -246,38 +244,35 @@ if __name__ == '__main__':
     for iU, tZ in enumerate(H.tZ__U):
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
         xran = [-1.4, 0.4]
-        yran = (-0.5, 0)
+        yran = [-0.6, 0.]
         ax.set_xlim(xran)
         ax.set_ylim(yran)
         xm, ym = C.ma_mask_xyz(H.alogZ_mass__Urg[iU], y = y, mask = mask__rg)
         #ax.scatter(xm, ym, c = '0.8', **default_sc_kwargs)
         sc = ax.scatter(xm, ym, c = H.Rtoplot(), cmap = 'jet_r', vmin = minR, vmax = H.RbinFin, alpha = 0.4, **default_sc_kwargs)
         #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-        if (row == 0) and (col == 0):
-            kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
-            plot_text_ax(ax, '%s' % xm.count(), **kw_text)
-            pos_y = .92
-        else:
-            pos_y = .99
-        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 12, va = 'top', ha = 'left', c = 'k')
+        pos_y = .99
+        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 15, va = 'top', ha = 'left', c = 'k')
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         ax.plot(rs.xS, rs.yS, 'k-')
         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **default_ols_kwargs)
-        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 12, va = 'top', ha = 'center', c = 'k')
+        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 15, va = 'top', ha = 'center', c = 'k')
         plot_text_ax(ax, '%.2f Ganos' % (tZ / 1e9), **kw_text)
         ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--')
-        ax.xaxis.set_major_locator(MaxNLocator(4))
-        ax.yaxis.set_major_locator(MaxNLocator(4))
         if col == 0:
             ax.set_ylabel(r'$\log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)$')
         else:
             plt.setp(ax.get_yticklabels(), visible = False)
+        prune = None
         if row == 1:
             if col == 0:
                 ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M$ [$Z_\odot$]')
+                prune = 'upper'
         else:
             plt.setp(ax.get_xticklabels(), visible = False)
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4, prune = prune))
         row, col = next_row_col(row, col, NRows, NCols)
     cax = plt.axes([0.92, 0.15, 0.025, 0.8])
     cb = f.colorbar(sc, cax = cax, ticks = ticks_r)
@@ -292,7 +287,7 @@ if __name__ == '__main__':
     f = plt.figure()
     NCols = 3
     NRows = 2
-    page_size_inches = [15, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -300,45 +295,41 @@ if __name__ == '__main__':
     bins = (30, 30)
     cmap = 'Blues'
     
-    ols_kwargs = default_ols_kwargs.copy()
     y = H.integrated_logO3N2_M13__g - 8.69
     #yran = [0, 3]
     row, col = 0, 0
     for iU, tZ in enumerate(H.tZ__U):
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
         xran = [-1.4, 0.4]
-        yran = (-0.5, 0)
+        yran = [-0.6, 0.]
         ax.set_xlim(xran)
         ax.set_ylim(yran)
         mask_aux = np.bitwise_or(mask_GAL__g, np.less(H.integrated_logO3N2_M13__g, 6))  
         xm, ym = C.ma_mask_xyz(H.alogZ_mass_GAL__Ug[iU], y = y, mask = mask_aux)
         ax.scatter(xm, ym, c = '0.8', **default_sc_kwargs)
         #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-        if (row == 0) and (col == 0):
-            kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
-            plot_text_ax(ax, '%s' % xm.count(), **kw_text)
-            pos_y = .92
-        else:
-            pos_y = .99
-        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 12, va = 'top', ha = 'left', c = 'k')
+        pos_y = .99
+        kw_text = dict(pos_x = 0.01, pos_y = pos_y, fs = 15, va = 'top', ha = 'left', c = 'k')
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         ax.plot(rs.xS, rs.yS, 'k-')
         plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **default_ols_kwargs)
-        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 12, va = 'top', ha = 'center', c = 'k')
+        kw_text = dict(pos_x = 0.5, pos_y = 0.99, fs = 15, va = 'top', ha = 'center', c = 'k')
         plot_text_ax(ax, '%.2f Ganos' % (tZ / 1e9), **kw_text)
         ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--')
-        ax.xaxis.set_major_locator(MaxNLocator(4))
-        ax.yaxis.set_major_locator(MaxNLocator(4))
         if col == 0:
             ax.set_ylabel(r'$\log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)$')
         else:
             plt.setp(ax.get_yticklabels(), visible = False)
+        prune = None
         if row == 1:
             if col == 0:
                 ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M$ [$Z_\odot$]')
+                prune = 'upper'
         else:
             plt.setp(ax.get_xticklabels(), visible = False)
+        ax.xaxis.set_major_locator(MaxNLocator(4))
+        ax.yaxis.set_major_locator(MaxNLocator(4, prune = prune))
         row, col = next_row_col(row, col, NRows, NCols)
     f.subplots_adjust(bottom = 0.15, top = 0.95, hspace = 0., wspace = 0., right = 0.95, left = 0.1)
     #pdf.savefig(f)
@@ -358,7 +349,7 @@ if __name__ == '__main__':
     bins = 30
     cmap_radii = 'jet_r'
     
-    page_size_inches = [15, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -386,7 +377,7 @@ if __name__ == '__main__':
         row, col = next_row_col(row, col, NRows, NCols)
     xm, ym = C.ma_mask_xyz(y = H.logO3N2_M13__g - 8.69, x = x, mask = mask__g)    
     rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 12, va = 'center', ha = 'right', c = 'k')
+    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 15, va = 'center', ha = 'right', c = 'k')
     plot_text_ax(ax, r'$Z_{neb}$' % (tZ / 1e9), **kw_text)
     ax.plot(rs.xS, rs.yS, 'k--')
     ax.set_ylabel(r'metallicity [$Z_\odot$]')
@@ -408,7 +399,7 @@ if __name__ == '__main__':
     #cb = plt.colorbar(sc)
     #cb.ax.yaxis.set_label('R [HLR]')
     cmap = plt.get_cmap('viridis')
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 15, va = 'top', ha = 'left', c = 'k')
     for iU, tZ in enumerate(H.tZ__U):
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = x, y = H.alogZ_mass__Urg[iU], mask = mask__rg)
@@ -418,7 +409,7 @@ if __name__ == '__main__':
         row, col = next_row_col(row, col, NRows, NCols)
     xm, ym = C.ma_mask_xyz(y = H.logO3N2_M13__Trg[iT] - 8.69, x = x, mask = mask__rg)    
     rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 12, va = 'center', ha = 'right', c = 'k')
+    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 15, va = 'center', ha = 'right', c = 'k')
     plot_text_ax(ax, r'$Z_{neb}$' % (tZ / 1e9), **kw_text)
     ax.plot(rs.xS, rs.yS, 'k--')
     ax.set_xlabel(r'$\langle\log\ \mu_\star\rangle_R$ [$M_\odot pc^{-2}$]')
@@ -445,7 +436,7 @@ if __name__ == '__main__':
         row, col = next_row_col(row, col, NRows, NCols)
     xm, ym = C.ma_mask_xyz(y = H.integrated_logO3N2_M13__g - 8.69, x = x, mask = mask_aux)
     rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
-    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 12, va = 'center', ha = 'right', c = 'k')
+    kw_text = dict(transform = False, pos_x = rs.xS[0] - 0.02, pos_y = rs.yS[0], fs = 15, va = 'center', ha = 'right', c = 'k')
     plot_text_ax(ax, '$Z_{neb}$' % (tZ / 1e9), **kw_text)
     ax.plot(rs.xS, rs.yS, 'k--')
     ax.set_xlabel(r'$\log\ M_\star$ [$M_\odot$]')
@@ -470,9 +461,8 @@ if __name__ == '__main__':
         xm, ym = C.ma_mask_xyz(x = H.alogZ_mass__Ug[iU], y = y, mask = mask__g)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         rs.OLS_bisector()
-        print tZ/1e9, rs.OLS_median_intercept, rs.OLS_median_slope, rs.OLS_intercept, rs.OLS_slope
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
-        kw_text = dict(pos_x = 0.01 + (iU * 0.17), pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = c)
+        kw_text = dict(pos_x = 0.01, pos_y = 0.4 - (iU * 0.08), fs = 15, va = 'bottom', ha = 'left', c = c)
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         row, col = next_row_col(row, col, NRows, NCols)
     ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M$ [$Z_\odot$]')
@@ -492,13 +482,13 @@ if __name__ == '__main__':
     #cb = plt.colorbar(sc)
     #cb.ax.yaxis.set_major_locator(MaxNLocator(4))
     cmap = plt.get_cmap('viridis')
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 12, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 15, va = 'top', ha = 'left', c = 'k')
     for iU, tZ in enumerate(H.tZ__U):
         c = cmap(float(iU) / H.N_U)
         xm, ym = C.ma_mask_xyz(x = H.alogZ_mass__Urg[iU], y = y, mask = mask__rg)
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
-        kw_text = dict(pos_x = 0.01 + (iU * 0.17), pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = c)
+        kw_text = dict(pos_x = 0.01, pos_y = 0.4 - (iU * 0.08), fs = 15, va = 'bottom', ha = 'left', c = c)
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         row, col = next_row_col(row, col, NRows, NCols)
     ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M(R)$ [$Z_\odot$]')
@@ -520,7 +510,7 @@ if __name__ == '__main__':
         xm, ym = C.ma_mask_xyz(x = H.alogZ_mass_GAL__Ug[iU], y = y, mask = mask_GAL__g)    
         rs = C.runstats(xm.compressed(), ym.compressed(), debug = args.debug, **default_rs_kwargs)
         ax.plot(rs.xS, rs.yS, c = c, lw = lw)
-        kw_text = dict(pos_x = 0.01 + (iU * 0.17), pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = c)
+        kw_text = dict(pos_x = 0.01, pos_y = 0.4 - (iU * 0.08), fs = 15, va = 'bottom', ha = 'left', c = c)
         plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
         row, col = next_row_col(row, col, NRows, NCols)
     ax.set_xlabel(r'$\langle \log\ Z_\star \rangle_M^{GAL}$ [$Z_\odot$]')

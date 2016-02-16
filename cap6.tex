@@ -35,21 +35,24 @@ A relação da qual comentamos no preambulo deste capítulo pode ser vista na Fi
 estelar ($A_V / \mu_\star$) parece relacionar de maneira interessante com a metalicidade média das
 populações estelares e nos motivou a buscar a conversão de poeira em gás e poder compará-la com a
 metalicidade nebular.
+
 \begin{figure}
 	\centering
 	%\resizebox{0.7\textwidth}{!}{\includegraphics{figuras/dust2stars.pdf}}
 	\includegraphics[height = 8cm, width = 9.5cm]{figuras/dust2stars.pdf}
 	\caption[$A_V / \mu_\star$ vs. \meanM{\log Z_\stars}]
 	{Relação entre metalicidade média das populações estelares e a razão entre o coeficiente de
-extinção (em magnitude) e a densidade superficial de massa estelar. Os pontos estão divididos em
-cores por tipo morfológico.}
+extinção (em magnitude) e a densidade superficial de massa estelar. Os pontos são aproximadamente
+6000 bins radiais de 300 galáxias (de 0 a 2 HLR divididos em 20 bins por galáxia) e estão
+classificados em cores por tipo morfológico.}
 	\label{fig:dust2stars}
 \end{figure}
+
 O principal objetivo de nosso trabalho é pode estimar fração de gás espacialmente resolvidas nas
 galáxias do CALIFA. Podemos definir fração de gás como:
 \begin{equation}
-	f_{\mathrm{gas}} = \frac{\mathrm{M}_{\mathrm{gas}}}{\mathrm{M}_\star + \mathrm{M}_{\mathrm{gas}}}
-\equiv \frac{1}{1 + \frac{\mathrm{M}_\star}{\mathrm{M}_{\mathrm{gas}}}},
+	f_{\mathrm{gas}} = \frac{M_{\mathrm{gas}}}{M_\star + M_{\mathrm{gas}}} \equiv \frac{1}{1 +
+	\frac{M_\star}{M_{\mathrm{gas}}}},
 	\label{eq:fgas}
 \end{equation}
 \noindent onde $M_{\mathrm{gas}}$ é a massa total na forma de gás e $M_\star$ é a massa total em
@@ -78,12 +81,14 @@ $f_{\mathrm{gas}}$.
 \label{sec:gasfrac:KS}
 
 Como explicado na Sec. \ref{sec:intro:galaxias}, a quantidade de gás de uma galáxia e a taxa de
-formação estelar parecem estar relacionadas através de uma lei de potências. Pensando nisso,
-estabelecemos nossa relação entre poeira e formação estelar, que pode ser vista na Fig.
-\ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como nossa variável representante da poeira e
-no direito, $\tauVN$. A conversão de poeira em gás é, da mesma forma que a conversão de CO em gás,
-dependente da metalicidade, mas com a vantagem de não necessitar medidas. O espalhamento nesta
-figura nos mostra que podemos explorar os resíduos em torno desse ajuste.
+formação estelar estão relacionadas através de uma lei de potências. Já a relação entre poeira e gás
+é resultado direto da lei de Kennicut-Schmidt, que faz a ligação entre gás e formação estelar e da
+relação entre gás e poeira \citep[][e suas referências]{Magdis.etal.2011a, Leroy.etal.2011a,
+Santini.etal.2014a}. Pensando nisso, estabelecemos uma relação entre poeira e formação estelar, que
+pode ser vista na Fig. \ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como variável
+representante da poeira e no direito, $\tauVN$. A conversão de poeira em gás é, da mesma forma que a
+conversão de CO em gás, dependente da metalicidade, mas com a vantagem de não necessitar medidas. O
+espalhamento nesta figura nos mostra que podemos explorar os resíduos em torno desse ajuste.
 
 \begin{figure}
 	\centering
@@ -113,7 +118,7 @@ No eixo x temos, na primeira fila, da esquerda para direita: metalicidade nebula
 populações estelares ($\meanL{\log t_\star}$), fração em luz das populações estelares jovens
 ($x_Y$); na última fila, na mesma ordem: densidade superficial de massa estelar, relação axial, raio
 e tipo morfológico.}
-	\label{fig:pseudoKS}
+	\label{fig:pseudoKSresid}
 \end{figure}
 
 Diversos autores atualmente calculam e discutem a relação KS e a sua validade para diferentes
@@ -132,48 +137,69 @@ conseguida utilizando a equação:
 	\tau_{\mathrm{d}} &=& \sigma_{\mathrm{d}} \int n_{\mathrm{d}} dz =
 	\frac{\sigma_{\mathrm{d}}}{m_{\mathrm{d}}}\times\Sigma_{\mathrm{d}}
 	\\
-	\Sigma_{\mathrm{d}} &=& \frac{m_{\mathrm{d}} \tau_{\mathrm{d}}}{\sigma_{\mathrm{d}}},
+	\Sigma_{\mathrm{d}} &=& \frac{m_{\mathrm{d}}}{\sigma_{\mathrm{d}}}\ \tau_{\mathrm{d}},
 	\label{eq:sigmadust}
 \end{eqnarray}
-\noindent onde o prefixo d designa poeira ({\em dust}, em inglês), $\sigma_{\mathrm{d}}$ é área de
-um grão de poeira, $n_{\mathrm{d}}$ é o número de grãos de poeira ao longo de uma profundidade
-$dz$ e $m_{\mathrm{d}}$ é a massa de um grão de poeira. Substituindo a Eq. \ref{eq:sigmadust} na Eq. 
-\ref{eq:dust2gas} e assumindo $\tauV$ como $\tau_{\mathrm{d}}$ obtemos:
+\noindent onde $\sigma_{\mathrm{d}}$ é área de um grão de poeira, $n_{\mathrm{d}}$ é o número de
+grãos de poeira ao longo de uma profundidade $dz$ e $m_{\mathrm{d}}$ é a massa de um grão de
+poeira. Substituindo a Eq. \ref{eq:sigmadust} na Eq. \ref{eq:dust2gas} e assumindo $\tauV$ como
+$\tau_{\mathrm{d}}$ obtemos:
 \begin{equation}
-	\SigmaGas\ =\ \frac{m_{\mathrm{d}}}{\sigma_{\mathrm{d}}}\ \deltaDGR\ \tauV. 
+	\SigmaGas\ =\ \kappa \times \frac{m_{\mathrm{d}}}{\sigma_{\mathrm{d}}}\ \tauV. 
 	\label{eq:dust2gas_tauV}
 \end{equation}
-O termo $\deltaDGR$ é dependente da metalicidade e vamos explorar a conversão feita por
-\citet{Brinchmann.etal.2013a}. Neste trabalho os autores seguem o modelo de absorção de
-\ref{Charlot.Fall.2000a} e identificam algumas variáveis que vamos utilizar:
+
+A conversão de poeira em gás é dependente da metalicidade, como citado em BR13 e vamos explorar suas
+propriedades. Neste trabalho os autores seguem o modelo de extinção de \citet{Charlot.Fall.2000a} e
+identificam algumas variáveis que vamos utilizar:
 \begin{eqnarray}
 	\xi &=& \frac{\Sigma_{\mathrm{d}}}{\Sigma_Z} \\
 	Z &=& \frac{\Sigma_Z}{\SigmaGas}  \\
-	\delta_{\mathrm{DGR}} &=& \frac{\Sigma_{\mathrm{d}}}{\SigmaGas} = \xi Z, 
+	\delta_{\mathrm{DGR}} &=& \frac{\Sigma_{\mathrm{d}}}{\Sigma_Z}\	\frac{\Sigma_Z}{\SigmaGas}\ =\ \frac{\Sigma_{\mathrm{d}}}{\SigmaGas} = \xi Z,
 	\label{eq:deltaDGR}
 \end{eqnarray}
-\noindent onde $\xi$ é a razão poeira-metais ({\em dust-to-metals}) e Z é a metalicidade do gás.
-Utilizando a Eq. \ref{eq:deltaDGR} na Eq. \ref{eq:dust2gas_tauV} e fazendo
-$m_{\mathrm{d}}/\sigma_{\mathrm{d}} \approx 0.2$, que corresponde ao tipo de poeira Galáctica, temos:
+\noindent onde $\xi$ é a razão poeira-metais ({\em dust-to-metals}), Z é a metalicidade do gás e o
+termo $\delta_{\mathrm{DGR}}$ é igual a $1/\kappa$. Utilizando a Eq. \ref{eq:deltaDGR} na Eq.
+\ref{eq:dust2gas_tauV} e fazendo $m_{\mathrm{d}}/\sigma_{\mathrm{d}} \approx 0.2$, que corresponde
+ao tipo de poeira Galáctica (BR13), temos:
 \begin{equation}
 	\SigmaGas\ \approx\ 0.2 \frac{\tauV}{\delta_{\mathrm{DGR}}}\ [M_\odot pc^{-2}].
-	\label{eq:dust2gas_brinch}
+	\label{eq:SigmaGasBR}
 \end{equation}
 Neste artigo os autores utilizaram dados de $\sim 70000$ galáxias {\em star-forming} do
-\textit{SDSS}-DR7 e parametrizam $\delta_{\mathrm{DGR}}$ como \citep[][Eq.
-28]{Brinchmann.etal.2013a}:
+\textit{SDSS}-DR7 e parametrizam $\delta_{\mathrm{DGR}}$ como a Eq. 28 de BR13:
 \begin{equation}
 	\delta_{\mathrm{DGR}}\ =\ (5.3 \times 10^{-3} - 1.1 \times 10^{-2})
-\left(\frac{\mathrm{O/H}}{(\mathrm{O/H})_\odot}\right),
+\left(\frac{(O/H)}{(O/H)_\odot}\right),
 	\label{eq:DGR_brinch_eq28}
 \end{equation}
 \noindent onde os fatores que multiplicam a metalicidade representam um intervalo onde esta
-conversão é válida.
+conversão é válida. O valor de $\delta_{\mathrm{DGR}}$ foi parametrizado utilizando as metalicidades
+MPA/JHU para o calculadas para o
+\SDSS\footnote{\href{http://wwwmpa.mpa-garching.mpg.de/SDSS/}{http://wwwmpa.mpa-garching.mpg.de/SDSS/}}.
+Para que possamos utilizar essa conversão, calibramos a abundância de oxigênio de M13 com aquela
+utilizada no trabalho de BR13. Podemos ver na Fig. \ref{fig:calibZ} a calibração feita utilizando 4
+ajustes. Escolhemos utilizar o ajuste linear, pois é aquele com menor desvio quadrático médio.
+Finalmente, nossa equação final para $\delta_{\mathrm{DGR}}$ é:
+\begin{equation}
+	\delta_{\mathrm{DGR}} =  (5.3 \times 10^{-3} - 1.1 \times 10^{-2}) \times 10^{\left(2.016 x\ +\ 0.425\right)},
+	\label{eq:myDGR}
+\end{equation}
+\noindent onde $x = \log\ ((O/H)/(O/H)_\odot)$ de M13. Agora, substituindo a Eq. \ref{eq:myDGR} em
+\ref{eq:SigmaGasBR} e utilizando este resultado na Eq. \ref{eq:fgas} podemos estimar frações de
+gás para galáxias do \CAL.
 
-O valor de $\delta_{\mathrm{DGR}}$ foi parametrizado utilizando as metalicidades 
-
-precisamos 
-\ref{eq:DGR_brinch_eq28}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.9\textwidth]{figuras/logOH_ZnebMPA.pdf}
+	\caption[Calibração das metalicidades.]
+	{Calibração da metalicidade (abundância relativa de oxigênio) do grupo MPA/JHU com a de M13. A
+linha preta contínua representa a mediana da distribuição, as outras linhas, pelas cores indicadas
+na legenda, são regressões polinomiais de $1^\underline{a}$, $2^\underline{a}$ e $3^\underline{a}$
+ordem e o {\em OLS bisector} da distribuição. Os contornos marcam $1\sigma$, $2\sigma$ e $3\sigma$
+respectivamente.}
+	\label{fig:calibZ}
+\end{figure}
 
 \section{Eficiência e tempo de depleção do gás.}
 \label{sec:gasfrac:SFE}

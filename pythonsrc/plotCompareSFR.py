@@ -759,52 +759,51 @@ if __name__ == '__main__':
                        'integrated_SFRSD_Rp_age%s' % fnamesuffix, 1., 16)
     Rs_SFRSD_int = np.copy(Rs)
 
-    kwargs_ols_plot = dict(c = 'r', ls = '--', lw = 2, label = 'OLS')
-    ols_kwargs = dict(c = 'r', pos_x = 0.98, pos_y = 0.01, fs = 10, rms = True, text = True, kwargs_plot = kwargs_ols_plot)
+    kwargs_ols_plot = dict(c = 'r', ls = '--', lw = 2)
+    ols_kwargs = dict(c = 'r', pos_x = 0.98, pos_y = 0.01, fs = 15, rms = True, text = True, kwargs_plot = kwargs_ols_plot)
+
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 16
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16 
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rcParams['font.serif'] = 'Times New Roman'
 
     from matplotlib.pyplot import MaxNLocator
     f = plt.figure()
-    f.set_size_inches(7, 10)
+    NRows = 3
+    NCols = 2
+    grid_shape = (NRows, NCols)
+    f.set_size_inches(NCols * 4, NRows * 4 - 2)
     iT = 11
     tSF = tSF__T[iT]
     txt_suptitle = r'$\mathrm{Correlac\c\~ao\ da\ taxa\ de\ formac\c\~ao\ estelar}$'
     xlabel = r'$\log\ t_\star$ [yr]'
     ylabel = r'$R_s$'
-    grid_shape = (4,2)
-    ax = plt.subplot2grid(grid_shape, loc = (0,0), rowspan = 2, colspan = 2)
+    ax = plt.subplot2grid(grid_shape, loc = (0,0), rowspan = 1, colspan = 2)
     ax.set_title(txt_suptitle)
-    ax.plot(np.log10(tSF__T), Rs_SFR, 'b--', label = 'SFR')
-    ax.plot(np.log10(tSF__T), Rs_SFRSD, 'r--', label = r'$\Sigma_{SFR}$')
-    ax.plot(np.log10(tSF__T), Rs_aSFRSD, 'k-', label = r'$\Sigma_{SFR}(R)$')
-    ax.plot(np.log10(tSF__T), Rs_aSFRSD_norm, 'g--', label = r'$\frac{\Sigma_{SFR}}{\Sigma_{SFR}(@1HLR)}$')
+    x = np.log10(tSF__T)
+    ax.plot(x, Rs_SFR, 'b--', label = 'SFR')
+    ax.plot(x, Rs_SFRSD, 'r--', label = r'$\Sigma_{SFR}$')
+    ax.plot(x, Rs_aSFRSD, 'k-', label = r'$\Sigma_{SFR}(R)$')
+    ax.plot(x, Rs_aSFRSD_norm, 'g--', label = r'$\frac{\Sigma_{SFR}}{\Sigma_{SFR}(@1HLR)}$')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.set_xlim(6,8)
     ax.set_ylim(0,1)
-    ax.legend(bbox_to_anchor = (0.99, .4), fontsize = 12, frameon = False)
+    ax.legend(bbox_to_anchor = (0.99, .4), fontsize = 15, frameon = False, ncol = 2)
     xlim_inf, xlim_sup = ax.get_xlim()
     ylim_inf, ylim_sup = ax.get_ylim()
-    x_pos = np.log10(tSF__T[iT])
+    x_pos = x[iT]
     y_pos = Rs_aSFRSD[iT]
     arrow_size_x = 0.2
     arrow_size_y = 0.15
-    textbox = dict(boxstyle = 'round', facecolor = 'wheat', alpha = 0.) 
-    ax.annotate('%.2f Myr\nRs:%.3f' % ((tSF / 1e6), y_pos),
-        xy = (x_pos, y_pos), xycoords = 'data',
-        xytext = (x_pos + arrow_size_x, y_pos + arrow_size_y),
-        textcoords = 'data',
-        verticalalignment = 'top', horizontalalignment = 'left',
-        bbox = textbox,
-        arrowprops = dict(
-                        arrowstyle = '->',
-                        color = 'k',
-                        connectionstyle = 'angle3,angleA=0,angleB=90',
-                    ),
-    )
+    ax.plot(x_pos, y_pos, color='k', marker='*', markersize = 10, markeredgecolor='k')
     
     bins = (30, 30)
     cmap = 'Blues'
-    ax = plt.subplot2grid(grid_shape, loc = (2,0))
+    ax = plt.subplot2grid(grid_shape, loc = (1,0))
     xlabel = r'$\log\ SFR_\star(t_\star)\ [M_\odot yr^{-1}]$' 
     ylabel = r'$\log\ SFR_{neb}\ [M_\odot yr^{-1}]$'
     x = np.ma.log10(SFR__Tg[iT])
@@ -836,7 +835,7 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
         
-    ax = plt.subplot2grid(grid_shape, loc = (2,1))
+    ax = plt.subplot2grid(grid_shape, loc = (1,1))
     xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star)\ [M_\odot yr^{-1} kpc^{-2}]$' 
     ylabel = r'$\log\ \Sigma_{SFR}^{neb}\ [M_\odot yr^{-1} kpc^{-2}]$' 
     x = np.ma.log10(SFRSD__Tg[iT] * 1e6)
@@ -868,7 +867,7 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
         
-    ax = plt.subplot2grid(grid_shape, loc = (3,0))
+    ax = plt.subplot2grid(grid_shape, loc = (2,0))
     xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
     ylabel = r'$\log\ \Sigma_{SFR}^{neb}(R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
     x = np.ma.log10(aSFRSD__Trg[iT] * 1e6)
@@ -899,7 +898,7 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
 
-    ax = plt.subplot2grid(grid_shape, loc = (3,1))
+    ax = plt.subplot2grid(grid_shape, loc = (2,1))
     xlabel = r'$\log\ \frac{\Sigma_{SFR}^\star(R)}{\Sigma_{SFR}^\star(@1HLR)}$'
     ylabel = r'$\log\ \frac{\Sigma_{SFR}^{neb}(R)}{\Sigma_{SFR}^{neb}(@1HLR)}$' 
     aSFRSD_norm__rg = H.aSFRSD__Trg[iT] / H.aSFRSD_oneHLR__Tg[iT]
@@ -930,6 +929,6 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
 
-    f.subplots_adjust(hspace = 0.4, wspace = 0.4)
+    f.subplots_adjust(hspace = 0.3, wspace = 0.35, right = 0.95, bottom = 0.08, top = 0.95)
     f.savefig('Rs_allSFR.pdf')
     plt.close(f)

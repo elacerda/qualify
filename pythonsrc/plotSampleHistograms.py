@@ -16,13 +16,24 @@ import argparse as ap
 import numpy as np
 import sys
 
+#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+# mpl.rcParams['font.size'] = 20
+# mpl.rcParams['axes.labelsize'] = 20
+# mpl.rcParams['axes.titlesize'] = 20
+# mpl.rcParams['xtick.labelsize'] = 20
+# mpl.rcParams['ytick.labelsize'] = 20 
+# mpl.rcParams['font.family'] = 'serif'
+# mpl.rcParams['font.serif'] = 'Times New Roman'
+#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+
 mpl.rcParams['font.size'] = 20
-mpl.rcParams['axes.labelsize'] = 20
+mpl.rcParams['axes.labelsize'] = 16
 mpl.rcParams['axes.titlesize'] = 20
-mpl.rcParams['xtick.labelsize'] = 20
-mpl.rcParams['ytick.labelsize'] = 20 
+mpl.rcParams['xtick.labelsize'] = 16
+mpl.rcParams['ytick.labelsize'] = 16 
 mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['font.serif'] = 'Times New Roman'
+
 
 default_sc_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', cmap = 'Spectral')
 default_rs_kwargs = dict(smooth = True, sigma = 1.2, frac = 0.02)
@@ -261,7 +272,7 @@ if __name__ == '__main__':
     suptitle_R = r'Nzones:%d(%d gals) $t_{SF}$:%.2fMyr ' % ((~mask__g).sum(), NgalsOkZones, (H.tSF__T[iT] / 1e6))
     NRows = 2
     NCols = 2
-    page_size_inches = [10, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -459,7 +470,7 @@ if __name__ == '__main__':
     ols_kwargs = default_ols_kwargs.copy()
     NRows = 2
     NCols = 2
-    page_size_inches = [10, 8]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -476,7 +487,7 @@ if __name__ == '__main__':
         ax.set_xlabel(p['label'])
         print k, len(x), len(xall)
         c = 'r'
-        pos_x = 0.86
+        pos_x = 0.8
         va = 'top'
         ha = 'right'
         if k == 'at_flux' or k == 'ba':
@@ -484,19 +495,20 @@ if __name__ == '__main__':
             ha = 'left'
         ax.hist(xall, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed=True, )#, range = props_limits[i])
         txt = r'%.2f' % np.mean(xall)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 10, va = va, ha = ha, c = c)
+        fs = 15
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.median(xall)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.std(xall)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.max(xall)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.min(xall)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         f.subplots_adjust(hspace = 0.4, wspace = 0.4)
 
@@ -504,22 +516,22 @@ if __name__ == '__main__':
         pos_x = 0.98
         va = 'top'
         if k == 'at_flux' or k == 'ba':
-            pos_x = 0.14
+            pos_x = 0.2
         ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed=True, )#, range = props_limits[i])
         txt = r'%.2f' % np.mean(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.median(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.std(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.max(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.min(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 10, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         f.subplots_adjust(hspace = 0.4, wspace = 0.4)
 
@@ -544,6 +556,3 @@ if __name__ == '__main__':
     fname = 'sample_histo_%s' % fnamesuffix        
     f.savefig(fname)
     plt.close(f)
-         
-    
-    

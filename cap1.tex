@@ -88,7 +88,7 @@ em dia essa é comumente chamada de relação de Kennicut-Schmidt (KS) ou lei de
 equação parametrizada por \citeauthor{Kennicutt.1998a} foi:
 \begin{equation}
 	\Sigma_{\mathrm{SFR}}\ =\ (2.5\pm0.7)\times 10^{-4} \left(\frac{\Sigma_{\mathrm{gas}}}{
-M_\odot\ \mathrm{pc}^{-2}}\right)^{1.4 \pm 0.15}\ M_\odot\ \mathrm{ano}^{-1}\ \mathrm{kpc}^{-2}
+M_\odot\ \mathrm{pc}^{-2}}\right)^{1.4 \pm 0.15}\ M_\odot\ \mathrm{ano}^{-1}\ \mathrm{kpc}^{-2}.
 	\label{eq:SFRKennicutt}
 \end{equation}
 \noindent Utilizando a síntese de populações estelares já aplicada às galáxias do CALIFA estudamos
@@ -130,20 +130,20 @@ indireta de estimar a densidade superficial do gás oculto através da introduç
 conversão:
 \begin{equation}
 	\label{eq:dust2gas}
-	\SigmaGas\ =\ \deltaDGR \Sigma_{\mathrm{dust}}, 
+	\SigmaGas\ =\ \frac{\SigmaGas}{\SigmaDust} \times \SigmaDust\ = \kappa \times \SigmaDust. 
 \end{equation}
-\noinden onde $\deltaDGR$ é a razão entre poeira e gás ({\em dust-to-gas ratio} - DGR) e
-as densidades superficiais dadas em $M_\odot pc^{-2}$. Diversos artigos discutem a calibração e
-os {\em caveats} deste tipo de conversão e também problemas de degenerescência na conversão CO-$H_2$
-\citep{Guiderdoni.Rocca.1987, Leroy.etal.2011a, Leroy.etal.2013a, RemyRuyer.etal.2014a}, mas quase
-todos eles utilizam medidas de infravermelho (IR) para estimar $\Sigma_{\mathrm{dust}}$, onde os
-grãos de poeira geralmente re-emitem a luz absorvida em outras frequências. Já
-\citet{Brinchmann.etal.2013a} desenvolve a conversão de poeira para gás utilizando medidas da poeira
-em absorção, e não em emissão, como os estudos em IR, para as galáxias formadoras de
-estrelas\footnote{Galáxias {\em star-forming} (SF) - com ativa formação estelar.} do \SDSS DR7.
-Na busca por traçadores de gás, escolhemos a poeira em absorção (na faixa do espectro óptico) para
-tal objetivo pois é uma quantidade à qual temos acesso, tanto via síntese espectral como por meio
-de linhas de emissão.
+\noindent O prefixo d designa poeira ({\em dust}, em inglês) e as densidades superficiais são dadas
+em $M_\odot pc^{-2}$. Diversos artigos discutem a calibração e os {\em caveats} deste tipo de
+conversão e também problemas de degenerescência na conversão CO-$H_2$ \citep{Guiderdoni.Rocca.1987,
+Leroy.etal.2011a, Leroy.etal.2013a, RemyRuyer.etal.2014a}, mas quase todos eles utilizam medidas de
+infravermelho (IR) para estimar $\Sigma_{\mathrm{dust}}$, onde os grãos de poeira geralmente
+re-emitem a luz absorvida em outras frequências. Já \citet[][BR13 daqui em
+diante]{Brinchmann.etal.2013a} desenvolve a conversão de poeira para gás utilizando medidas da
+poeira em absorção, e não em emissão, como os estudos em IR, para as galáxias formadoras de
+estrelas\footnote{Galáxias {\em star-forming} (SF) - com ativa formação estelar.} do \SDSS DR7. Na
+busca por traçadores de gás, escolhemos a poeira em absorção (na faixa do espectro óptico) para tal
+objetivo pois é uma quantidade à qual temos acesso, tanto via síntese espectral como por meio de
+linhas de emissão.
 
 \section{Este trabalho}
 \label{sec:intro:estetrabalho}

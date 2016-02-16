@@ -12,8 +12,8 @@ from CALIFAUtils.scripts import SFR_parametrize
 from CALIFAUtils.scripts import SFR_parametrize_trapz
 from CALIFAUtils.plots import add_subplot_axes
 
-#useTrapz = True
-useTrapz = False
+useTrapz = True
+#useTrapz = False
 plot = True
 #plot = False
 outputImgSuffix = 'pdf'
@@ -110,29 +110,29 @@ if __name__ == '__main__':
             subax.xaxis.set_minor_locator(MultipleLocator(0.25))
             subax.yaxis.set_major_locator(MultipleLocator(0.1))
             subax.yaxis.set_minor_locator(MultipleLocator(0.05))
-            subax.xaxis.grid(which='minor')
-            subax.yaxis.grid(which='minor')
+            #subax.xaxis.grid(which='minor')
+            #subax.yaxis.grid(which='minor')
             
             ax1.xaxis.set_major_locator(MultipleLocator(1))
             ax1.xaxis.set_minor_locator(MultipleLocator(0.25))
             ax1.yaxis.set_major_locator(MultipleLocator(1))
             ax1.yaxis.set_minor_locator(MultipleLocator(0.25))
-            ax1.xaxis.grid(which='major')
-            ax1.yaxis.grid(which='major')
+            #ax1.xaxis.grid(which='major')
+            #ax1.yaxis.grid(which='major')
             
             ax2.xaxis.set_major_locator(MultipleLocator(1))
             ax2.xaxis.set_minor_locator(MultipleLocator(0.25))
             ax2.yaxis.set_major_locator(MultipleLocator(0.25))
             ax2.yaxis.set_minor_locator(MultipleLocator(0.05))
-            ax2.xaxis.grid(which='major')
-            ax2.yaxis.grid(which='major')
+            #ax2.xaxis.grid(which='major')
+            #ax2.yaxis.grid(which='major')
             
             ax3.xaxis.set_major_locator(MultipleLocator(1))
             ax3.xaxis.set_minor_locator(MultipleLocator(0.5))
             ax3.yaxis.set_major_locator(MultipleLocator(2))
             ax3.yaxis.set_minor_locator(MultipleLocator(1))
-            ax3.xaxis.grid(which='minor')
-            ax3.yaxis.grid(which='minor')
+            #ax3.xaxis.grid(which='minor')
+            #ax3.yaxis.grid(which='minor')
     
             ax1.set_xlabel(r'$\log\ t\ [anos]$')
             ax1.set_ylabel(r'$\mathcal{N}_H(t)\ [10^{60}\ \gamma\ M_\odot{}^{-1}]$')

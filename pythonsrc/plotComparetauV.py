@@ -11,16 +11,18 @@ from os.path import basename
 from CALIFAUtils.lines import Lines
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import MaxNLocator
+from CALIFAUtils.plots import plot_text_ax
+from CALIFAUtils.plots import density_contour
+from CALIFAUtils.scripts import mask_zones_iT
+from CALIFAUtils.scripts import mask_radius_iT
+from CALIFAUtils.plots import plotOLSbisectorAxis
 from matplotlib.backends.backend_pdf import PdfPages
-from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
-from CALIFAUtils.plots import density_contour, plotOLSbisectorAxis, \
-                              plot_text_ax
 
 mpl.rcParams['font.size'] = 20
-mpl.rcParams['axes.labelsize'] = 20
+mpl.rcParams['axes.labelsize'] = 16
 mpl.rcParams['axes.titlesize'] = 20
-mpl.rcParams['xtick.labelsize'] = 20
-mpl.rcParams['ytick.labelsize'] = 20 
+mpl.rcParams['xtick.labelsize'] = 16
+mpl.rcParams['ytick.labelsize'] = 16 
 mpl.rcParams['font.family'] = 'serif'
 mpl.rcParams['font.serif'] = 'Times New Roman'
 
@@ -207,7 +209,7 @@ if __name__ == '__main__':
     default_figure_kwargs = dict(figsize = (10, 8), dpi = 100)
     default_scatter_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', alpha = 0.45, label = '')
     default_ols_plot_kwargs = dict(c = 'r', ls = '--', lw = 2, label = 'OLS')
-    default_ols_kwargs = dict(c = 'k', pos_x = 0.98, pos_y = 0.01, fs = 6, rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
+    default_ols_kwargs = dict(c = 'k', pos_x = 0.98, pos_y = 0.01, fs = 15, rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
     default_zbins_kwargs = dict(
         ols = True,
         zmask = None,
@@ -230,6 +232,8 @@ if __name__ == '__main__':
     ############################################################
     ############################################################
     
+    fs_xmcount = 0
+    
     Dtau = lambda tauBC,a,x: (1-a*x)*tauBC
     Rtau = lambda tauISM,tauBC,a,mu,x: (1 + mu * a * tauISM/tauBC)/(1 + mu * a * x * tauISM/tauBC)
      
@@ -240,7 +244,7 @@ if __name__ == '__main__':
     NCols = 1
     NRows = 1
     f = plt.figure()
-    page_size_inches = [5,5]
+    page_size_inches = [4, 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -261,7 +265,7 @@ if __name__ == '__main__':
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau_xY__g, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -286,10 +290,11 @@ if __name__ == '__main__':
     plt.close(f)
      
     ############################################################    
+
     NCols = 1
     NRows = 1
     f = plt.figure()
-    page_size_inches = [5,5]
+    page_size_inches = [4, 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -301,7 +306,7 @@ if __name__ == '__main__':
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau_xY__rg, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -332,7 +337,7 @@ if __name__ == '__main__':
     NCols = 3
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -349,37 +354,39 @@ if __name__ == '__main__':
         c = 'b'
         va = 'top'
         ha = 'right'
-        fs = 14
+        fs = 15
         pos_x = 0.98
         bins = 30
         ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
         txt = r'%.2f' % np.mean(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.median(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.std(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.max(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.min(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         plt.setp(ax.get_yticklabels(), visible = False)
         ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
         ax.set_xlabel(p['label'])
         col += 1
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2, bottom = 0.2, right = 0.95, left = 0.05)
     f.savefig('tauISM_tauBC_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-     
+
+    ############################################################
+      
     NCols = 3
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -396,61 +403,53 @@ if __name__ == '__main__':
         c = 'b'
         va = 'top'
         ha = 'right'
-        fs = 14
+        fs = 15
         pos_x = 0.98
         bins = 30
         ax.hist(x, bins = bins, range = p['range'], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled', normed = True)
         txt = r'%.2f' % np.mean(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.median(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.std(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.max(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         txt = r'%.2f' % np.min(x)
-        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+        kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
         plot_text_ax(ax, txt, **kw_text)
         plt.setp(ax.get_yticklabels(), visible = False)
         ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
         ax.set_xlabel(p['label'])
         col += 1
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2, bottom = 0.2, right = 0.95, left = 0.05)
     f.savefig('tauISM_tauBC_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)    
  
-    NCols = 4
-    NRows = 1
+    ############################################################
+    ############################################################
+    ############################################################
+ 
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [-1, 2]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = D_tau__g, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -465,6 +464,17 @@ if __name__ == '__main__':
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # ols_kwargs = default_ols_kwargs.copy()
+    # ols_kwargs.update(dict(
+    #     va = 'top',
+    #     ha = 'right', 
+    #     pos_x = 0.98, 
+    #     fs = 15, 
+    #     rms = True, 
+    #     text = True, 
+    #     pos_y = 0.98, 
+    #     kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+    # )
     # rs.poly1d()
     # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
@@ -486,6 +496,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **default_sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -498,30 +509,18 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [-1, 2]
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL__g, y = D_tau__g, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -546,7 +545,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL__g, D_tau__g, z = H.x_Y__Tg[iT], mask = mask__g)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -557,6 +556,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **default_sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -569,47 +569,34 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    #f.subplots_adjust(wspace = 0, hspace = 0.2)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('DTau_xY_ba_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
   
     ###########################################################
-    ###########################################################
-    ###########################################################
   
-    NCols = 4
-    NRows = 1
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [-1, 2]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = D_tau__rg, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -645,6 +632,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -657,30 +645,17 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [-1, 2]
-  
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL__rg, y = D_tau__rg, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -705,7 +680,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL__rg, D_tau__rg, z = H.x_Y__Trg[iT], mask = mask__rg)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -716,6 +691,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -728,47 +704,33 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('DTau_xY_ba_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
   
     ###########################################################
-    ###########################################################
-    ###########################################################
   
-    NCols = 4
-    NRows = 1
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [-1, 2]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.integrated_x_Y__Tg[iT], y = integrated_D_tau, mask = mask_GAL__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -804,6 +766,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -816,30 +779,17 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [-1, 2]
-  
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL, y = integrated_D_tau, mask = mask_GAL__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -864,7 +814,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL, integrated_D_tau, z = H.integrated_x_Y__Tg[iT], mask = mask_GAL__g)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -875,6 +825,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -887,44 +838,35 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('DTau_xY_ba_int_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-  
-    ################## 
-    NCols = 4
-    NRows = 1
+
+    ############################################################
+    ############################################################
+    ############################################################
+    
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [0, 8]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Tg[iT], y = R_tau__g, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -960,6 +902,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -972,30 +915,17 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [0, 8]
-  
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL__g, y = R_tau__g, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1020,7 +950,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL__g, R_tau__g, z = H.x_Y__Tg[iT], mask = mask__g)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -1031,6 +961,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -1043,47 +974,33 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('RTau_xY_ba_z_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
   
     ###########################################################
-    ###########################################################
-    ###########################################################
   
-    NCols = 4
-    NRows = 1
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [0, 8]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.x_Y__Trg[iT], y = R_tau__rg, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1119,6 +1036,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -1131,30 +1049,17 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [0, 8]
-  
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL__rg, y = R_tau__rg, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1179,7 +1084,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL__rg, R_tau__rg, z = H.x_Y__Trg[iT], mask = mask__rg)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -1190,6 +1095,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -1202,47 +1108,33 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('RTau_xY_ba_R_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
   
     ###########################################################
-    ###########################################################
-    ###########################################################
   
-    NCols = 4
-    NRows = 1
+    NCols = 2
+    NRows = 2
     f = plt.figure()
-    page_size_inches = [20,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     bins = (30, 30)
     cmap = 'Blues'
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-      
     xran = [0,1]
     yran = [0, 8]
   
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(x = H.integrated_x_Y__Tg[iT], y = integrated_R_tau, mask = mask_GAL__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1278,6 +1170,7 @@ if __name__ == '__main__':
     zticks = [0, 0.2, 0.35, 0.5, 0.65, 1.0]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -1290,30 +1183,17 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ols_kwargs = default_ols_kwargs.copy()
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-  
     xran = [0,1]
     yran = [0, 8]
-  
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(x = mu_GAL, y = integrated_R_tau, mask = mask_GAL__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1338,7 +1218,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
-    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym, zm = C.ma_mask_xyz(mu_GAL, integrated_R_tau, z = H.integrated_x_Y__Tg[iT], mask = mask_GAL__g)
     mask = []
     mask.append(np.less_equal(zm, .12))
@@ -1349,6 +1229,7 @@ if __name__ == '__main__':
     zticks = [0,.12,.18,.22,.30,1]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    ax.set_xlabel(xlabel)
     #ax.scatter(xm, ym, c = '0.5', **sc_kwargs)
     zcmap = mpl.cm.ScalarMappable()
     zcmap.set_cmap(mpl.cm.spectral_r)
@@ -1361,14 +1242,18 @@ if __name__ == '__main__':
             rs = C.runstats(XM.compressed(), YM.compressed(), **default_rs_kwargs)
             c = zcmap.to_rgba(0.5 * (zticks[i] + zticks[j]))
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
-    ax.legend(loc = 'upper right', fontsize = 15, frameon = False)
+    ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2)
     f.savefig('RTau_xY_ba_int_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
+
+    ############################################################
+    ############################################################
+    ############################################################
  
     #with PdfPages('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix)) as pdf:
     NCols = 2
@@ -1403,7 +1288,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1444,7 +1329,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1485,7 +1370,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
     ax.set_xlim(xran)
@@ -1530,7 +1415,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
     ax.set_xlim(xran)
@@ -1555,11 +1440,15 @@ if __name__ == '__main__':
     #pdf.savefig(f)
     f.savefig('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
+
+    ############################################################
+    ############################################################
+    ############################################################
  
     NCols = 3
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -1586,7 +1475,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1616,24 +1505,24 @@ if __name__ == '__main__':
     pos_x = 0.98
     va = 'top'
     ha = 'right'
-    fs = 14
+    fs = 15
     x = D_tau__g.compressed()
     xlabel = r'$\mathcal{D}_\tau$'
     ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
     txt = r'%.2f' % np.mean(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.median(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.std(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.max(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.min(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
@@ -1648,19 +1537,19 @@ if __name__ == '__main__':
     xlabel = r'$\mathcal{R}_\tau$'
     ax.hist(x, bins = bins, range = [0,8], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
     txt = r'%.2f' % np.mean(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.median(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.std(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.max(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.min(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -1668,17 +1557,16 @@ if __name__ == '__main__':
     ax.set_xlim(0,8)       
     ax.set_xlabel(xlabel)            
  
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2, bottom = 0.2, right = 0.95, left = 0.05)
     f.savefig('HistoTauVz_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
      
-
-
+    ############################################################
 
     NCols = 3
     NRows = 1
     f = plt.figure()
-    page_size_inches = [15,5]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -1705,7 +1593,7 @@ if __name__ == '__main__':
     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
@@ -1735,24 +1623,24 @@ if __name__ == '__main__':
     pos_x = 0.98
     va = 'top'
     ha = 'right'
-    fs = 14
+    fs = 15
     x = D_tau__rg.compressed()
     xlabel = r'$\mathcal{D}_\tau\ \equiv\ \left(\tau_V^{neb} - \tau_V^\star\right)$'
     ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
     txt = r'%.2f' % np.mean(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.median(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.std(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.max(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.min(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
@@ -1767,19 +1655,19 @@ if __name__ == '__main__':
     xlabel = r'$\mathcal{R}_\tau\ \equiv\ \left(\frac{\tau_V^{neb}}{\tau_V^\star}\right)$'
     ax.hist(x, bins = bins, range = [0,8], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
     txt = r'%.2f' % np.mean(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.median(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.std(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.max(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     txt = r'%.2f' % np.min(x)
-    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+    kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
     plot_text_ax(ax, txt, **kw_text)
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -1787,17 +1675,15 @@ if __name__ == '__main__':
     ax.set_xlim(0,8)       
     ax.set_xlabel(xlabel)            
  
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(wspace = 0, hspace = 0.2, bottom = 0.2, right = 0.95, left = 0.05)
     f.savefig('HistoTauVR_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)    
-
-
 
 #     
 #     NCols = 3
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [NCols * 4, NRows * 4]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -1824,7 +1710,7 @@ if __name__ == '__main__':
 #     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
 #     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
 #     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
 #     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
 #     ax.set_xlim(xran)
@@ -1854,24 +1740,24 @@ if __name__ == '__main__':
 #     pos_x = 0.98
 #     va = 'top'
 #     ha = 'right'
-#     fs = 14
+#     fs = 15
 #     x = integrated_D_tau.compressed()
 #     xlabel = r'$\mathcal{D}_\tau$'
 #     ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
 #     txt = r'%.2f' % np.mean(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.median(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.std(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.max(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.min(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
@@ -1886,19 +1772,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\mathcal{R}_\tau$'
 #     ax.hist(x, bins = bins, range = [0,8], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
 #     txt = r'%.2f' % np.mean(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.median(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.std(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.max(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.min(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -1906,14 +1792,14 @@ if __name__ == '__main__':
 #     ax.set_xlim(0,8)       
 #     ax.set_xlabel(xlabel)            
 # 
-#     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+#     f.subplots_adjust(wspace = 0, hspace = 0.2)
 #     f.savefig('HistoTauVint_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)    
 # 
 #     NCols = 3
 #     NRows = 1
 #     f = plt.figure()
-#     page_size_inches = [15,5]
+#     page_size_inches = [NCols * 4, NRows * 4]
 #     f.set_size_inches(page_size_inches)
 #     f.set_dpi(100)
 #     grid_shape = (NRows, NCols)
@@ -1943,7 +1829,7 @@ if __name__ == '__main__':
 #     # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
 #     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 #     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = 8, va = 'top', ha = 'left', c = 'k')
+#     kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
 #     plot_text_ax(ax, '%s' % xm.count(), **kw_text)
 #     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
 #     ax.set_xlim(xran)
@@ -1973,24 +1859,24 @@ if __name__ == '__main__':
 #     pos_x = 0.98
 #     va = 'top'
 #     ha = 'right'
-#     fs = 14
+#     fs = 15
 #     x = (ym - xm).compressed()
 #     xlabel = r'$\mathcal{D}_\tau$'
 #     ax.hist(x, bins = bins, color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
 #     txt = r'%.2f' % np.mean(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.median(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.std(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.max(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.min(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
@@ -2005,19 +1891,19 @@ if __name__ == '__main__':
 #     xlabel = r'$\mathcal{R}_\tau$'
 #     ax.hist(x, bins = bins, range = [0,8], color = c, align = 'mid', alpha = 0.6, histtype='stepfilled')
 #     txt = r'%.2f' % np.mean(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.96, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.median(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.88, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.std(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.80, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.max(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.72, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'%.2f' % np.min(x)
-#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = 14, va = va, ha = ha, c = c)
+#     kw_text = dict(pos_x = pos_x, pos_y = 0.64, fs = fs, va = va, ha = ha, c = c)
 #     plot_text_ax(ax, txt, **kw_text)
 #     plt.setp(ax.get_yticklabels(), visible = False)
 #     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -2025,7 +1911,7 @@ if __name__ == '__main__':
 #     ax.set_xlim(0,8)       
 #     ax.set_xlabel(xlabel)            
 # 
-#     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+#     f.subplots_adjust(wspace = 0, hspace = 0.2)
 #     f.savefig('HistoTauVres_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
 #     plt.close(f)    
 #    
@@ -2042,7 +1928,7 @@ if __name__ == '__main__':
 #         va = 'top',
 #         ha = 'right', 
 #         pos_x = 0.98, 
-#         fs = 14, 
+#         fs = 15, 
 #         rms = True, 
 #         text = True, 
 #         pos_y = 0.98, 

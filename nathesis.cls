@@ -50,9 +50,9 @@
 \usepackage{xfrac}
 
 % linhas orfans e viuvas
-\clubpenalty=10000
-\widowpenalty=10000
-\displaywidowpenalty=10000
+\clubpenalty=1000
+\widowpenalty=1000
+\displaywidowpenalty=1000
 
 \usepackage{enumitem}
 \setlist{nosep}
@@ -88,8 +88,8 @@ numbers=left,
 numberstyle=\footnotesize,
 numbersep=1em,
 xleftmargin=1em,
-framextopmargin=2em,
-framexbottommargin=2em,
+framextopmargin=1em,
+framexbottommargin=1em,
 showspaces=false,
 showtabs=false,
 showstringspaces=false,

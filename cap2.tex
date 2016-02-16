@@ -121,8 +121,8 @@ incerteza em $\tauVN$ por:
 Todos os demais elementos, além do hidrogênio e do hélio, são considerados metais em astrofísica.
 Os indicadores de metalicidade nebular mais utilizados são os que utilizam as medidas da
 linha de \OIII e \NII. As calibrações destes indicadores utilizadas pelo nosso projeto foram feitas por
-\citet{Marino.etal.2013a} de forma empírica utilizando medidas de temperatura eletrônica de 603
-regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}.
+\citet[][M13 daqui em diante]{Marino.etal.2013a} de forma empírica utilizando medidas de temperatura
+eletrônica de 603 regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}.
 O indicador que estamos utilizando para esse projeto é aquele que calibra a fração relativa de
 oxigênio por hidrogênio utilizando a razão entre as linhas de \oIII e \nII. O valor encontrado pelos
 autores para a calibração do $\log$ (O3N2) foi:
@@ -133,11 +133,11 @@ autores para a calibração do $\log$ (O3N2) foi:
 \begin{equation}
 	\textrm{O3N2} = \log \left(\frac{\OIII}{\Hbeta} \times \frac{\Halpha}{\NII}\right). 
 \end{equation}
-A Fig. \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por \citet{Marino.etal.2013a}.
+A Fig. \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por M13.
 
 \begin{figure}
 	\centering
-	\includegraphics[scale=0.8, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
+	\includegraphics[scale=0.7, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
 	\caption[Calibração da abundância de oxigênio no gás]{Calibração da abundância de oxigênio 
 	nebular	para 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}. Figura retirada de 
 	\citet{Marino.etal.2013a}}
@@ -191,8 +191,8 @@ sc = ax.scatter(N2Ha__z, O3Hb__z, c = K.zoneDistance_HLR,
 ax.set_xlabel(r'$\log\ [NII]/H\alpha$')
 ax.set_ylabel(r'$\log\ [OIII]/H\beta$')
 cb = plt.colorbar(sc)
-cb.set_label('Radius [HLR]')
-plt.axis([-1, 0.5, -1.5, 1])
+cb.set_label('R [HLR]')
+plt.axis([-0.6, 0.3, -1.5, 1])
 f.savefig('%s-BPT.pdf' % K.califaID)
 	\end{python}
 	\caption[Exemplo de programa utilizando o EmLinesDataCube.]
@@ -204,7 +204,7 @@ f.savefig('%s-BPT.pdf' % K.califaID)
 \begin{figure}
 	\centering
 	%\includegraphics[scale=0.8, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
-	\includegraphics[scale=0.85]{figuras/K0277-BPT.pdf}
+	\includegraphics[scale=0.6]{figuras/K0277-BPT.pdf}
 	\caption[Diagrama BPT produzido pelo programa no exemplo da Fig. \ref{fig:BPTprog}.]
 	{Diagrama BPT para as regiões da galáxia NGC29116 (objeto CALIFA 277) produzida pelo exemplo
 	\ref{fig:BPTprog}. Nela utiliza-se os fluxos de \Halpha, \Hbeta, \OIII e \NII.}
