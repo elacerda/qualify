@@ -51,8 +51,9 @@ classificados em cores por tipo morfológico.}
 O principal objetivo de nosso trabalho é pode estimar fração de gás espacialmente resolvidas nas
 galáxias do CALIFA. Podemos definir fração de gás como:
 \begin{equation}
-	f_{\mathrm{gas}} = \frac{M_{\mathrm{gas}}}{M_\star + M_{\mathrm{gas}}} \equiv \frac{1}{1 +
-	\frac{M_\star}{M_{\mathrm{gas}}}},
+	f_{\mathrm{gas}}\ =\ \frac{M_{\mathrm{gas}}}{M_\star + M_{\mathrm{gas}}}\ =\ \frac{1}{1 +
+	\left(\frac{M_\star}{M_{\mathrm{gas}}}\right)}\ \equiv\ \frac{1}{1 +
+	\left(\frac{\mu_\star}{\SigmaGas}\right)}
 	\label{eq:fgas}
 \end{equation}
 \noindent onde $M_{\mathrm{gas}}$ é a massa total na forma de gás e $M_\star$ é a massa total em
@@ -187,8 +188,7 @@ Finalmente, nossa equação final para $\delta_{\mathrm{DGR}}$ é:
 \end{equation}
 \noindent onde $x = \log\ ((O/H)/(O/H)_\odot)$ de M13. Agora, substituindo a Eq. \ref{eq:myDGR} em
 \ref{eq:SigmaGasBR} e utilizando este resultado na Eq. \ref{eq:fgas} podemos estimar frações de
-gás para galáxias do \CAL.
-
+gás para galáxias do \CAL. 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{figuras/logOH_ZnebMPA.pdf}
@@ -200,6 +200,54 @@ ordem e o {\em OLS bisector} da distribuição. Os contornos marcam $1\sigma$, $
 respectivamente.}
 	\label{fig:calibZ}
 \end{figure}
+
+\subsection{Analisando a conversão.}
+\label{sec:gasfrac:gas2dust:analise}
+
+Para comparar, vamos inverter a Eq. \ref{eq:SFRKennicutt} para calcular $\SigmaGas$ a partir da KS.
+Esse artifício serve para verificarmos o comportamento assintótico de nossas variáveis calculadas
+($\delta_{\mathrm{DGR}}$, $\SigmaGas$, $f_{\mathrm{gas}}$). Vamos usar as seguintes equações para
+comparar:
+\begin{eqnarray}
+	\SigmaGas^{\mathrm{KS}} &=& \left(\frac{\SigmaSFR}{1.6 \times 10^{-4}}\right)^{\frac{1}{1.4}} \\
+	\label{eq:SigmaGasKenn}
+	\delta_{\mathrm{DGR}}^{\mathrm{KS}} &=& 0.2\ \left(\frac{\tauVS}{\SigmaGas^{\mathrm{KS}}}\right) \\
+	\label{eq:DeltaDGRKenn}
+	f_{\mathrm{gas}}^{\mathrm{KS}} &=& \frac{1}{1 +
+	\left(\frac{\mu_\star}{\SigmaGas^{\mathrm{KS}}}\right)}.
+	\label{eq:fGasKenn}
+\end{eqnarray}
+\noindent Juntamente produzimos a mesma versão destas variáveis, mas substituindo para os valores
+nebulares quando possível ($\SigmaSFRN$ e $\tauVN$). 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/gas_R.pdf}
+	\caption[Perfis radiais de $\delta_{\mathrm{DGR}}$, $\SigmaGas$ e $f_{\mathrm{gas}}$.]
+	{}
+	\label{fig:propsDGR}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/props_DGR.pdf}
+	\caption[Propriedades versos $\delta_{\mathrm{DGR}}$.]
+	{}
+	\label{fig:propsDGR}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
+	\caption[Propriedades versos $\SigmaGas$.]
+	{}
+	\label{fig:propsSigmaGas}
+\end{figure}
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
+	\caption[Propriedades versos $f_{\mathrm{gas}}$.]
+	{}
+	\label{fig:propsfGas}
+\end{figure}
+
 
 \section{Eficiência e tempo de depleção do gás.}
 \label{sec:gasfrac:SFE}

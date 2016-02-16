@@ -587,7 +587,7 @@ if __name__ == '__main__':
     ##########################
     ######### PAGE 1 #########
     ##########################
-    NRows = 3
+    NRows = 1
     NCols = 3
     f = plt.figure()
     #page_size_inches = A4Size_inches[::-1]
@@ -596,7 +596,6 @@ if __name__ == '__main__':
     grid_shape = (NRows, NCols)
      
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
-    ax.set_axis_on()
     rs_kwargs = default_rs_kwargs.copy()
     sc_kwargs = default_sc_kwargs.copy()
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
@@ -620,13 +619,15 @@ if __name__ == '__main__':
     ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
     ax.set_xlim(minR, H.RbinFin)
     #ax.set_ylim(0, .5)
-    ax.set_title('Radial bins')
+    ax.set_xlabel(r'R [HLR]')
     ax.set_ylabel(r'$\delta_{DGR}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    ax.grid()
-    plt.setp(ax.get_xticklabels(), visible = False)
+    #ax.grid()
+    #plt.setp(ax.get_xticklabels(), visible = False)
       
-    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    #ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     ax.set_axis_on()
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas__rg), mask = mask__rg) 
     rs_BR_SigmaGas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
@@ -649,22 +650,23 @@ if __name__ == '__main__':
         ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, c = 'r', **sc_kwargs)
         ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, c = 'black', **sc_kwargs)
-    ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b', label = r'BR from $\tau_V^\star$')
-    ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r', label = r'BR from $\tau_V^{neb}$')
-    ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g', label = r'SK from synt.')
-    ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black', label = r'SK from H$\alpha$')
+    ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b')
+    ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r')
+    ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g')
+    ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black')
     ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
     ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0.4, 2)
     #ax.legend(loc = 'upper right')
-    ax.legend(bbox_to_anchor = (2.2, 2), fontsize = 12, frameon = False, ncol = 2)#, loc = 'upper right')
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    ax.grid()
-    plt.setp(ax.get_xticklabels(), visible = False)
+    #ax.grid()
+    ax.set_xlabel(r'R [HLR]')
+    #plt.setp(ax.get_xticklabels(), visible = False)
     ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
      
-    ax = plt.subplot2grid(grid_shape, loc = (2, 0))
+    #ax = plt.subplot2grid(grid_shape, loc = (2, 0))
+    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
     ax.set_axis_on()
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas__rg, mask = mask__rg) 
     rs_BR_f_gas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
@@ -687,55 +689,59 @@ if __name__ == '__main__':
         ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, c = 'r', **sc_kwargs)
         ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, c = 'black', **sc_kwargs)
-    ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b')
-    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r')
-    ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g')
-    ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black')
+    ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b', label = r'BR13 $\tau_V^\star$')
+    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r', label = r'BR13 $\tau_V^{neb}$')
+    ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g', label = r'KS syn.')
+    ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black', label = r'KS neb.')
     ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
     ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
+    ax.legend(bbox_to_anchor = (0.99, 0.99), fontsize = 12, frameon = False, ncol = 2)
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0, .4)
     ax.set_xlabel(r'R [HLR]')
-    ax.set_ylabel(r'f${}_{gas}$')
+    ax.set_ylabel(r'$f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    ax.grid()
+    #ax.grid()
                  
-    ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 2), rowspan = NRows)
-    ax.set_axis_off()
-    txt = r'NGals:%d  tSF:%.2f Myr  $(\frac{m_d}{\sigma_d})$ = %.1f' % (N_gals, (H.tSF__T[iT] / 1e6), dustdim)
-    kw_text = dict(pos_x = 0, pos_y = 0.65, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$x_Y$(min):%.0f%%  $\tau_V^\star $(min):%.2f  $\tau_V^{neb}$(min):%.2f  $\epsilon\tau_V^{neb}$(max):%.2f' % (H.xOkMin * 100., H.tauVOkMin, H.tauVNebOkMin, H.tauVNebErrMax)
-    kw_text = dict(pos_x = 0, pos_y = 0.60, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-    plot_text_ax(ax, txt, **kw_text)
-
-    txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
-    kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = 'b')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
-    kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{gas}})$'
-    kw_text = dict(pos_x = 0, pos_y = 0.44, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-    plot_text_ax(ax, txt, **kw_text)
-
-    txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
-    kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = 'b')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
-    kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'r')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
-    kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
-    plot_text_ax(ax, txt, **kw_text)
-    txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
-    kw_text = dict(pos_x = 0, pos_y = 0.16, fs = 12, va = 'bottom', ha = 'left', c = 'g')
-    plot_text_ax(ax, txt, **kw_text)
-
-    txt = r'$f_{gas}\ =\ \frac{\Sigma_{gas}}{\mu_\star + \Sigma_{gas}}$'
-    kw_text = dict(pos_x = 0, pos_y = 0.08, fs = 15, va = 'bottom', ha = 'left', c = 'k')
-    plot_text_ax(ax, txt, **kw_text)
-    f.subplots_adjust(hspace = 0.2, wspace = 0.3)
+#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+#     ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 2), rowspan = NRows)
+#     ax.set_axis_off()
+#     txt = r'NGals:%d  tSF:%.2f Myr  $(\frac{m_d}{\sigma_d})$ = %.1f' % (N_gals, (H.tSF__T[iT] / 1e6), dustdim)
+#     kw_text = dict(pos_x = 0, pos_y = 0.65, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$x_Y$(min):%.0f%%  $\tau_V^\star $(min):%.2f  $\tau_V^{neb}$(min):%.2f  $\epsilon\tau_V^{neb}$(max):%.2f' % (H.xOkMin * 100., H.tauVOkMin, H.tauVNebOkMin, H.tauVNebErrMax)
+#     kw_text = dict(pos_x = 0, pos_y = 0.60, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+#     plot_text_ax(ax, txt, **kw_text)
+# 
+#     txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
+#     kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
+#     kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{gas}})$'
+#     kw_text = dict(pos_x = 0, pos_y = 0.44, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+#     plot_text_ax(ax, txt, **kw_text)
+# 
+#     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
+#     kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
+#     kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'r')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+#     kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
+#     plot_text_ax(ax, txt, **kw_text)
+#     txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+#     kw_text = dict(pos_x = 0, pos_y = 0.16, fs = 12, va = 'bottom', ha = 'left', c = 'g')
+#     plot_text_ax(ax, txt, **kw_text)
+# 
+#     txt = r'$f_{gas}\ =\ \frac{\Sigma_{gas}}{\mu_\star + \Sigma_{gas}}$'
+#     kw_text = dict(pos_x = 0, pos_y = 0.08, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+#     plot_text_ax(ax, txt, **kw_text)
+#EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.1, right = 0.95, top = 0.95, bottom = 0.2)
     f.savefig('gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
@@ -855,7 +861,7 @@ if __name__ == '__main__':
         ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
         ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
         ax.yaxis.set_major_locator(MaxNLocator(4))
-        ax.grid()
+        #ax.grid()
         ax.set_xlabel(xdict['label'])
         ax.set_ylim(0, 16e-3)
         ax.set_xlim(xdict['lim'])
@@ -926,7 +932,7 @@ if __name__ == '__main__':
         ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
         ax.xaxis.set_major_locator(MaxNLocator(4))
         ax.yaxis.set_major_locator(MaxNLocator(4))
-        ax.grid()
+        #ax.grid()
         ax.set_xlabel(xdict['label'])
         ax.set_ylim(0.4, 2)
         ax.set_xlim(xdict['lim'])
@@ -997,14 +1003,14 @@ if __name__ == '__main__':
         ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
         ax.xaxis.set_major_locator(MaxNLocator(4))
         ax.yaxis.set_major_locator(MaxNLocator(4))
-        ax.grid()
+        #ax.grid()
         ax.set_xlabel(xdict['label'])
         ax.set_ylim(0, 0.4)
         ax.set_xlim(xdict['lim'])
         if col != 0:
             plt.setp(ax.get_yticklabels(), visible = False)
         if col == 0:
-            ax.set_ylabel(r'f${}_{gas}$')
+            ax.set_ylabel(r'$f_{\mathrm{gas}}$')
         if col == (NCols - 1):
             row += 1
             col = 0
