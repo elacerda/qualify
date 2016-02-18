@@ -167,7 +167,8 @@ if __name__ == '__main__':
     ######################
     # SK Law 
     ######################
-    SK_zero = 1.6e-4
+    #SK_zero = 1.6e-4
+    SK_zero = 2.5e-4
     SK_slope = 1.4
     aux = 1e6 ** (1. / SK_slope)
     SK_SigmaGas__g = aux * (H.SFRSD__Tg[iT] / SK_zero) ** (1. / SK_slope)
@@ -397,7 +398,7 @@ if __name__ == '__main__':
     BR_integrated_f_gas_Ha_up = 1. / (1. + 1. / BR_integrated_GSR_Ha_up)
     BR_integrated_f_gas_Ha_down = 1. / (1. + 1. / BR_integrated_GSR_Ha_down)
     gas_dict['BRTauVStar'] = dict(
-        c = 'b',
+        c = '#FF0000',
         SigmaGas__g = BR_SigmaGas__g,
         SigmaGas__rg = BR_SigmaGas__rg,
         integrated_SigmaGas = BR_integrated_SigmaGas,
@@ -452,7 +453,7 @@ if __name__ == '__main__':
         ),
     )
     gas_dict['BRTauVNeb'] = dict(
-        c = 'r',
+        c = 'b',
         SigmaGas__g = BR_SigmaGas_Ha__g,
         SigmaGas__rg = BR_SigmaGas_Ha__rg,
         integrated_SigmaGas = BR_integrated_SigmaGas_Ha,
@@ -610,13 +611,13 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR_Ha__rg, mask = mask__rg) 
     rs_SK_DGR_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     if args.scatter is True:
-        ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = 'b', **sc_kwargs)
+        ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = '#FF0000', **sc_kwargs)
         ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, c = 'g', **sc_kwargs)
-    ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = 'b')
+    ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = '#FF0000')
     ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
     ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
-    ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
+    ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
     ax.set_xlim(minR, H.RbinFin)
     #ax.set_ylim(0, .5)
     ax.set_xlabel(r'R [HLR]')
@@ -646,16 +647,16 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
     rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     if args.scatter is True:
-        ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, c = 'b', **sc_kwargs)
-        ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, c = 'r', **sc_kwargs)
+        ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, c = '#FF0000', **sc_kwargs)
+        ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, c = 'b', **sc_kwargs)
         ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, c = 'black', **sc_kwargs)
-    ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b')
-    ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r')
+    ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = '#FF0000')
+    ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'b')
     ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g')
     ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black')
-    ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
-    ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
+    ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
+    ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0.4, 2)
     #ax.legend(loc = 'upper right')
@@ -685,16 +686,16 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_f_gas_Ha__rg, mask = mask__rg)
     rs_SK_f_gas_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     if args.scatter is True:
-        ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, c = 'b', **sc_kwargs)
-        ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, c = 'r', **sc_kwargs)
+        ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, c = '#FF0000', **sc_kwargs)
+        ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, c = 'b', **sc_kwargs)
         ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, c = 'black', **sc_kwargs)
-    ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b', label = r'BR13 $\tau_V^\star$')
-    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r', label = r'BR13 $\tau_V^{neb}$')
+    ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = '#FF0000', label = r'BR13 $\tau_V^\star$')
+    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'b', label = r'BR13 $\tau_V^{neb}$')
     ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g', label = r'KS syn.')
     ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black', label = r'KS neb.')
-    ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
-    ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)
+    ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
+    ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)
     ax.legend(bbox_to_anchor = (0.99, 0.99), fontsize = 12, frameon = False, ncol = 2)
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0, .4)
@@ -715,7 +716,7 @@ if __name__ == '__main__':
 #     plot_text_ax(ax, txt, **kw_text)
 # 
 #     txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
-#     kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+#     kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = '#FF0000')
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
@@ -725,10 +726,10 @@ if __name__ == '__main__':
 #     plot_text_ax(ax, txt, **kw_text)
 # 
 #     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
-#     kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = 'b')
+#     kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = '#FF0000')
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
-#     kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'r')
+#     kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'b')
 #     plot_text_ax(ax, txt, **kw_text)
 #     txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
 #     kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
@@ -853,13 +854,13 @@ if __name__ == '__main__':
         xm, ym_SK_DGR_Ha = C.ma_mask_xyz(x = x, y = SK_DGR_Ha__rg, mask = mask__rg)
         rs_SK_DGR_Ha = runstats(xm.compressed(), ym_SK_DGR_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, marker = 'o', c = '#FF0000', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-        ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = 'b')
+        ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = '#FF0000')
         ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
         ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
-        ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
+        ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)            
         ax.yaxis.set_major_locator(MaxNLocator(4))
         #ax.grid()
         ax.set_xlabel(xdict['label'])
@@ -920,16 +921,16 @@ if __name__ == '__main__':
         xm, ym_SK_SigmaGas_Ha = C.ma_mask_xyz(x = x, y = np.log10(SK_SigmaGas_Ha__rg), mask = mask__rg)
         rs_SK_SigmaGas_Ha = runstats(xm.compressed(), ym_SK_SigmaGas_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_SigmaGas.x, rs_BR_SigmaGas.y, marker = 'o', c = '#FF0000', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_SigmaGas_Ha.x, rs_BR_SigmaGas_Ha.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_SigmaGas.x, rs_SK_SigmaGas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_SigmaGas_Ha.x, rs_SK_SigmaGas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-        ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = 'b')
-        ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'r')
+        ax.plot(rs_BR_SigmaGas.xS, rs_BR_SigmaGas.yS, '.-', c = '#FF0000')
+        ax.plot(rs_BR_SigmaGas_Ha.xS, rs_BR_SigmaGas_Ha.yS, '.-', c = 'b')
         ax.plot(rs_SK_SigmaGas.xS, rs_SK_SigmaGas.yS, '.-', c = 'g')
         ax.plot(rs_SK_SigmaGas_Ha.xS, rs_SK_SigmaGas_Ha.yS, '.-', c = 'black')
-        ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
-        ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
+        ax.fill_between(rs_BR_SigmaGas_up.xS, rs_BR_SigmaGas_up.yS, rs_BR_SigmaGas_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)            
+        ax.fill_between(rs_BR_SigmaGas_Ha_up.xS, rs_BR_SigmaGas_Ha_up.yS, rs_BR_SigmaGas_Ha_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
         ax.xaxis.set_major_locator(MaxNLocator(4))
         ax.yaxis.set_major_locator(MaxNLocator(4))
         #ax.grid()
@@ -991,16 +992,16 @@ if __name__ == '__main__':
         xm, ym_SK_f_gas_Ha = C.ma_mask_xyz(x = x, y = SK_f_gas_Ha__rg, mask = mask__rg)
         rs_SK_f_gas_Ha = runstats(xm.compressed(), ym_SK_f_gas_Ha.compressed(), **rs_kwargs)
         if args.scatter is True:
-            ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-            ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, marker = 'o', c = 'r', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_f_gas.x, rs_BR_f_gas.y, marker = 'o', c = '#FF0000', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
+            ax.scatter(rs_BR_f_gas_Ha.x, rs_BR_f_gas_Ha.y, marker = 'o', c = 'b', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, marker = 'o', c = 'g', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
             ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, marker = 'o', c = 'black', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-        ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = 'b')
-        ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'r')
+        ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = '#FF0000')
+        ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'b')
         ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g')
         ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black')
-        ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
-        ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'r', alpha = 0.4)            
+        ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)            
+        ax.fill_between(rs_BR_f_gas_Ha_up.xS, rs_BR_f_gas_Ha_up.yS, rs_BR_f_gas_Ha_down.yS, edgecolor = 'k', facecolor = 'b', alpha = 0.4)            
         ax.xaxis.set_major_locator(MaxNLocator(4))
         ax.yaxis.set_major_locator(MaxNLocator(4))
         #ax.grid()

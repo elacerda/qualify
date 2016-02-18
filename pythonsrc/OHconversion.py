@@ -164,7 +164,7 @@ if __name__ == '__main__':
     xran = (-1, 0.1)
     yran = (-1.25, 1)
     bins = (50,50)
-    ax.hist2d(xm, ym, bins = bins, range = [xran, yran], cmap = 'Blues')
+    ax.hist2d(xm, ym, bins = bins, range = [xran, yran], cmap = 'gray_r')
     #ax.scatter(xm, ym,  marker = '.', s = 1, c = '0.5', edgecolor = 'none', alpha = 0.9, label='')
     rs = CALIFAUtils.runstats(xm, ym, **default_rs_kwargs)
     density_contour(rs.x, rs.y, bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
