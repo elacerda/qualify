@@ -586,19 +586,16 @@ if __name__ == '__main__':
           
 #    with PdfPages(output) as pdf:
     ##########################
-    ######### PAGE 1 #########
     ##########################
-    NRows = 1
-    NCols = 3
     f = plt.figure()
-    #page_size_inches = A4Size_inches[::-1]
-    page_size_inches = [NCols * 4, NRows * 4]
-    f.set_size_inches(page_size_inches)
-    grid_shape = (NRows, NCols)
-     
-    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    f.set_size_inches((4,4))
+    ax = f.gca()
     rs_kwargs = default_rs_kwargs.copy()
     sc_kwargs = default_sc_kwargs.copy()
+    rs_kwargs.update(dict(xbin = H.Rbin__r[H.Rbin__r > 0.7]))
+    
+    xran = [minR, H.RbinFin]
+    yran = [0, 0.02]
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
     rs_BR_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     m_aux = mask__rg | BR_DGR_up__rg.mask | BR_DGR_up__rg.mask
@@ -606,30 +603,70 @@ if __name__ == '__main__':
     rs_BR_DGR_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
     xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_down__rg, mask = m_aux)
     rs_BR_DGR_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
-    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR__rg, mask = mask__rg) 
-    rs_SK_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
-    xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR_Ha__rg, mask = mask__rg) 
-    rs_SK_DGR_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
-    if args.scatter is True:
-        ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = '#FF0000', **sc_kwargs)
-        ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, c = 'g', **sc_kwargs)
-        ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, c = 'g', **sc_kwargs)
+    bins = (20,20)
+    #ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = '#FF0000', **sc_kwargs)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = '#FF0000')
-    ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
-    ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
     ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
     ax.set_xlim(minR, H.RbinFin)
-    #ax.set_ylim(0, .5)
+    ax.set_ylim(yran)
+    ax.set_xticks([1, 1.5, 2, 2.5, 3])
     ax.set_xlabel(r'R [HLR]')
     ax.set_ylabel(r'$\delta_{DGR}$')
-    ax.xaxis.set_major_locator(MaxNLocator(4))
+    #ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    #ax.grid()
-    #plt.setp(ax.get_xticklabels(), visible = False)
+    f.subplots_adjust(left = 0.25, right = 0.95, top = 0.95, bottom = 0.15)
+    f.savefig('DGR_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ######### PAGE 1 #########
+    ##########################
+    NRows = 1
+    NCols = 2
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    rs_kwargs = default_rs_kwargs.copy()
+    sc_kwargs = default_sc_kwargs.copy()
+    rs_kwargs.update(dict(xbin = H.Rbin__r[H.Rbin__r > 0.7]))
+     
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
+    # rs_BR_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    # m_aux = mask__rg | BR_DGR_up__rg.mask | BR_DGR_up__rg.mask
+    # xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_up__rg, mask = m_aux)
+    # rs_BR_DGR_up = runstats(xm.compressed(), yup.compressed(), **rs_kwargs)
+    # xm, ydown = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR_down__rg, mask = m_aux)
+    # rs_BR_DGR_down = runstats(xm.compressed(), ydown.compressed(), **rs_kwargs)
+    # xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR__rg, mask = mask__rg) 
+    # rs_SK_DGR = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    # xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = SK_DGR_Ha__rg, mask = mask__rg) 
+    # rs_SK_DGR_Ha = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    # if args.scatter is True:
+    #     ax.scatter(rs_BR_DGR.x, rs_BR_DGR.y, c = '#FF0000', **sc_kwargs)
+    #     ax.scatter(rs_SK_DGR.x, rs_SK_DGR.y, c = 'g', **sc_kwargs)
+    #     ax.scatter(rs_SK_DGR_Ha.x, rs_SK_DGR_Ha.y, c = 'g', **sc_kwargs)
+    # ax.plot(rs_BR_DGR.xS, rs_BR_DGR.yS, '.-', c = '#FF0000')
+    # ax.plot(rs_SK_DGR.xS, rs_SK_DGR.yS, '.-', c = 'g')
+    # ax.plot(rs_SK_DGR_Ha.xS, rs_SK_DGR_Ha.yS, '.-', c = 'black')
+    # ax.fill_between(rs_BR_DGR_up.xS, rs_BR_DGR_up.yS, rs_BR_DGR_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
+    # ax.set_xlim(minR, H.RbinFin)
+    # #ax.set_ylim(0, .5)
+    # ax.set_xlabel(r'R [HLR]')
+    # ax.set_ylabel(r'$\delta_{DGR}$')
+    # ax.xaxis.set_major_locator(MaxNLocator(4))
+    # ax.yaxis.set_major_locator(MaxNLocator(4))
+    # #ax.grid()
+    # #plt.setp(ax.get_xticklabels(), visible = False)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
       
     #ax = plt.subplot2grid(grid_shape, loc = (1, 0))
-    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-    ax.set_axis_on()
+    #ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas__rg), mask = mask__rg) 
     rs_BR_SigmaGas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_up__rg), mask = mask__rg) 
@@ -660,15 +697,15 @@ if __name__ == '__main__':
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0.4, 2)
     #ax.legend(loc = 'upper right')
+    ax.set_xticks([1, 1.5, 2, 2.5, 3])
     ax.yaxis.set_major_locator(MaxNLocator(4))
     #ax.grid()
     ax.set_xlabel(r'R [HLR]')
     #plt.setp(ax.get_xticklabels(), visible = False)
-    ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
+    ax.set_ylabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
      
     #ax = plt.subplot2grid(grid_shape, loc = (2, 0))
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
-    ax.set_axis_on()
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas__rg, mask = mask__rg) 
     rs_BR_f_gas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas_up__rg, mask = mask__rg) 
@@ -691,7 +728,7 @@ if __name__ == '__main__':
         ax.scatter(rs_SK_f_gas.x, rs_SK_f_gas.y, c = 'g', **sc_kwargs)
         ax.scatter(rs_SK_f_gas_Ha.x, rs_SK_f_gas_Ha.y, c = 'black', **sc_kwargs)
     ax.plot(rs_BR_f_gas.xS, rs_BR_f_gas.yS, '.-', c = '#FF0000', label = r'BR13 $\tau_V^\star$')
-    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'b', label = r'BR13 $\tau_V^{neb}$')
+    ax.plot(rs_BR_f_gas_Ha.xS, rs_BR_f_gas_Ha.yS, '.-', c = 'b', label = r'BR13 $\tau_V^{\mathrm{neb}}$')
     ax.plot(rs_SK_f_gas.xS, rs_SK_f_gas.yS, '.-', c = 'g', label = r'KS syn.')
     ax.plot(rs_SK_f_gas_Ha.xS, rs_SK_f_gas_Ha.yS, '.-', c = 'black', label = r'KS neb.')
     ax.fill_between(rs_BR_f_gas_up.xS, rs_BR_f_gas_up.yS, rs_BR_f_gas_down.yS, edgecolor = 'k', facecolor = '#FF0000', alpha = 0.4)
@@ -699,12 +736,12 @@ if __name__ == '__main__':
     ax.legend(bbox_to_anchor = (0.99, 0.99), fontsize = 12, frameon = False, ncol = 2)
     ax.set_xlim(minR, H.RbinFin)
     ax.set_ylim(0, .4)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.set_xticks([1, 1.5, 2, 2.5, 3])
     ax.set_xlabel(r'R [HLR]')
     ax.set_ylabel(r'$f_{\mathrm{gas}}$')
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
     #ax.grid()
-                 
+    
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 #     ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 2), rowspan = NRows)
 #     ax.set_axis_off()
@@ -718,32 +755,149 @@ if __name__ == '__main__':
 #     txt = r'$\delta_{DGR} = (%.2f\times 10^{-3} - %.2f\times 10^{-2}) (\frac{O/H}{(O/H)_\odot})$' % (DGR_conv_lim_inf / 1e-3, DGR_conv_lim_sup / 1e-2)
 #     kw_text = dict(pos_x = 0, pos_y = 0.55, fs = 12, va = 'bottom', ha = 'left', c = '#FF0000')
 #     plot_text_ax(ax, txt, **kw_text)
-#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{gas}})$'
+#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^\star}{\Sigma_{\mathrm{gas}}})$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.50, fs = 12, va = 'bottom', ha = 'left', c = 'g')
 #     plot_text_ax(ax, txt, **kw_text)
-#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{gas}})$'
+#     txt = r'$\delta_{DGR} = (\frac{m_d}{\sigma_d}) \times (\frac{\tau_V^{neb}}{\Sigma_{\mathrm{gas}}})$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.44, fs = 12, va = 'bottom', ha = 'left', c = 'k')
 #     plot_text_ax(ax, txt, **kw_text)
 # 
-#     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
+#     txt = r'$\Sigma_{\mathrm{gas}} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^\star}{\delta_{DGR}})$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.34, fs = 12, va = 'bottom', ha = 'left', c = '#FF0000')
 #     plot_text_ax(ax, txt, **kw_text)
-#     txt = r'$\Sigma_{gas} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
+#     txt = r'$\Sigma_{\mathrm{gas}} = (\frac{m_d}{\sigma_d})\times (\frac{\tau_V^{neb}}{\delta_{DGR}})$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.28, fs = 12, va = 'bottom', ha = 'left', c = 'b')
 #     plot_text_ax(ax, txt, **kw_text)
-#     txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+#     txt = r'$\Sigma_{\mathrm{gas}} = (\frac{\Sigma_{SFR}^\star}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
 #     kw_text = dict(pos_x = 0, pos_y = 0.22, fs = 12, va = 'bottom', ha = 'left', c = 'k')
 #     plot_text_ax(ax, txt, **kw_text)
-#     txt = r'$\Sigma_{gas} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
+#     txt = r'$\Sigma_{\mathrm{gas}} = (\frac{\Sigma_{SFR}^{H\alpha}}{1.6\times 10^{-4}})^{\frac{1}{1.4}}$' 
 #     kw_text = dict(pos_x = 0, pos_y = 0.16, fs = 12, va = 'bottom', ha = 'left', c = 'g')
 #     plot_text_ax(ax, txt, **kw_text)
 # 
-#     txt = r'$f_{gas}\ =\ \frac{\Sigma_{gas}}{\mu_\star + \Sigma_{gas}}$'
+#     txt = r'$f_{\mathrm{gas}}\ =\ \frac{\Sigma_{\mathrm{gas}}}{\mu_\star + \Sigma_{\mathrm{gas}}}$'
 #     kw_text = dict(pos_x = 0, pos_y = 0.08, fs = 15, va = 'bottom', ha = 'left', c = 'k')
 #     plot_text_ax(ax, txt, **kw_text)
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.1, right = 0.95, top = 0.95, bottom = 0.2)
     f.savefig('gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ##########################
+    ##########################
+    ##########################
+
+    NRows = 2
+    NCols = 4
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    rs_kwargs = default_rs_kwargs.copy()
+    sc_kwargs = default_sc_kwargs.copy()
+    xrange = [0, 150]
+    default_histo_kwargs = dict(range = xrange) 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    x = BR_SigmaGas__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'r'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'BR13 $\tau_V^\star$')
+    ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    x = BR_SigmaGas_Ha__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'b'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'BR13 $\tau_V^{\mathrm{neb}}$')
+    ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    x = SK_SigmaGas__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'g'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'KS syn.')
+    ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    x = SK_SigmaGas_Ha__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'k'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'KS neb.')
+    ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    xrange = [0, 1]
+    default_histo_kwargs = dict(range = xrange) 
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    x = BR_f_gas__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'r'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'BR13 $\tau_V^\star$')
+    ax.set_xlabel(r'$f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    x = BR_f_gas_Ha__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'b'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'BR13 $\tau_V^{\mathrm{neb}}$')
+    ax.set_xlabel(r'$f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 2))
+    x = SK_f_gas__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'g'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'KS syn.')
+    ax.set_xlabel(r'$f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 3))
+    x = SK_f_gas_Ha__rg
+    mask_aux = (mask__rg | x.mask)
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'k'})
+    plot_histo_axis(ax, np.ma.masked_array(x, mask = mask_aux).compressed(), **histo_kwargs)
+    ax.set_xlim(xrange)
+    ax.set_title(r'KS neb.')
+    ax.set_xlabel(r'$f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+    
+    f.subplots_adjust(hspace = 0.35, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
+    f.savefig('Histo_Gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
     ##########################
@@ -780,6 +934,7 @@ if __name__ == '__main__':
         ax.set_xlabel(r'R [HLR]')
         ax.set_ylabel(ydict['label'])
         ax.yaxis.set_major_locator(MaxNLocator(4))
+        ax.set_xticks([1, 1.5, 2, 2.5, 3])
         #ax.grid()
         #plt.setp(ax.get_yticklabels(), visible = False)
         if col == (NCols - 1):
@@ -940,7 +1095,7 @@ if __name__ == '__main__':
         if col != 0:
             plt.setp(ax.get_yticklabels(), visible = False)
         if col == 0:
-            ax.set_ylabel(r'$\log\ \Sigma_{gas}$ [M${}_\odot$ pc${}^{-2}$]')
+            ax.set_ylabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
         if col == (NCols - 1):
             row += 1
             col = 0

@@ -55,18 +55,19 @@ Podemos definir fração de gás como:
 	\label{eq:fgas}
 \end{equation}
 \noindent onde $M_{\mathrm{gas}}$ é a massa total na forma de gás e $M_\star$ é a massa total em
-estrelas. 
+estrelas e $\mu_\star$ e $\SigmaGas$ são as densidades superficiais de massa estelar e de massa de
+gás.
 
 Em um modelo simples de evolução química assume-se:
 \begin{itemize}
 	\setlength\itemsep{0.2cm}
-  	\item onde não exista nem {\em inflow} nem {\em outflow} de gás na galáxia (isolada em um sistema
+  	\item não existir nem {\em inflow} nem {\em outflow} de gás na galáxia (isolada em um sistema
 fechado sem entrada nem saída de gás);
   	\item seu gás inicial é totalmente pristino (sem presença de metais)
   	\item {\em Instant Recycling Approximation} - IRA: todas as estrelas com mais de 1 $M_\odot$
 morrem imediatamente e todas as estrelas com massa menor que 1 $M_\odot$ vivem eternamente;
 	\item a IMF é constante no tempo;
-	\item o gas está sempre homogeneamente misturado.
+	\item o gás está sempre homogeneamente misturado.
 \end{itemize}
 
 Com estas simplificações, podemos escrever a metalicidade do gás como:
@@ -119,23 +120,30 @@ torno do ajuste (canto superior direito).}
 \label{sec:gasfrac:KS:resid}
  
 De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} é notável a participação da
-metalicidade nebular no espalhamento na relação $\SigmaSFR$-$\tauVS$. Como segunda maior causadora
-vem a fração em luz de populações jovens. O procedimento apresentado no Cap. \ref{sec:difextin}
-talvez possa diminuir a influência de $x_Y$ (e também de $b/a$) em $\tauVS$ de maneira que tenhamos
-um coeficiente de extinção mais diretamente ligado às regiões de formação estelar (portanto, mais
-relacionado ao gás $H_2$). A correlação com o raio deve ter o mesmo fundamento que a com a densidade
-superficial de massa estelar, visto que ambos estão fortemente ligados. A metalicidade estelar e a
-idade média das populações estelares parecem assumirem um papel pequeno no espalhamento da pKS. Não
-verificamos influência alguma da morfologia. Esses resultados se sustentam em parte quando
-analisamos em uma escala menor, ou seja, zona a zona (Fig. \ref{fig:pseudoKSresidZonas}). A
-influência de $x_Y$ nesta escala se torna majoritária aparecendo também uma correlação com a idade
-média das populações estelares.
+metalicidade nebular no espalhamento na relação $\SigmaSFR$-$\tauVS$, mas em um intervalo pequeno
+(90\% dos pontos ficam no intervalo entre -0.4 e -0.11 $Z_\odot$). Em razão de seu largo intervalo
+($\sim 3$ ordens de grandeza), a densidade superficial de massa estelar ($\mu_\star$) parece ser a
+principal causadora de espalhamento na relação. A fração em luz de populações jovens também parece
+ter uma boa participação, entretanto, o procedimento apresentado no Cap. \ref{sec:difextin} talvez
+possa diminuir a influência de $x_Y$ (e também de $b/a$) em $\tauVS$ de maneira que tenhamos um
+coeficiente de extinção mais diretamente ligado às regiões de formação estelar. A correlação com o
+raio deve ter o mesmo fundamento que a com a densidade superficial de massa estelar, visto que ambos
+estão fortemente ligados. A metalicidade estelar e a idade média das populações estelares parecem
+assumirem um papel pequeno no espalhamento da pKS. Não verificamos influência alguma da morfologia.
+
+Quando mudamos para os resíduos em torno da relação da direita na Fig. \ref{fig:pseudoKS} (Fig.
+\ref{fig:pseudoKSresid_neb}), o resultado é basicamente o mesmo, mas com uma dependência maior para
+a fração de luz das populações jovens e com uma dependência muito mais forte com a idade média das
+populações estelares. A participação da relação de semi-eixos ($b/a$) desaparece quase que
+completamente, mas aparece um pequeno desvio em relação às galáxias tipo Sd, mais jovens, menos
+evoluídas e com uma densidade superficial de formação estelar mais alta, na média, ao longo do
+disco.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/deltapKS.pdf}
 	\caption[Resíduos da {\em pseudo-KS}.]
-	{No eixo y de todos os painés temos $\Delta_{pKS} = \SimgaSFR - (0.779 \tauVS - 1.191)$, onde, o
+	{No eixo y de todos os painéis temos $\Delta_{pKS} = \SimgaSFR - (0.751 \tauVS - 1.209)$, onde, o
 termo entre parenteses é o ajuste linear da mediana no painel esquerdo da Fig. \ref{fig:pseudoKS}.
 No eixo x temos, na primeira fila, da esquerda para direita: metalicidade nebular ($12 + \log
 (O/H)$), metalicidade estelar média pesada pela massa ($\meanM{\log Z_\star}$), idade média das
@@ -147,10 +155,11 @@ e tipo morfológico.}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/deltapKS.pdf}
+	\includegraphics[width=0.99\textwidth]{figuras/deltapKS_neb.pdf}
 	\caption[Resíduos da {\em pseudo-KS}.]
-	{Igual a Fig. \ref{fig:pseudoKSresid}, mas analisando zona a zona.}
-	\label{fig:pseudoKSresidZonas}
+	{Igual a Fig. \rf{fig:pseudoKSresid}, mas para a relação da direita na Fig. \ref{fig:pseudoKS}, ou
+seja, utilizando $\tauVN$ como o sinalizador de gás. }
+	\label{fig:pseudoKSresid_neb}
 \end{figure}
 
 Diversos autores atualmente calculam e discutem a relação KS e a sua validade para diferentes
@@ -218,9 +227,11 @@ desvio quadrático médio. Finalmente, nossa equação final para $\delta_{\math
 	\delta_{\mathrm{DGR}} =  (5.3 \times 10^{-3} - 1.1 \times 10^{-2}) \times 10^{\left(2.016 x\ +\ 0.425\right)},
 	\label{eq:myDGR}
 \end{equation}
-\noindent onde $x = \log\ ((O/H)/(O/H)_\odot)$ de M13. Agora, substituindo a Eq. \ref{eq:myDGR} em
-\ref{eq:SigmaGasBR} e utilizando este resultado na Eq. \ref{eq:fgas} podemos estimar frações de
-gás para galáxias do \CAL. 
+\noindent onde $x = \log\ ((O/H)/(O/H)_\odot)$ de M13. Podemos ver o perfil radial médio de
+$\delta_{\mathrm{DGR}}$ para a amostra definida neste trabalho. Agora, substituindo a Eq.
+\ref{eq:myDGR} em \ref{eq:SigmaGasBR} e utilizando este resultado na Eq. \ref{eq:fgas} podemos
+estimar frações de gás para galáxias do \CAL.
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{figuras/logOH_ZnebMPA.pdf}
@@ -233,64 +244,86 @@ $2\sigma$ e $3\sigma$ respectivamente.}
 	\label{fig:calibZ}
 \end{figure}
 
+\begin{figure}
+	\centering
+	\includegraphics[width=0.5\textwidth]{figuras/DGR_R.pdf}
+	\caption[Perfil radial de $\delta_{\mathrm{DGR}}.]
+	{Perfil radial de $\delta_{\mathrm{DGR}}$ definido pela Eq. \ref{eq:myDGR}. A área rachurada
+representa $\delta_{\mathrm{DGR}}$ calculado para os valores máximo e mínimo do intervalo definido
+por BR13. Os contornos marcam $1\sigma$, $2\sigma$ e $3\sigma$ respectivamente.}
+	\label{fig:DGR_R}
+\end{figure}
+
+
 \subsection{Analisando a conversão}
 \label{sec:gasfrac:gas2dust:analisradperf}
 
-Como não possuímos medidas diretas de gás de forma a validar a conversão vamos inverter a Eq.
-\ref{eq:SFRKennicutt} para calcular $\SigmaGas$ a partir da KS. Através deste artifício podemos
-verificar o comportamento assintótico de nossas variáveis calculadas ($\delta_{\mathrm{DGR}}$,
-$\SigmaGas$, $f_{\mathrm{gas}}$). Vamos usar as seguintes equações para comparar:
+Como não possuímos medidas diretas de gás para comparar com os valores estimados aqui, vamos
+utilizar uma forma indireta invertendo a Eq. \ref{eq:SFRKennicutt} para calcular $\SigmaGas$ a
+partir da KS, desta forma obtemos:
 \begin{eqnarray}
 	\SigmaGas^{\mathrm{KS}} &=& \left(\frac{\SigmaSFR}{2.5 \times 10^{-4}}\right)^{\frac{1}{1.4}} \\
 	\label{eq:SigmaGasKenn}
-	\delta_{\mathrm{DGR}}^{\mathrm{KS}} &=& 0.2\ \left(\frac{\tauVS}{\SigmaGas^{\mathrm{KS}}}\right) \\
-	\label{eq:DeltaDGRKenn}
 	f_{\mathrm{gas}}^{\mathrm{KS}} &=& \frac{1}{1 +
 	\left(\frac{\mu_\star}{\SigmaGas^{\mathrm{KS}}}\right)}.
 	\label{eq:fGasKenn}
 \end{eqnarray}
-\noindent Juntamente produzimos a mesma versão destas variáveis, mas substituindo para os valores
-nebulares quando possível ($\SigmaSFRN$ e $\tauVN$).
+\noindent Juntamente produzimos a mesma versão destas variáveis, mas substituindo os $\SigmaSFR$
+e $\tauVS$ para $\SigmaSFRN$ e $\tauVN$.
 
 A Fig. \ref{fig:propsGasR} nos mostra os perfis radiais de $\delta_{\mathrm{DGR}}$, $\SigmaGas$ e
-$f_{\mathrm{gas}}$. Apesar de que os perfis de $\delta_{\mathrm{DGR}}$ e $\SigmaGas$ parece
-divergirem quanto ao comportamento ao longo do Raio, a fração de gás parece ser um resultado mais
-robusto, graças a influência de densidade superficial de massa estelar ($\mu_\star$).
+$f_{\mathrm{gas}}$. Apesar da divergência entre os perfis de $\delta_{\mathrm{DGR}}$ e $\SigmaGas$
+quanto ao comportamento ao longo do raio, a fração de gás parece ser um resultado mais robusto,
+graças a influência de densidade superficial de massa estelar ($\mu_\star$).
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/gas_R.pdf}
-	\caption[Perfis radiais de $\delta_{\mathrm{DGR}}$, $\SigmaGas$ e $f_{\mathrm{gas}}$.]
+	\includegraphics[width=0.9\textwidth]{figuras/gas_R.pdf}
+	\caption[Perfis radiais de $\SigmaGas$ e $f_{\mathrm{gas}}$.]
 	{Perfis radiais para a razão poeira-gás ($\delta_{\mathrm{DGR}}$), densidade superficial de massa
 de gás ($\SigmaGas$) e fração de gás ($f_{\mathrm{gas}}$). A área rachurada representa o intervalo
 definido na Eq. \ref{eq:myDGR}. Em azul e vermelho temos a conversão de poeira em gás utilizando a
 conversão pela Eq. \ref{eq:SigmaGasBR} com $\delta_{\mathrm{DGR}}$ definido na Eq. \ref{eq:myDGR},
 utilizando $\tauVN$ e $\tauVS$ respectivamente. Em verde e preto temos as variáveis definidas no
-início desta seção, invertendo a lei de KS, utilizando $\SigmaSFR$ e $\SigmaSFRN$.}
+início desta seção, invertendo a lei de KS, utilizando $\SigmaSFR$ e $\SigmaSFRN$ respectivamente.}
 	\label{fig:propsGasR}
+\end{figure}
+
+Na Fig. \ref{fig:histoGas} os histogramas das variáveis calculadas nessa seção e nas Figs.
+\ref{fig:propsSigmaGas} e \ref{fig:propsfGas} vemos $\SigmaGas$ e $f_{\mathrm{gas}}$ versus algumas
+propriedades. O código de cores em todos os gráficos segue àquele definido na Fig.
+\ref{fig:propsGasR}. Para $\SigmaGas$ vemos que os resultados são bastante diferentes quando
+comparamos pelo método de conversão de poeira em absorção (utilizando um $\delta_{\mathrm{DGR}}$) e
+quando invertemos a lei de KS (Eqs. \ref{eq:SigmaGasKenn} e \ref{eq:fGasKenn}). Já quando observamos
+frações de gás vemos que os resultados são mais robustos. 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/histo_gas_R.pdf}
+	\caption[Histogramas de $\SigmaGas$ e $f_{\mathrm{gas}}$.]
+	{Histogramas de $\SigmaGas$ e $f_{\mathrm{gas}} calculadas das diferentes formas especificadas
+na Sec. \ref{sec:gasfrac:gas2dust:analisradperf}$. As cores de cada histograma seguem àquelas
+definidas na Fig. \ref{fig:propsGasR}. Os valores nos cantos são os mesmos encontrados em todos os
+histogramas deste trabalho: média, mediana, desvio padrão, máximo e mínimo.}
+	\label{fig:histoGas}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/props_DGR.pdf}
-	\caption[Propriedades versos $\delta_{\mathrm{DGR}}$.]
-	{}
-	\label{fig:propsDGR}
-\end{figure}
-\begin{figure}
-	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
-	\caption[Propriedades versos $\SigmaGas$.]
-	{}
+	\caption[Propriedades físicas e $\SigmaGas$.]
+	{Densidade superficial de massa de gás ($\SigmaGas$) contra idade média das populações estelares,
+fração em luz das populações jovens, densidade superficial de massa estelar, todos na primeira
+fileira e, na segunda fileira, relação de semi-eixos, metalicidade média das populações estelares
+pesada pela massa e metalicidade nebular. }
 	\label{fig:propsSigmaGas}
 \end{figure}
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
-	\caption[Propriedades versos $f_{\mathrm{gas}}$.]
-	{}
+	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
+	{Igual a Fig. \ref{propsSigmaGas}, mas para a fração de gás.}
 	\label{fig:propsfGas}
-\end{figure}
-
+\end{figure} 
 
 \section{Eficiência e tempo de depleção do gás.}
 \label{sec:gasfrac:SFE}

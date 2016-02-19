@@ -185,7 +185,7 @@ if __name__ == '__main__':
     sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
     tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
     
-    default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.02, gs_prc = True, OLS = True)
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.02, gs_prc = True, poly1d = True)
     default_sc_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', alpha = 0.6, label = '')
     default_plot_rs_kwargs = dict(c = 'k', lw = 2, label = 'Median (run. stats)', alpha = 0.9)
     default_figure_kwargs = dict(figsize = (10, 8), dpi = 100)
@@ -239,7 +239,6 @@ if __name__ == '__main__':
     #     
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     
-    
     if args.dryrun: sys.exit(1)
     mpl.rcParams['font.size'] = 20
     mpl.rcParams['axes.labelsize'] = 16
@@ -269,18 +268,19 @@ if __name__ == '__main__':
         fs = 15, 
         rms = True, 
         text = True, 
+        OLS = True,
         pos_y = 0.98, 
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
-    x = np.ma.log10(H.tau_V__Trg[iT])
-    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6) 
-    xlabel = r'$\log\ \tau_V^{\star}(R)$'
-    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    x = np.ma.log10(H.tau_V__Tg[iT])
+    y = np.ma.log10(H.SFRSD__Tg[iT] * 1e6) 
+    xlabel = r'$\log\ \tau_V^{\star}$'
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star)\ [M_\odot yr^{-1} kpc^{-2}]$'
     xran = [-1.5, 0.5]
     yran = [-3.5, 0]
-    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
     plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
@@ -293,17 +293,17 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-    xlabel = r'$\log\ \tau_V^{\mathrm{neb}}(R)$'
-    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    xlabel = r'$\log\ \tau_V^{\mathrm{neb}}$'
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star)\ [M_\odot yr^{-1} kpc^{-2}]$'
     xran = [-1.5, 0.5]
     yran = [-3.5, 0]
-    x = np.ma.log10(H.tau_V_neb__Trg[iT])
-    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    x = np.ma.log10(H.tau_V_neb__g)
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__g) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
     plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
@@ -316,13 +316,13 @@ if __name__ == '__main__':
     #ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
  
     f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
-    f.savefig('PseudoSK_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    f.savefig('PseudoSKz_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
     ############################################################
@@ -341,10 +341,10 @@ if __name__ == '__main__':
     y = np.ma.log10(H.SFRSD__Tg[iT] * 1e6)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-
-    a = rs.OLS_median_slope
-    b = rs.OLS_median_intercept    
-    deltapKS = ym - (a * xm + b) 
+    #rs.OLS_bisector()
+    a = rs.poly1d_median_slope
+    b = rs.poly1d_median_intercept    
+    deltapKS = ym - (a * xm + b)
 
     morfType_GAL__g = np.ma.masked_all(H.morfType_GAL__g.shape, dtype = np.int)
     maskSaSab = (H.morfType_GAL__g < 2) & (H.morfType_GAL__g >= 0)
@@ -405,6 +405,7 @@ if __name__ == '__main__':
         fs = 15, 
         rms = True, 
         text = True, 
+        OLS = True,
         pos_y = 0.98, 
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
@@ -424,7 +425,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -443,7 +444,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -463,7 +464,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -484,7 +485,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -503,7 +504,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -523,7 +524,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -543,8 +544,8 @@ if __name__ == '__main__':
     ax.set_xlim(H.RbinIni, 3)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
-    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -563,8 +564,8 @@ if __name__ == '__main__':
     xlabel = props_label__g[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
-    rs = C.runstats(xm.compressed(), ym.compressed(), xbins = tickpos, **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1], **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     for i in range(Ntypes):
         m_morf = mask_morf[i]
@@ -588,15 +589,114 @@ if __name__ == '__main__':
     plt.close(f)
 
     ############################################################
+    ############################################################
+    ############################################################
+
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.08, gs_prc = True, poly1d = True)
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 16
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16 
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rcParams['font.serif'] = 'Times New Roman'
+    
+    ############################################################
+    bins = (30,30)
+    NCols = 2
+    NRows = 1
+    f = plt.figure()
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    f.set_dpi(100)
+    grid_shape = (NRows, NCols)
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 15, 
+        rms = True, 
+        text = True, 
+        OLS = True,
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
+    )
+ 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    x = np.ma.log10(H.tau_V__Trg[iT])
+    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6) 
+    xlabel = r'$\log\ \tau_V^{\star}(R)$'
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    xran = [-1.5, 0.5]
+    yran = [-3.5, 0]
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(xlabel) 
+    ax.set_ylabel(ylabel)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+ 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    xlabel = r'$\log\ \tau_V^{\mathrm{neb}}(R)$'
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    xran = [-1.5, 0.5]
+    yran = [-3.5, 0]
+    x = np.ma.log10(H.tau_V_neb__Trg[iT])
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(xlabel) 
+    #ax.set_ylabel(ylabel)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+ 
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.savefig('PseudoSKR_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ############################################################
+    ############################################################
+    ############################################################
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 18
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 18
+    mpl.rcParams['ytick.labelsize'] = 18 
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rcParams['font.serif'] = 'Times New Roman'
 
     x = np.ma.log10(H.tau_V__Trg[iT])
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-
-    a = rs.OLS_median_slope
-    b = rs.OLS_median_intercept    
-    deltapKS = ym - (a * xm + b) 
+    #rs.OLS_bisector()
+    a = rs.poly1d_median_slope
+    b = rs.poly1d_median_intercept    
+    #deltapKS = ym - ((a * xm + b) + (0.308 * np.ma.log10(H.McorSD__Trg[iT]) - 0.656))
+    deltapKS = ym - (a * xm + b)
+    #deltapKS = deltapKS - (1.322 * (H.logO3N2_M13__Trg[iT] - 8.69) + 0.302)
+    #deltapKS = deltapKS - (0.404 * np.ma.log10(H.McorSD__Trg[iT]) - 0.889)
 
     props__r = [ 
         deltapKS,
@@ -613,7 +713,7 @@ if __name__ == '__main__':
     props_label__r = [ 
         r'$\Delta(pKS)$',
         r'$\log \left(\frac{(O/H)}{(O/H)_\odot}\right)$',
-        r'$\langle \log\ Z_\star \rangle_M (R)$ (t < %.2f Gyr) [$Z_\odot$]' % (H.tZ__U[iU] / 1e9),
+        r'$\langle \log\ Z_\star \rangle_M (R)$ [$Z_\odot$]',
         r'$\langle \log\ t \rangle_L (R)$ [yr]',
         r'$x_Y$ (R)',
         r'$\log\ \mu_\star (R)$ [$M_\odot \ pc^{-2}$]',
@@ -635,9 +735,10 @@ if __name__ == '__main__':
         va = 'top',
         ha = 'right', 
         pos_x = 0.98, 
-        fs = 15, 
+        fs = 16, 
         rms = True, 
-        text = True, 
+        text = True,
+        OLS = True, 
         pos_y = 0.98, 
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
@@ -657,7 +758,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -676,7 +777,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -696,7 +797,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -717,7 +818,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -736,8 +837,8 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
@@ -756,7 +857,7 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -776,8 +877,8 @@ if __name__ == '__main__':
     ax.set_xlim(H.RbinIni, 3)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
-    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
@@ -787,7 +888,9 @@ if __name__ == '__main__':
     ax.set_xlabel(xlabel)
     ax.set_ylim(-1.5,1.5)
     plt.setp(ax.get_yticklabels(), visible = False)
-    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    #ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.set_xlim(minR,H.RbinFin)
+    ax.set_xticks([1, 1.5, 2, 2.5, 3])
     ax.yaxis.set_major_locator(MaxNLocator(4))
 
     ax = plt.subplot2grid(grid_shape, loc = (1, 3))
@@ -796,8 +899,8 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
-    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = tickpos, **default_rs_kwargs)
-    plotOLSbisectorAxis(ax, rs.xS, rs.yS, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     for i in range(Ntypes):
         m_morf = mask_morf[i]
@@ -821,6 +924,243 @@ if __name__ == '__main__':
     plt.close(f)
 
     ############################################################
+    x = np.ma.log10(H.tau_V_neb__Trg[iT])
+    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    #rs.OLS_bisector()
+    a = rs.poly1d_median_slope
+    b = rs.poly1d_median_intercept    
+    #deltapKS = ym - ((a * xm + b) + (0.308 * np.ma.log10(H.McorSD__Trg[iT]) - 0.656))
+    deltapKS = ym - (a * xm + b)
+    #deltapKS = deltapKS - (1.322 * (H.logO3N2_M13__Trg[iT] - 8.69) + 0.302)
+    #deltapKS = deltapKS - (0.404 * np.ma.log10(H.McorSD__Trg[iT]) - 0.889)
+
+    props__r = [ 
+        deltapKS,
+        H.logO3N2_M13__Trg[iT] - 8.69,
+        H.alogZ_mass__Urg[iU], 
+        H.at_flux__Trg[iT],
+        H.x_Y__Trg[iT], 
+        np.ma.log10(H.McorSD__Trg[iT]), 
+        H.reply_arr_by_radius(H.ba_GAL__g), 
+        H.Rtoplot(), 
+        H.reply_arr_by_radius(morfType_GAL__g),
+    ]
+
+    props_label__r = [ 
+        r'$\Delta(pKS)$',
+        r'$\log \left(\frac{(O/H)}{(O/H)_\odot}\right)$',
+        r'$\langle \log\ Z_\star \rangle_M (R)$ [$Z_\odot$]',
+        r'$\langle \log\ t \rangle_L (R)$ [yr]',
+        r'$x_Y$ (R)',
+        r'$\log\ \mu_\star (R)$ [$M_\odot \ pc^{-2}$]',
+        r'$b/a$',
+        r'R [HLR]',
+        r'tipo morf.',
+    ]
+    
+    bins = (30,30)
+    NCols = 4
+    NRows = 2
+    f = plt.figure()
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    f.set_dpi(100)
+    grid_shape = (NRows, NCols)
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 16, 
+        rms = True, 
+        text = True,
+        OLS = True, 
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
+    )
+
+    y = props__r[0]
+    ylabel = props_label__r[0]
+    if b > 0:
+        delta_txt = r'$\Delta(pKS) = \log\ \Sigma_{SFR}^\star - (%.3f\ \log\ \tau_V^\star + %.3f)\ [rms: %.3f]$' % (a, b, deltapKS.std())
+    else:
+        delta_txt = r'$\Delta(pKS) = \log\ \Sigma_{SFR}^\star - (%.3f\ \log\ \tau_V^\star - %.3f)\ [rms: %.3f]$' % (a, -1. * b, deltapKS.std())
+    f.suptitle(delta_txt)
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    i_prop = 1
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    i_prop = 2
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    i_prop = 3
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    i_prop = 4
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    ax.set_xlim(0,1)
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    i_prop = 5
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    ax.set_ylim(-1.5,1.5)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    i_prop = 6
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    ax.set_xlim(0,1)
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 2))
+    i_prop = 7
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    ax.set_xlim(H.RbinIni, 3)
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    #ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.set_xlim(minR,H.RbinFin)
+    ax.set_xticks([1, 1.5, 2, 2.5, 3])
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 3))
+    i_prop = 8
+    x = props__r[i_prop]
+    xlabel = props_label__r[i_prop]
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    for i in range(Ntypes):
+        m_morf = mask_morf[i]
+        m__rg = H.reply_arr_by_radius(m_morf)
+        plotPercentilesAxis(ax, i, ym[m__rg].compressed(), 
+                            **dict(color='gray', marker='.', markersize = 10, markeredgecolor='k', 
+                                   median_kwargs=dict(color=color_morf[i], marker='*', markersize = 15, markeredgecolor='k')))
+    ax.axhline(y = 0, ls = '--', c = 'k')
+    ax.set_xticks(tickpos)
+    ax.set_xticklabels(label_morf)
+    ax.xaxis.set_ticks_position('none')
+    #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    #ax.set_ylabel(ylabel)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(-1.5,1.5)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.1)
+    f.savefig('DeltapSKR_neb_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
     ############################################################
     ############################################################
 
