@@ -22,7 +22,7 @@
 A fração de gás no modelo simples de evolução química ({\em closed-box model}) escala linearmente
 com a metalicidade do gás, onde a inclinação da reta é o {\em yield}, que representa o quanto de
 metais está sendo produzido e ejetado a cada geração de estrelas. Durante a pesquisa que nos levou a
-escrever o artigo que está no Apênd. \label{apendice:GDetal2014b} encontramos uma relação
+escrever o artigo que está no Apênd. \ref{apendice:GDetal2014b} encontramos uma relação
 interessante que serviu de pontapé inicial para explorarmos a conversão de poeira em gás. Nesse
 capítulo vamos comentar brevemente sobre nosso progresso e discutir quais os desafios enfrentados
 até agora e aqueles que estão por vir nas próximas estapas de nosso projeto.
@@ -63,45 +63,46 @@ Em um modelo simples de evolução química assume-se:
 	\setlength\itemsep{0.2cm}
   	\item não existir nem {\em inflow} nem {\em outflow} de gás na galáxia (isolada em um sistema
 fechado sem entrada nem saída de gás);
-  	\item seu gás inicial é totalmente pristino (sem presença de metais)
-  	\item {\em Instant Recycling Approximation} - IRA: todas as estrelas com mais de 1 $M_\odot$
-morrem imediatamente e todas as estrelas com massa menor que 1 $M_\odot$ vivem eternamente;
+  	\item seu gás inicial não possui metais (metalicidade inicial do sistema é zero);
+  	\item {\em Instantaneous Recycling Approximation} - IRA: todas as estrelas com mais de 1
+$M_\odot$ evoluem e morrem imediatamente e todas as estrelas com massa menor que 1 $M_\odot$ vivem
+eternamente;
 	\item a IMF é constante no tempo;
 	\item o gás está sempre homogeneamente misturado.
 \end{itemize}
 
 Com estas simplificações, podemos escrever a metalicidade do gás como:
 \begin{equation}
-	Z_{\mathrm{gas}} = - y \ln f_{\mathrm{gas}},
+	Z_{\mathrm{gas}} = y \ln \left(\frac{1}{f_{\mathrm{gas}}}\right),
 	\label{eq:Zgas_closedbox}
 \end{equation}
-\noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Nesta equação,
-$Z$ e $y$ podem ser utilizados trocando Z pela abundância de um elemento específico e seu {\em
-yield}. Invertendo a Eq. \ref{Zgas_closedbox} podemos definir o {\em yield} efetivo ($y_{eff}$), ou
-seja, aquele que um sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa
+\noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Invertendo a
+Eq. \ref{eq:Zgas_closedbox} podemos definir o {\em yield} efetivo ($y_{eff}$), ou seja, aquele que
+um sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa
 primeira equação foi derivada explicitamente pela primeira vez por \citet{Searle.Sargent.1972a} ao
-estudar duas regiões \Hii gigantes, ditas ``isoladas''. \citet{Garnett.2002a}, assumindo que o {\em
-true yield} seja constante, calcula $y_{eff}$ para 31 galáxias espirais e 13 galáxias irregulares,
+estudar duas regiões \Hii gigantes, ditas ``isoladas''. \citet{Garnett.2002a}, assumindo um {\em
+true yield} constante, calcula $y_{eff}$ para 31 galáxias espirais e 13 galáxias irregulares,
 encontrando valores distintos entre elas, o que o leva a concluir que o fluxo de gás ({\em outflow}
-e {\em inflow}) nestes sistemas são ambos processos muito importantes para a evolução química de uma
-galáxia. \citet{Tremonti.etal.2004a} calculam o $y_{eff}$ para $\sim 55000$ galáxias {\em
-star-forming} do \SDSS, chegando a um valor de 0.0104. Ao adicionar outras medidas verifica que este
-valor varia em uma escala de $\sim 10$ vezes, o que falha com a assunção de um {\em yield}
+e {\em inflow}) nestes sistemas são ambos processos muito importantes para a evolução química de
+uma galáxia. \citet{Tremonti.etal.2004a} calculam o $y_{eff}$ para $\sim 55000$ galáxias {\em
+star-forming} do \SDSS, chegando a um valor de 0.0104. Ao adicionar outras medidas verifica que
+este valor varia em uma escala de $\sim 10$ vezes, o que falha com a assunção de um {\em yield}
 constante.
 
-\section{Relação de Kennicut-Schmidt e nossa {\em pseudo-KS}}
+\section{Relação de Kennicut-Schmidt e a {\em pseudo-KS}}
 \label{sec:gasfrac:KS}
 
 Como explicado na Sec. \ref{sec:intro:galaxias}, a quantidade de gás de uma galáxia e a taxa de
-formação estelar estão relacionadas através de uma lei de potências. Já a relação entre poeira e gás
-é resultado direto da lei de Kennicut-Schmidt, que faz a ligação entre gás e formação estelar e da
-relação entre gás e poeira \citep[][e suas referências]{Magdis.etal.2011a, Leroy.etal.2011a,
-Santini.etal.2014a}. Pensando nisso, estabelecemos uma relação entre poeira e formação estelar, que
-pode ser vista na Fig. \ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como variável
-representante da poeira e no direito, $\tauVN$. A conversão de poeira em gás é, da mesma forma que a
-conversão de CO em gás, dependente da metalicidade, mas com a vantagem de não necessitarmos
-medidas adicionais. O espalhamento nesta figura nos mostra que podemos explorar os resíduos em torno
-desse ajuste.
+formação estelar estão relacionadas através de uma lei de potências (KS). A relação entre poeira e
+formação estelar é um resultado de indireto desta lei já que vemos que existe a ligação entre poeira
+e gás e que ela possui dependência com a metalicidade principalmente \citep[][e suas
+referências]{Magdis.etal.2011a, Leroy.etal.2011a, Santini.etal.2014a}. Pensando nisso, vamos estudar
+a relação entre poeira e formação estelar (aqui chamada de pseudo-KS), que pode ser vista na Fig.
+\ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como variável representante da poeira e no
+direito, $\tauVN$. O espalhamento nesta figura nos mostra que podemos explorar os resíduos em torno
+desse ajuste, mas é bastante claro que existe uma relação. A conversão de CO em gás também é
+dependente da metalicidade, mas utilizando o coeficiente de extinção em absorção não necessitamos
+medidas adicionais.
 
 \begin{figure}
 	\centering
@@ -119,17 +120,20 @@ torno do ajuste (canto superior direito).}
 \subsection{Resíduos da pseudo-KS}
 \label{sec:gasfrac:KS:resid}
  
-De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} é notável a participação da
-metalicidade nebular no espalhamento na relação $\SigmaSFR$-$\tauVS$, mas em um intervalo pequeno
-(90\% dos pontos ficam no intervalo entre -0.4 e -0.11 $Z_\odot$). Em razão de seu largo intervalo
-($\sim 3$ ordens de grandeza), a densidade superficial de massa estelar ($\mu_\star$) parece ser a
-principal causadora de espalhamento na relação. A fração em luz de populações jovens também parece
-ter uma boa participação, entretanto, o procedimento apresentado no Cap. \ref{sec:difextin} talvez
-possa diminuir a influência de $x_Y$ (e também de $b/a$) em $\tauVS$ de maneira que tenhamos um
-coeficiente de extinção mais diretamente ligado às regiões de formação estelar. A correlação com o
-raio deve ter o mesmo fundamento que a com a densidade superficial de massa estelar, visto que ambos
-estão fortemente ligados. A metalicidade estelar e a idade média das populações estelares parecem
-assumirem um papel pequeno no espalhamento da pKS. Não verificamos influência alguma da morfologia.
+De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} as maiores correlações são com a
+densidade superficial de massa estelar, o raio, a metalicidade nebular e a fração em luz das
+populações jovens. A participação da metalicidade nebular no espalhamento na relação
+$\SigmaSFR$-$\tauVS$ atua em um intervalo pequeno (90\% dos pontos ficam no intervalo entre -0.4 e
+-0.11 $Z_\odot$). Em razão de seu largo intervalo ($\sim 3$ ordens de grandeza), a densidade
+superficial de massa estelar parece ser a principal causadora do espalhamento na relação. A fração
+em luz de populações jovens também parece ter uma boa participação, entretanto, como apresentado no
+Cap. \ref{sec:difextin}, $\tauVS$ possui uma influência de $x_Y$ (e também de $b/a$) de maneira que
+nas regiões com fração mais alta ele se iguala (e em alguns casos é ultrapassa) o valor de $\tauVN$.
+A correlação com o raio parece refletir o comportamento de $\SigmaSFR$ que varia bastante dentro do
+disco, diferentemente de $\tauVS$ (veja na Fig. \ref{fig:RadProfProps} o comportamento de
+$\SigmaSFR$ e $\tauVR$). A metalicidade estelar média e a idade média das populações estelares
+parecem assumirem um papel pequeno no espalhamento da pKS. Não verificamos influência alguma da
+morfologia.
 
 Quando mudamos para os resíduos em torno da relação da direita na Fig. \ref{fig:pseudoKS} (Fig.
 \ref{fig:pseudoKSresid_neb}), o resultado é basicamente o mesmo, mas com uma dependência maior para
@@ -275,6 +279,7 @@ A Fig. \ref{fig:propsGasR} nos mostra os perfis radiais de $\delta_{\mathrm{DGR}
 $f_{\mathrm{gas}}$. Apesar da divergência entre os perfis de $\delta_{\mathrm{DGR}}$ e $\SigmaGas$
 quanto ao comportamento ao longo do raio, a fração de gás parece ser um resultado mais robusto,
 graças a influência de densidade superficial de massa estelar ($\mu_\star$).
+
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{figuras/gas_R.pdf}
@@ -300,8 +305,8 @@ frações de gás vemos que os resultados são mais robustos.
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/histo_gas_R.pdf}
 	\caption[Histogramas de $\SigmaGas$ e $f_{\mathrm{gas}}$.]
-	{Histogramas de $\SigmaGas$ e $f_{\mathrm{gas}} calculadas das diferentes formas especificadas
-na Sec. \ref{sec:gasfrac:gas2dust:analisradperf}$. As cores de cada histograma seguem àquelas
+	{Histogramas de $\SigmaGas$ e $f_{\mathrm{gas}}$ calculadas das diferentes formas especificadas
+na Sec. \ref{sec:gasfrac:gas2dust:analisradperf}. As cores de cada histograma seguem àquelas
 definidas na Fig. \ref{fig:propsGasR}. Os valores nos cantos são os mesmos encontrados em todos os
 histogramas deste trabalho: média, mediana, desvio padrão, máximo e mínimo.}
 	\label{fig:histoGas}
@@ -324,6 +329,8 @@ pesada pela massa e metalicidade nebular. }
 	{Igual a Fig. \ref{propsSigmaGas}, mas para a fração de gás.}
 	\label{fig:propsfGas}
 \end{figure} 
+
+Como finalização desta seção vamos 
 
 \section{Eficiência e tempo de depleção do gás.}
 \label{sec:gasfrac:SFE}

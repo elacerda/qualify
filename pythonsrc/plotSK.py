@@ -428,6 +428,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -447,6 +449,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -467,6 +471,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -488,6 +494,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -507,6 +515,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -527,6 +537,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -548,6 +560,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -566,6 +580,8 @@ if __name__ == '__main__':
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1], **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     for i in range(Ntypes):
         m_morf = mask_morf[i]
@@ -761,6 +777,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -780,6 +798,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -800,6 +820,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -821,6 +843,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -840,6 +864,8 @@ if __name__ == '__main__':
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -860,6 +886,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -881,6 +909,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -901,6 +931,8 @@ if __name__ == '__main__':
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     for i in range(Ntypes):
         m_morf = mask_morf[i]
@@ -999,6 +1031,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -1018,6 +1052,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -1038,6 +1074,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -1060,6 +1098,8 @@ if __name__ == '__main__':
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #ax.set_ylabel(ylabel)
@@ -1079,6 +1119,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.axhline(y = 0, ls = '--', c = 'k')
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     ax.set_ylim(-1.5,1.5)
@@ -1098,6 +1140,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -1119,6 +1163,8 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.axhline(y = 0, ls = '--', c = 'k')
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
@@ -1139,6 +1185,8 @@ if __name__ == '__main__':
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
     #ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     for i in range(Ntypes):
         m_morf = mask_morf[i]

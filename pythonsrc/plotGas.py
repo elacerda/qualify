@@ -6,7 +6,7 @@ from CALIFAUtils.scripts import get_CALIFAID_by_NEDName
 from matplotlib.backends.backend_pdf import PdfPages
 from CALIFAUtils.scripts import mask_radius_iT
 from CALIFAUtils.scripts import mask_zones_iT
-from CALIFAUtils.plots import plot_histo_axis
+from CALIFAUtils.plots import plot_histo_axis, plotOLSbisectorAxis
 from CALIFAUtils.plots import density_contour
 from matplotlib.ticker import MaxNLocator
 from CALIFAUtils.plots import plot_text_ax
@@ -571,7 +571,7 @@ if __name__ == '__main__':
     #integrated_f_gas_angel = 1./(1. + 1/((10. ** integrated_log_M_gas_angel__g) / H.Mcor_GAL__g))
 
     default_sc_kwargs = dict(marker = 'o', s = 1, edgecolor = 'none', alpha = 0.8, label = '')
-    default_rs_kwargs = dict(smooth = True, sigma = 1.2, frac = 0.05, gs_prc = True)
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, frac = 0.08, gs_prc = True)
     
     if args.dryrun is True:
         sys.exit('dryrun')
@@ -585,6 +585,8 @@ if __name__ == '__main__':
         output = args.output
           
 #    with PdfPages(output) as pdf:
+
+    ##########################
     ##########################
     ##########################
     f = plt.figure()
@@ -1178,4 +1180,214 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
     f.savefig('props_fGas_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+    
+    ##########################
+    ##########################
+    ##########################
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, frac = 0.08, gs_prc = True, OLS = True, poly1d = True)
+    default_sc_kwargs = dict(marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    default_ols_plot_kwargs = dict(c = 'r', ls = '--', lw = 2, label = '')
+    default_ols_kwargs = dict(c = 'k', pos_x = 0.98, pos_y = 0.01, fs = 15, rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
+    NRows = 2
+    NCols = 4
+    f = plt.figure()
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    rs_kwargs = default_rs_kwargs.copy()
+    sc_kwargs = default_sc_kwargs.copy()
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 14, 
+        rms = True, 
+        text = True, 
+        OLS = True,
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
+    )
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    x = np.ma.log(1./BR_f_gas__rg)
+    _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
+    y = ydict['v']
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    yeff = ym/xm
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xran = [-2, 7]
+    yran = ydict['lim']
+    bins = (30, 30)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_ylabel(ydict['label'])
+    ax.set_ylim(ydict['lim'])
+    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
+    x = xdict['v']
+    y = yeff
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    bins = (30, 30)
+    xran = xdict['lim']
+    yran = [-0.6, 0]
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    #plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_xlim(xran)
+    #ax.set_ylim(yran)
+    ax.set_xlabel(xdict['label'])
+    ax.set_ylabel(r'$y_{eff}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    x = np.ma.log(1./BR_f_gas_Ha__rg)
+    _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
+    y = ydict['v']
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    yeff = ym/xm
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xran = [-2, 7]
+    yran = ydict['lim']
+    bins = (30, 30)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_ylabel(ydict['label'])
+    ax.set_ylim(ydict['lim'])
+    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 3))
+    _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
+    x = xdict['v']
+    y = yeff
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    bins = (30, 30)
+    xran = xdict['lim']
+    yran = [-0.6, 0]
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    #plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_xlim(xran)
+    #ax.set_ylim(yran)
+    ax.set_xlabel(xdict['label'])
+    ax.set_ylabel(r'$y_{eff}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    x = np.ma.log(1./SK_f_gas__rg)
+    _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
+    y = ydict['v']
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    yeff = ym/xm
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xran = [-2, 7]
+    yran = ydict['lim']
+    bins = (30, 30)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_ylabel(ydict['label'])
+    ax.set_ylim(ydict['lim'])
+    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
+    x = xdict['v']
+    y = yeff
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    bins = (30, 30)
+    xran = xdict['lim']
+    yran = [-0.6, 0]
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    #plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_xlim(xran)
+    #ax.set_ylim(yran)
+    ax.set_xlabel(xdict['label'])
+    ax.set_ylabel(r'$y_{eff}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (1, 2))
+    x = np.ma.log(1./SK_f_gas_Ha__rg)
+    _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
+    y = ydict['v']
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    yeff = ym/xm
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    xran = [-2, 7]
+    yran = ydict['lim']
+    bins = (30, 30)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9                                                
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_ylabel(ydict['label'])
+    ax.set_ylim(ydict['lim'])
+    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    
+    ax = plt.subplot2grid(grid_shape, loc = (1, 3))
+    _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
+    x = xdict['v']
+    y = yeff
+    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    bins = (30, 30)
+    xran = xdict['lim']
+    yran = [-0.6, 0]
+    ax.scatter(rs.x, rs.y, **sc_kwargs)
+    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    #plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    #ols_kwargs['pos_y'] = 0.9
+    #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.set_xlim(xran)
+    #ax.set_ylim(yran)
+    ax.set_xlabel(xdict['label'])
+    ax.set_ylabel(r'$y_{eff}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.yaxis.set_major_locator(MaxNLocator(4))    
+    
+    f.subplots_adjust(hspace = 0.3, wspace = 0.35, left = 0.15, right = 0.95, top = 0.95, bottom = 0.1)
+    f.savefig('simplemodel_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
