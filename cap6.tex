@@ -73,7 +73,7 @@ eternamente;
 
 Com estas simplificações, podemos escrever a metalicidade do gás como:
 \begin{equation}
-	Z_{\mathrm{gas}} = y \ln \left(\frac{1}{f_{\mathrm{gas}}}\right),
+	Z_{\mathrm{gas}}\ =\ y \ln \left(\frac{1}{f_{\mathrm{gas}}}\right),
 	\label{eq:Zgas_closedbox}
 \end{equation}
 \noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Invertendo a
@@ -89,7 +89,7 @@ star-forming} do \SDSS, chegando a um valor de 0.0104. Ao adicionar outras medid
 este valor varia em uma escala de $\sim 10$ vezes, o que falha com a assunção de um {\em yield}
 constante.
 
-\section{Relação de Kennicut-Schmidt e a {\em pseudo-KS}}
+\section{Relação de Kennicut-Schmidt e a pseudo-KS}
 \label{sec:gasfrac:KS}
 
 Como explicado na Sec. \ref{sec:intro:galaxias}, a quantidade de gás de uma galáxia e a taxa de
@@ -106,65 +106,137 @@ medidas adicionais.
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.95\textwidth]{figuras/pseudoKS.pdf}
-	\caption[Nossa {\em pseudo-KS}.]
+	\includegraphics[width=0.8\textwidth]{figuras/pseudoKS.pdf}
+	\caption[Relação pseudo-KS.]
 	{Relação entre a densidade superficial da taxa de formação estelar e o coeficiente de extinção
 proveniente da síntese ($\tauVS$ - {\em painel esquerdo}) e do decremento de Balmer ($\tauVN$ -
-{\em painel direito}). A linha tracejada em vermelho marca o ajuste linear da mediana e os
-valores marcam o coeficiente de correlação de Spearmann (canto inferior esquerdo) e a
-inclinação, valor de interceptação do eixo y e o valor do desvio médio quadrático da distribuição em
-torno do ajuste (canto superior direito).}
+{\em painel direito}). Em ambos painéis as linhas pretas marcam a mediana (linha contínua) e os 5,
+16, 64 e 95 percentis (linhas tracejadas). A linha tracejada em vermelho marca o ajuste linear da
+mediana e os valores marcam o coeficiente de correlação de Spearmann (canto inferior esquerdo) e a
+inclinação, valor de y no qual há a interceptação do eixo x e o valor do desvio médio quadrático da
+distribuição em torno do ajuste (canto superior direito).}
 	\label{fig:pseudoKS}
 \end{figure}
 
 \subsection{Resíduos da pseudo-KS}
 \label{sec:gasfrac:KS:resid}
  
-De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} as maiores correlações são com a
-densidade superficial de massa estelar, o raio, a metalicidade nebular e a fração em luz das
-populações jovens. A participação da metalicidade nebular no espalhamento na relação
-$\SigmaSFR$-$\tauVS$ atua em um intervalo pequeno (90\% dos pontos ficam no intervalo entre -0.4 e
--0.11 $Z_\odot$). Em razão de seu largo intervalo ($\sim 3$ ordens de grandeza), a densidade
-superficial de massa estelar parece ser a principal causadora do espalhamento na relação. A fração
-em luz de populações jovens também parece ter uma boa participação, entretanto, como apresentado no
-Cap. \ref{sec:difextin}, $\tauVS$ possui uma influência de $x_Y$ (e também de $b/a$) de maneira que
-nas regiões com fração mais alta ele se iguala (e em alguns casos é ultrapassa) o valor de $\tauVN$.
-A correlação com o raio parece refletir o comportamento de $\SigmaSFR$ que varia bastante dentro do
-disco, diferentemente de $\tauVS$ (veja na Fig. \ref{fig:RadProfProps} o comportamento de
-$\SigmaSFR$ e $\tauVR$). A metalicidade estelar média e a idade média das populações estelares
-parecem assumirem um papel pequeno no espalhamento da pKS. Não verificamos influência alguma da
-morfologia.
-
-Quando mudamos para os resíduos em torno da relação da direita na Fig. \ref{fig:pseudoKS} (Fig.
-\ref{fig:pseudoKSresid_neb}), o resultado é basicamente o mesmo, mas com uma dependência maior para
-a fração de luz das populações jovens e com uma dependência muito mais forte com a idade média das
-populações estelares. A participação da relação de semi-eixos ($b/a$) desaparece quase que
-completamente, mas aparece um pequeno desvio em relação às galáxias tipo Sd, mais jovens, menos
-evoluídas e com uma densidade superficial de formação estelar mais alta, na média, ao longo do
-disco.
+Primeiramente vamos definir o resíduo como:
+\begin{equation}
+	\Delta(pKS)\ =\ \log\ \SigmaSFR - (0.751 \log\ \tauVS - 1.209).
+	\label{eq:DeltapKS}
+\end{equation}
+\noindent De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} as maiores correlações
+com $\Delta(pKS)$ são com a densidade superficial de massa estelar, o raio, a metalicidade nebular e
+a fração em luz das populações jovens. Apesar da notável participação da metalicidade nebular no
+espalhamento da relação $\SigmaSFR - \tauVS$, ela possui intervalo pequeno de variação (90\% dos
+pontos ficam no intervalo entre -0.4 e -0.11 $Z_\odot$), além do resíduo ir para o lado contrário
+que imaginaríamos assumindo que, para um $\tauVS$ fixo, com o aumento da metalicidade $\SigmaGas$
+(e consequentemente, $\SigmaSFR$) deveria diminuir (causando um resíduo na direção contrária). Em
+razão de seu largo intervalo ($\sim 3$ ordens de grandeza), a densidade superficial de massa
+estelar parece ser a principal causadora do espalhamento na relação. A fração em luz de populações
+jovens também parece ter uma boa participação, entretanto, como apresentado no Cap.
+\ref{sec:difextin}, $x_Y$ (e também de $b/a$) possuem grande influência no calculo de $\tauVS$ de
+maneira que nas regiões com fração de luz em populações jovens mais alta, $\tauVS$ se iguala (e em
+alguns casos é ultrapassa) o valor de $\tauVN$. A correlação com o raio parece refletir o
+comportamento de $\SigmaSFR$ que varia bastante dentro do disco, diferentemente de $\tauVS$ (veja
+na Fig. \ref{fig:RadProfProps} o comportamento de $\SigmaSFR$ e $\tauVR$). A metalicidade estelar
+média e a idade média das populações estelares parecem assumirem um papel pequeno no espalhamento
+da pKS. Não verificamos influência alguma da morfologia.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/deltapKS.pdf}
 	\caption[Resíduos da {\em pseudo-KS}.]
-	{No eixo y de todos os painéis temos $\Delta_{pKS} = \SimgaSFR - (0.751 \tauVS - 1.209)$, onde, o
-termo entre parenteses é o ajuste linear da mediana no painel esquerdo da Fig. \ref{fig:pseudoKS}.
-No eixo x temos, na primeira fila, da esquerda para direita: metalicidade nebular ($12 + \log
-(O/H)$), metalicidade estelar média pesada pela massa ($\meanM{\log Z_\star}$), idade média das
-populações estelares ($\meanL{\log t_\star}$), fração em luz das populações estelares jovens
-($x_Y$); na última fila, na mesma ordem: densidade superficial de massa estelar, relação axial, raio
-e tipo morfológico.}
-	\label{fig:pseudoKSresid}
+	{No eixo y de todos os painéis temos $\Delta(pKS) = \log\ \SigmaSFR - (0.751 \log\ \tauVS -
+1.209)$, onde, o termo entre parenteses é o ajuste linear da mediana no painel esquerdo da Fig.
+\ref{fig:pseudoKS}. No eixo $x$ temos, na primeira fila, da esquerda para direita: metalicidade
+nebular ($\log\ ((O/H)/(O/H)_\odot)$), metalicidade estelar média pesada pela massa ($\meanM{\log
+Z_\star}$), idade média das populações estelares ($\meanL{\log t_\star}$), fração em luz das
+populações estelares jovens ($x_Y$); na última fila, na mesma ordem: densidade superficial de massa
+estelar ($\log \mu_\star$), relação axial ($b/a$), raio e tipo morfológico. Em cada painel as linhas
+pretas marcam a mediana (linha contínua) e os 5, 16, 64 e 95 percentis (linhas tracejadas). A
+linha tracejada vermelha representa a regressão linear da mediana, cuja inclinação, o valor de y no
+qual há a interceptação do eixo x e o valor rms da distribuição estão no canto superior direito. O
+número no canfo inferior esquerdo é o coeficiente de correlação de Spearman.}
+	\label{fig:deltapKS}
+\end{figure}
+
+Como primeiro passo vamos tentar remover o espalhamento utilizando a regressão linear representada
+no primeiro painel da Fig. \ref{fig:deltapKS}, ou seja, removendo o espalhamento causado pela
+metalicidade nebular. Dessa forma, vamos identificar as duas variáveis que utilizaremos:
+\begin{eqnarray}
+	\Delta_1 &=& 0.751 \log\ \tauVS + 1.188 \log \left(\frac{(O/H)}{(O/H)_\odot}\right) - 0.935 \\
+	\label{eq:Delta1}
+	\Delta_2 &=& 0.751 \log\ \tauVS + 0.404 \log\ \mu_\star - 2.098 \\
+	\label{eq:Delta2}
+\end{eqnarray}
+Definimos então um novo $\Delta(pKS)$, alterando a Eq. \ref{eq:DeltapKS} utilizando $\Delta_1$:
+\begin{equation}
+	\Delta(pKS)\ =\ \log\ \SigmaSFR - \Delta_1.
+\end{equation}
+\noindent Este resultado pode ser observado na Fig. \ref{fig:deltapKS_noOH}. Vemos que apesar
+de diminuir em uma maneira geral o espalhamento, vemos que a densidade superficial de massa estelar
+continua cumprindo um papel importante nesta relação. Dessa forma, repetimos este último passo, mas
+agora removendo o espalhamento causado por $\mu_\star$ (utilizando $\Delta_2$). O novo valor de
+$\Delta(pKS)$ fica:
+\begin{equation}
+	\Delta(pKS)\ =\ \log \SigmaSFR - \Delta_2.
+\end{equation}
+\noindent Como podemos ver na Fig. \ref{fig:deltapKS_noMcorSD}, após este processo o
+espalhamento diminui consideravelmente na relação geral e em todas as outras variáveis, inclusive
+com a metalicidade nebular. Esta propriedade, assim como $\mu_\star$, possui um gradiente no mesmo
+sentido em relação ao raio, e talvez esse seja o motivo pelo qual quando removemos o espalhamento
+causado por esta última resulte na diminuição do espalhamento causado pela primeira. Os efeitos com
+idade, fração em de populações jovens, b/a e morfologia serão estudados em um próximo passo de
+nosso trabalho, principalmente no contexto do Cap. \ref{sec:difextin}. Parece que, em primeira
+ordem, encontramos o mais forte causador do espalhamento da Fig. \ref{fig:pseudoKS}, painel
+esquerdo. Na Fig. \ref{fig:pseudoKS_noscat} vemos o resultado desse processo na pKS.
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/deltapKS_noOH.pdf}
+	\caption[Resíduos da {\em pseudo-KS} removendo o espalhamento com \left(\frac{(O/H)}{(O/H)_\odot}\right).]
+	{Igual a Fig. \ref{fig:deltapKS}, mas removendo o espalhamento causado pela metalicidade
+nebular, conforme a dependência mostrada no seu primeiro painel.}
+	\label{fig:deltapKS_noOH}
 \end{figure}
 
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/deltapKS_neb.pdf}
-	\caption[Resíduos da {\em pseudo-KS}.]
-	{Igual a Fig. \rf{fig:pseudoKSresid}, mas para a relação da direita na Fig. \ref{fig:pseudoKS}, ou
-seja, utilizando $\tauVN$ como o sinalizador de gás. }
-	\label{fig:pseudoKSresid_neb}
+	\includegraphics[width=0.99\textwidth]{figuras/deltapKS_noMcorSD.pdf}
+	\caption[Resíduos da {\em pseudo-KS} removendo o espalhamento com $\mu_\star$.]
+	{Igual a Fig. \ref{fig:deltapKS_noOH}, mas removendo o espalhamento causado pela
+densidade superficial de massa estelar, conforme a dependência mostrada no primeiro painel da
+segunda fileira da Fig. \ref{fig:deltapKS}.}
+	\label{fig:deltapKS_noMcorSD}
 \end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.8\textwidth]{figuras/pseudoKS_noscat.pdf}
+	\caption[A {\em pseudo-KS} sem os principais causadores de espalhamento.]
+	{Igual a Fig. \ref{fig:pseudoKS}, mas agora usando no eixo $x$ os valores de $\Delta_1$ e
+$\Delta_2$, que se referem à remoção do espalhamento causado pela metalicidade nebular e pela
+densidade superficial de massa estelar respectivamente.}
+	\label{fig:pseudoKS_noscat}
+\end{figure}
+
+%Quando mudamos para os resíduos em torno da relação da direita na Fig. \ref{fig:pseudoKS} (Fig.
+%\ref{fig:pseudoKSresid_neb}), o resultado é basicamente o mesmo, mas com uma dependência maior para
+%a fração de luz das populações jovens e com uma dependência muito mais forte com a idade média das
+%populações estelares. A participação da relação de semi-eixos ($b/a$) desaparece quase que
+%completamente, mas aparece um pequeno desvio em relação às galáxias tipo Sd, mais jovens, menos
+%evoluídas e com uma densidade superficial de formação estelar mais alta, na média, ao longo do
+%disco.
+%\begin{figure}
+%	\centering
+%	\includegraphics[width=0.99\textwidth]{figuras/deltapKS_neb.pdf}
+%	\caption[Resíduos da {\em pseudo-KS}.]
+%	{Igual a Fig. \rf{fig:pseudoKSresid}, mas para a relação da direita na Fig. \ref{fig:pseudoKS}, ou
+%seja, utilizando $\tauVN$ como o sinalizador de gás. }
+%	\label{fig:pseudoKSresid_neb}
+%\end{figure}
 
 Diversos autores atualmente calculam e discutem a relação KS e a sua validade para diferentes
 resoluções espaciais \citep[e.g., ][]{Kennicutt.etal.2007a, Leroy.etal.2012a,
@@ -258,7 +330,6 @@ por BR13. Os contornos marcam $1\sigma$, $2\sigma$ e $3\sigma$ respectivamente.}
 	\label{fig:DGR_R}
 \end{figure}
 
-
 \subsection{Analisando a conversão}
 \label{sec:gasfrac:gas2dust:analisradperf}
 
@@ -326,7 +397,7 @@ pesada pela massa e metalicidade nebular. }
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
 	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
-	{Igual a Fig. \ref{propsSigmaGas}, mas para a fração de gás.}
+	{Igual a Fig. \ref{fig:propsSigmaGas}, mas para a fração de gás.}
 	\label{fig:propsfGas}
 \end{figure} 
 
