@@ -107,7 +107,7 @@ O erro propagado para $\tauVN$ é:
 \left(\frac{\epsilon (F_{\Hbeta}^{obs})}{F_{\Hbeta}^{obs}}\right)^2 }
 	\label{eq:etauneb}
 \end{eqnarray}
-\noindent Os termos de dentro da raiz na Eq. \ref{eq:etauneb} são o inverso das relações sinal-ruído
+\noindent Os termos de dentro da raiz em \eqref{eq:etauneb} são o inverso das relações sinal-ruído
 ($S/N$) de \Halpha e \Hbeta. Como \Hbeta é sempre a mais ruidosa das duas, podemos aproximar a
 incerteza em $\tauVN$ por:
 \begin{equation}
@@ -229,18 +229,18 @@ de SFR ($\psi$) usando uma relação linear:
 \noindent Portanto, nosso trabalho é encontrar $k$. Faremos isso investigando a natureza dos 
 fótons H-ionizantes.
 
-A quantidade total de luz $l$\footnote{$l(t)$ pode ser qualquer função que descreve a evolução
-temporal de qualquer fonte radiativa genérica \emph{por unidade de massa formada} (portanto,
-dependente da {\em Initial Mass Function} - IMF) de uma população estelar simples ({\em Simple
-Stellar Population} - SSP)} que recebemos de estrelas que se formaram $t$ anos atrás é:
+Designamos como $\Lambda$ o valor total de luz ($l$) que recebemos de estrelas que se formaram $t$
+anos atrás. $l(t)$ pode ser qualquer função que descreve a evolução temporal de qualquer fonte
+radiativa genérica \emph{por unidade de massa formada} (portanto, dependente da Função de Massa
+Inicial\footnote{{\em Initial Mass Function} - IMF} de uma população estelar simples\footnote{{\em
+Simple Stellar Population} - SSP}:
 \begin{equation}
-	\mathrm{d}\Lambda = l(t)\ \mathrm{d}\mathrm{M}(t).
+	\Lambda = \int_0^t l(t')\ \textrm{d}\textrm{M}(t').
 	\label{eq:dLambda}
 \end{equation}
-\noindent No entanto, para obter $\Lambda$ nós temos que saber como a massa em estrelas cresce no
-tempo (SFR) e isso não é possível diretamente por esse método. Integrando a equação
-\eqref{eq:dLambda} dentro do tempo do Universo ($T_U\ \sim$ 14 bilhões de anos), nós teremos hoje,
-um total de
+\noindent Para obter $\Lambda$ nos falta saber como a massa em estrelas cresce no tempo (SFR).
+Integrando \eqref{eq:dLambda} dentro do tempo do Universo ($T_U\ \sim$ 14 bilhões de
+anos) teremos hoje um total de
 \begin{eqnarray}
 	\mathrm{d}\mathrm{M}(t) &=& \psi(t)\ \mathrm{d}t \\
 	\Lambda = \Lambda(t = T_U) &=& \int_0^{T_U} l(t)\ \textrm{d}\textrm{M}(t) = \int_0^{T_U} \psi(t)\
@@ -249,16 +249,15 @@ um total de
 \end{eqnarray}
 \noindent luz $l$. Assumindo o caso B de recombinação do hidrogênio, um em cada 2.226 fótons
 ionizantes produzem um fóton de \Halpha \citep{Osterbrock.Ferland.2006a}. Esse número não varia
-muito em função da temperatura e da densidade nas regiões nebulares. Por fim a luminosidade
-intrínseca de \Halpha pode ser teoricamente calculada como:
+muito em função da temperatura e da densidade nas regiões $H_2$. Portanto:
 \begin{equation}
 	\LHalpha = h \nu_{\Halpha} \frac{\mathrm{Q}_H}{2.226},
 	\label{eq:LHa_recomb_theory}
 \end{equation}
-\noindent aonde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo
-assume-se que nenhuma radiação ionizante escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar
-corrigido por extinção, também assume-se que a poeira não absorve muito os fótons com $h\nu\ < 13.6$
-eV. Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
+\noindent onde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo assume-se que
+nenhuma radiação ionizante escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido por
+extinção, também assume-se que a poeira não absorve muito os fótons com $h\nu\ < 13.6$ eV.
+Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
 obtemos:
 \begin{eqnarray}
 	Q_H &=& \int dQ_H = \int q_H(t)\ \mathrm{d}\mathrm{M}(t) \\ 

@@ -1230,7 +1230,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
-    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = xdict['v']
     y = yeff
@@ -1253,7 +1253,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
-    ax = plt.subplot2grid(grid_shape, loc = (0, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     x = np.ma.log(1./BR_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
@@ -1269,7 +1269,7 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.set_ylabel(ydict['label'])
+    #ax.set_ylabel(ydict['label'])
     ax.set_ylim(ydict['lim'])
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
@@ -1320,7 +1320,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
-    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = xdict['v']
     y = yeff
@@ -1343,7 +1343,7 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
-    ax = plt.subplot2grid(grid_shape, loc = (1, 2))
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     x = np.ma.log(1./SK_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
@@ -1359,7 +1359,7 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9                                                
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.set_ylabel(ydict['label'])
+    #ax.set_ylabel(ydict['label'])
     ax.set_ylim(ydict['lim'])
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
