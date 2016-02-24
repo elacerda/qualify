@@ -76,10 +76,9 @@ Com estas simplificações, podemos escrever a metalicidade do gás como:
 	Z_{\mathrm{gas}}\ =\ y \ln \left(\frac{1}{f_{\mathrm{gas}}}\right),
 	\label{eq:Zgas_closedbox}
 \end{equation}
-\noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Invertendo a
-Eq. \ref{eq:Zgas_closedbox} podemos definir o {\em yield} efetivo ($y_{eff}$), ou seja, aquele que
-um sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa
-primeira equação foi derivada explicitamente pela primeira vez por \citet{Searle.Sargent.1972a} ao
+\noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Invertendo
+\eqref{eq:Zgas_closedbox} podemos definir o {\em yield} efetivo ($y_{eff}$), ou seja, aquele que um
+sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa primeira equação foi derivada explicitamente pela primeira vez por \citet{Searle.Sargent.1972a} ao
 estudar duas regiões \Hii gigantes, ditas ``isoladas''. \citet{Garnett.2002a}, assumindo um {\em
 true yield} constante, calcula $y_{eff}$ para 31 galáxias espirais e 13 galáxias irregulares,
 encontrando valores distintos entre elas, o que o leva a concluir que o fluxo de gás ({\em outflow}
@@ -171,7 +170,7 @@ metalicidade nebular. Dessa forma, vamos identificar as duas variáveis que util
 	\Delta_2 &=& 0.751 \log\ \tauVS + 0.404 \log\ \mu_\star - 2.098 \\
 	\label{eq:Delta2}
 \end{eqnarray}
-Definimos então um novo $\Delta(pKS)$, alterando a Eq. \ref{eq:DeltapKS} utilizando $\Delta_1$:
+Definimos então um novo $\Delta(pKS)$, alterando \eqref{eq:DeltapKS} utilizando $\Delta_1$:
 \begin{equation}
 	\Delta(pKS)\ =\ \log\ \SigmaSFR - \Delta_1.
 \end{equation}
@@ -241,7 +240,7 @@ densidade superficial de massa estelar respectivamente.}
 Diversos autores atualmente calculam e discutem a relação KS e a sua validade para diferentes
 resoluções espaciais \citep[e.g., ][]{Kennicutt.etal.2007a, Leroy.etal.2012a,
 Calzetti.Liu.Koda.2012a, Lada.etal.2013a, Tacconi.etal.2013a, Casasola.etal.2015a}. A inclinação
-da KS (N = 1.4 na Eq. \ref{eq:SFRKennicutt}) varia geralmente entre 1 e 2, dependendo da resolução
+da KS (N = 1.4 em \eqref{eq:SFRKennicutt}) varia geralmente entre 1 e 2, dependendo da resolução
 espacial observada (regiões \Hii, perfis radiais, galáxias integradas) ou do tipo de gás usado
 (atômico, molecular ou a soma dos dois).
 
@@ -259,7 +258,7 @@ conseguida utilizando a equação:
 \end{eqnarray}
 \noindent onde $\sigma_{\mathrm{d}}$ é área de um grão de poeira, $n_{\mathrm{d}}$ é o número de
 grãos de poeira ao longo de uma profundidade $dz$ e $m_{\mathrm{d}}$ é a massa de um grão de
-poeira. Substituindo a Eq. \ref{eq:sigmadust} na Eq. \ref{eq:dust2gas} e assumindo $\tauV$ como
+poeira. Substituindo \eqref{eq:sigmadust} em \eqref{eq:dust2gas} e assumindo $\tauV$ como
 $\tau_{\mathrm{d}}$ obtemos:
 \begin{equation}
 	\SigmaGas\ =\ \kappa \times \frac{m_{\mathrm{d}}}{\sigma_{\mathrm{d}}}\ \tauV. 
@@ -278,8 +277,8 @@ utilizar:
 	\label{eq:deltaDGR}
 \end{eqnarray}
 \noindent onde $\xi$ é a razão poeira-metais ({\em dust-to-metals}), Z é a metalicidade do gás e o
-termo $\delta_{\mathrm{DGR}}$ é igual a $1/\kappa$. Utilizando a Eq. \ref{eq:deltaDGR} na Eq.
-\ref{eq:dust2gas_tauV} e fazendo $m_{\mathrm{d}}/\sigma_{\mathrm{d}} \approx 0.2$, que corresponde
+termo $\delta_{\mathrm{DGR}}$ é igual a $1/\kappa$. Utilizando \eqref{eq:deltaDGR} em
+\eqref{eq:dust2gas_tauV} e fazendo $m_{\mathrm{d}}/\sigma_{\mathrm{d}} \approx 0.2$, que corresponde
 ao tipo de poeira Galáctica (BR13), temos:
 \begin{equation}
 	\SigmaGas\ \approx\ 0.2 \frac{\tauV}{\delta_{\mathrm{DGR}}}\ [M_\odot pc^{-2}].
@@ -304,9 +303,9 @@ desvio quadrático médio. Finalmente, nossa equação final para $\delta_{\math
 	\label{eq:myDGR}
 \end{equation}
 \noindent onde $x = \log\ ((O/H)/(O/H)_\odot)$ de M13. Podemos ver o perfil radial médio de
-$\delta_{\mathrm{DGR}}$ para a amostra definida neste trabalho. Agora, substituindo a Eq.
-\ref{eq:myDGR} em \ref{eq:SigmaGasBR} e utilizando este resultado na Eq. \ref{eq:fgas} podemos
-estimar frações de gás para galáxias do \CAL.
+$\delta_{\mathrm{DGR}}$ para a amostra definida neste trabalho. Agora, substituindo \eqref{eq:myDGR}
+em \eqref{eq:SigmaGasBR} e utilizando este resultado em \eqref{eq:fgas} podemos estimar frações de
+gás para galáxias do \CAL.
 
 \begin{figure}
 	\centering
@@ -324,7 +323,7 @@ $2\sigma$ e $3\sigma$ respectivamente.}
 	\centering
 	\includegraphics[width=0.5\textwidth]{figuras/DGR_R.pdf}
 	\caption[Perfil radial de $\delta_{\mathrm{DGR}}.]
-	{Perfil radial de $\delta_{\mathrm{DGR}}$ definido pela Eq. \ref{eq:myDGR}. A área rachurada
+	{Perfil radial de $\delta_{\mathrm{DGR}}$ definido pela em \eqref{eq:myDGR}. A área rachurada
 representa $\delta_{\mathrm{DGR}}$ calculado para os valores máximo e mínimo do intervalo definido
 por BR13. Os contornos marcam $1\sigma$, $2\sigma$ e $3\sigma$ respectivamente.}
 	\label{fig:DGR_R}
@@ -334,7 +333,7 @@ por BR13. Os contornos marcam $1\sigma$, $2\sigma$ e $3\sigma$ respectivamente.}
 \label{sec:gasfrac:gas2dust:analisradperf}
 
 Como não possuímos medidas diretas de gás para comparar com os valores estimados aqui, vamos
-utilizar uma forma indireta invertendo a Eq. \ref{eq:SFRKennicutt} para calcular $\SigmaGas$ a
+utilizar uma forma indireta invertendo \eqref{eq:SFRKennicutt} para calcular $\SigmaGas$ a
 partir da KS, desta forma obtemos:
 \begin{eqnarray}
 	\SigmaGas^{\mathrm{KS}} &=& \left(\frac{\SigmaSFR}{2.5 \times 10^{-4}}\right)^{\frac{1}{1.4}} \\
@@ -356,9 +355,9 @@ graças a influência de densidade superficial de massa estelar ($\mu_\star$).
 	\includegraphics[width=0.9\textwidth]{figuras/gas_R.pdf}
 	\caption[Perfis radiais de $\SigmaGas$ e $f_{\mathrm{gas}}$.]
 	{Perfis radiais para a razão poeira-gás ($\delta_{\mathrm{DGR}}$), densidade superficial de massa
-de gás ($\SigmaGas$) e fração de gás ($f_{\mathrm{gas}}$). A área rachurada representa o intervalo
-definido na Eq. \ref{eq:myDGR}. Em azul e vermelho temos a conversão de poeira em gás utilizando a
-conversão pela Eq. \ref{eq:SigmaGasBR} com $\delta_{\mathrm{DGR}}$ definido na Eq. \ref{eq:myDGR},
+de gás ($\SigmaGas$) e fração de gás ($f_{\mathrm{gas}}$). A área hachurada representa o intervalo
+definido em \eqref{eq:myDGR}. Em azul e vermelho temos a conversão de poeira em gás utilizando a
+conversão \eqref{eq:SigmaGasBR} com $\delta_{\mathrm{DGR}}$ definido em \eqref{eq:myDGR},
 utilizando $\tauVN$ e $\tauVS$ respectivamente. Em verde e preto temos as variáveis definidas no
 início desta seção, invertendo a lei de KS, utilizando $\SigmaSFR$ e $\SigmaSFRN$ respectivamente.}
 	\label{fig:propsGasR}
@@ -369,7 +368,7 @@ Na Fig. \ref{fig:histoGas} os histogramas das variáveis calculadas nessa seçã
 propriedades. O código de cores em todos os gráficos segue àquele definido na Fig.
 \ref{fig:propsGasR}. Para $\SigmaGas$ vemos que os resultados são bastante diferentes quando
 comparamos pelo método de conversão de poeira em absorção (utilizando um $\delta_{\mathrm{DGR}}$) e
-quando invertemos a lei de KS (Eqs. \ref{eq:SigmaGasKenn} e \ref{eq:fGasKenn}). Já quando observamos
+quando invertemos a lei de KS (\eqref{eq:SigmaGasKenn} e \eqref{eq:fGasKenn}). Já quando observamos
 frações de gás vemos que os resultados são mais robustos. 
 
 \begin{figure}
@@ -383,40 +382,93 @@ histogramas deste trabalho: média, mediana, desvio padrão, máximo e mínimo.}
 	\label{fig:histoGas}
 \end{figure}
 
+Fechamos esta seção com a relação KS criada a partir dos valores de $\SigmaGas$ utilizando a
+conversão de BR13 (Fig. \ref{fig:KS}). Basicamente o resultado é: essa conversão não está
+``melhorando'' os resultados na direção de uma relação mais inclinada do que a relação original
+(que seria o caso de ir em direção à relação de KS). Os resíduos de metalicidade na relação $pKS$
+(Fig. \ref{fig:deltapKS}, primeiro painel na primeira fila) estão indo para a direção contrária a
+direção que deveria ter no caso de usar a conversão de poeira para gás assumindo
+\eqref{eq:SigmaGasBR} para chegar em uma relação de KS (\eqref{eq:SFRKennicutt}).
+
 \begin{figure}
 	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
-	\caption[Propriedades físicas e $\SigmaGas$.]
-	{Densidade superficial de massa de gás ($\SigmaGas$) contra idade média das populações estelares,
-fração em luz das populações jovens, densidade superficial de massa estelar, todos na primeira
-fileira e, na segunda fileira, relação de semi-eixos, metalicidade média das populações estelares
-pesada pela massa e metalicidade nebular. }
-	\label{fig:propsSigmaGas}
+	\includegraphics[width=0.99\textwidth]{figuras/KS.pdf}
+	\caption[Relação de Kennicut-Schmidt.]
+	{Igual a Fig. \ref{fig:pseudoKS} mas substituindo o eixo $x$ para o valor da densidade superficial
+de massa de gás calculado a partir da conversão de BR13 utilizando $\tauVS$ ({\em painel esquerdo})
+e $\tauVN$ ({\em painel direito}).}
+	\label{fig:KS}
 \end{figure}
-\begin{figure}
-	\centering
-	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
-	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
-	{Igual a Fig. \ref{fig:propsSigmaGas}, mas para a fração de gás.}
-	\label{fig:propsfGas}
-\end{figure} 
 
-Como finalização desta seção vamos 
+\section{Perspectivas e próximos passos.}
+\label{sec:gasfrac:nextsteps}
 
-\section{Eficiência e tempo de depleção do gás.}
-\label{sec:gasfrac:SFE}
+Nossa principal dificuldade nessa etapa é a falta de medidas diretas de gás para as mesmas regiões
+avaliadas, de forma a parametrizar uma conversão. A conversão de BR13 parece foi definida como
+somente dependente da metalicidade \eqref{eq:DGR_brinch_eq28} mas na Sec. \ref{sec:gasfrac:KS:resid}
+verificamos que outras variáveis a $pKS$, principalmente a densidade superficial de massa estelar
+($\mu_\star$). Precisamos estudar melhor esta relação também substituindo $\tauVS$ por $\tauVN$ e
+também a explorar as diferenças entre $\tauVS$, $\tauVN$, $\tauISM$ e $\tauBC$ e suas influências na
+relação $pKS$. 
 
-Um outro tipo de abordagem é trabalhar com a eficiência da transformação de gás em estrelas,
-utilizando a relação:
+O desvio padrão da relação KS construída utilizando $\SigmaGas$ vindo da conversão de
+BR13 é próximo a 0.4 dex e, após a conversão, a inclinação da reta diminui, o que vai na direção
+contrária ao que imaginaríamos assumindo uma relação KS com inclinação $\sim 1.4$. 
+
+Um próximo passo também é adotar um outro tipo de abordagem é trabalhar com a eficiência da
+transformação de gás em estrelas, utilizando a relação:
 \begin{equation}
 	\mathrm{SFE} = \frac{\Sigma_{\mathrm{SFR}}}{\Sigma_{\mathrm{gas}}} = \frac{1}{t_{\mathrm{dep}}},
 	\label{eq:SFE}
 \end{equation}
 \noindent onde SFE vem de {\em star-formation efficiency} e $t_{\mathrm{dep}}$, que é o inverso da
 eficiência, é o tempo de depleção do gás, que nos dá uma ideia da escala de tempo em que a galáxia
-consome todo o gás com a taxa em que está formando estrelas.
+consome todo o gás com a taxa em que está formando estrelas. Um exemplo desse tipo de análise pode
+ser visto na Fig. \ref{fig:tdep}, onde utilizamos $\SigmaGas$ proveniente dos métodos utilizados
+nesse capítulo para verificar o tempo de depleção do gás, o qual nos diz o tempo médio no qual o
+gás é consumido.
 
-\ldots
+\begin{figure}
+	\centering
+	\includegraphics[width=0.99\textwidth]{figuras/histo_tdep.pdf}
+	\caption[Tempo de depleção do gás.]
+	{Histogramas de $\tau_{\mathrm{dep}}$ para $\SigmaGas$ calculado como na Fig. \ref{fig:propsGasR}.
+As cores e valores no canto superior direito de cada painel seguem o mesmo padrão da Fig. \ref{fig:histoGas}.}
+	\label{fig:tdep}
+\end{figure}
+
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
+% 	\caption[Propriedades físicas e $\SigmaGas$.]
+% 	{Densidade superficial de massa de gás ($\SigmaGas$) contra idade média das populações estelares,
+% fração em luz das populações jovens, densidade superficial de massa estelar, todos na primeira
+% fileira e, na segunda fileira, relação de semi-eixos, metalicidade média das populações estelares
+% pesada pela massa e metalicidade nebular. }
+% 	\label{fig:propsSigmaGas}
+% \end{figure}
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
+% 	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
+% 	{Igual a Fig. \ref{fig:propsSigmaGas}, mas para a fração de gás.}
+% 	\label{fig:propsfGas}
+% \end{figure} 
+
+% \section{Eficiência e tempo de depleção do gás.}
+% \label{sec:gasfrac:SFE}
+% 
+% Um outro tipo de abordagem é trabalhar com a eficiência da transformação de gás em estrelas,
+% utilizando a relação:
+% \begin{equation}
+% 	\mathrm{SFE} = \frac{\Sigma_{\mathrm{SFR}}}{\Sigma_{\mathrm{gas}}} = \frac{1}{t_{\mathrm{dep}}},
+% 	\label{eq:SFE}
+% \end{equation}
+% \noindent onde SFE vem de {\em star-formation efficiency} e $t_{\mathrm{dep}}$, que é o inverso da
+% eficiência, é o tempo de depleção do gás, que nos dá uma ideia da escala de tempo em que a galáxia
+% consome todo o gás com a taxa em que está formando estrelas.
+
+%\ldots
 %\chapter{Coeficiente de extinção como indicador de Gás}
 %\label{sec:gas}
 % Referências:

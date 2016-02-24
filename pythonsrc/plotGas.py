@@ -4,14 +4,16 @@
 #
 from CALIFAUtils.scripts import get_CALIFAID_by_NEDName
 from matplotlib.backends.backend_pdf import PdfPages
+from CALIFAUtils.plots import plotOLSbisectorAxis
 from CALIFAUtils.scripts import mask_radius_iT
 from CALIFAUtils.scripts import mask_zones_iT
-from CALIFAUtils.plots import plot_histo_axis, plotOLSbisectorAxis
+from CALIFAUtils.plots import plot_histo_axis
 from CALIFAUtils.plots import density_contour
 from matplotlib.ticker import MaxNLocator
 from CALIFAUtils.plots import plot_text_ax
 from CALIFAUtils.objects import runstats
 from matplotlib import pyplot as plt
+from scipy.stats import spearmanr
 from os.path import basename
 import matplotlib as mpl
 import CALIFAUtils as C
@@ -1212,11 +1214,11 @@ if __name__ == '__main__':
     x = np.ma.log(1./BR_f_gas__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    xm, ym = C.ma_mask_xyz(x, 10**y, mask = mask__rg)
     yeff = ym/xm
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xran = [-2, 7]
-    yran = ydict['lim']
+    yran = 10**(np.asarray(ydict['lim']))
     bins = (30, 30)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1224,16 +1226,16 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.set_ylabel(ydict['label'])
-    ax.set_ylim(ydict['lim'])
+    ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
+    ax.set_ylim(yran)
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
-    x = xdict['v']
-    y = yeff
+    x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas__rg)
+    y = np.ma.log10(yeff)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
@@ -1249,7 +1251,7 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     #ax.set_ylim(yran)
     ax.set_xlabel(xdict['label'])
-    ax.set_ylabel(r'$y_{eff}$')
+    ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
@@ -1257,11 +1259,11 @@ if __name__ == '__main__':
     x = np.ma.log(1./BR_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    xm, ym = C.ma_mask_xyz(x, 10**y, mask = mask__rg)
     yeff = ym/xm
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xran = [-2, 7]
-    yran = ydict['lim']
+    yran = 10**(np.asarray(ydict['lim']))
     bins = (30, 30)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1269,16 +1271,16 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    #ax.set_ylabel(ydict['label'])
-    ax.set_ylim(ydict['lim'])
+    #ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
+    ax.set_ylim(yran)
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
-    x = xdict['v']
-    y = yeff
+    x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas_Ha__rg)
+    y = np.ma.log10(yeff)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
@@ -1294,7 +1296,7 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     #ax.set_ylim(yran)
     ax.set_xlabel(xdict['label'])
-    ax.set_ylabel(r'$y_{eff}$')
+    ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
@@ -1302,11 +1304,11 @@ if __name__ == '__main__':
     x = np.ma.log(1./SK_f_gas__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    xm, ym = C.ma_mask_xyz(x, 10**y, mask = mask__rg)
     yeff = ym/xm
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xran = [-2, 7]
-    yran = ydict['lim']
+    yran = 10**(np.asarray(ydict['lim']))
     bins = (30, 30)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1314,16 +1316,16 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.set_ylabel(ydict['label'])
-    ax.set_ylim(ydict['lim'])
+    ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
+    ax.set_ylim(yran)
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
     ax = plt.subplot2grid(grid_shape, loc = (1, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
-    x = xdict['v']
-    y = yeff
+    x = np.ma.log10(10 ** xdict['v'] + SK_SigmaGas__rg)
+    y = np.ma.log10(yeff)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
@@ -1339,7 +1341,7 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     #ax.set_ylim(yran)
     ax.set_xlabel(xdict['label'])
-    ax.set_ylabel(r'$y_{eff}$')
+    ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
@@ -1347,11 +1349,11 @@ if __name__ == '__main__':
     x = np.ma.log(1./SK_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
     y = ydict['v']
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    xm, ym = C.ma_mask_xyz(x, 10**y, mask = mask__rg)
     yeff = ym/xm
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xran = [-2, 7]
-    yran = ydict['lim']
+    yran = 10**(np.asarray(ydict['lim']))
     bins = (30, 30)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1359,16 +1361,16 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ols_kwargs['pos_y'] = 0.9                                                
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    #ax.set_ylabel(ydict['label'])
-    ax.set_ylim(ydict['lim'])
+    #ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
+    ax.set_ylim(yran)
     ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     
     ax = plt.subplot2grid(grid_shape, loc = (1, 3))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
-    x = xdict['v']
-    y = yeff
+    x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas_Ha__rg)
+    y = np.ma.log10(yeff)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     ax.scatter(rs.x, rs.y, **sc_kwargs)
@@ -1384,10 +1386,163 @@ if __name__ == '__main__':
     ax.set_xlim(xran)
     #ax.set_ylim(yran)
     ax.set_xlabel(xdict['label'])
-    ax.set_ylabel(r'$y_{eff}$')
+    ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))    
     
     f.subplots_adjust(hspace = 0.3, wspace = 0.35, left = 0.15, right = 0.95, top = 0.95, bottom = 0.1)
     f.savefig('simplemodel_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
+
+    default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.08, gs_prc = True, poly1d = True)
+    mpl.rcParams['font.size'] = 20
+    mpl.rcParams['axes.labelsize'] = 16
+    mpl.rcParams['axes.titlesize'] = 20
+    mpl.rcParams['xtick.labelsize'] = 16
+    mpl.rcParams['ytick.labelsize'] = 16 
+    mpl.rcParams['font.family'] = 'serif'
+    mpl.rcParams['font.serif'] = 'Times New Roman'
+    
+    ############################################################
+    bins = (30,30)
+    NCols = 2
+    NRows = 1
+    f = plt.figure()
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    f.set_dpi(100)
+    grid_shape = (NRows, NCols)
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'right', 
+        pos_x = 0.98, 
+        fs = 15, 
+        rms = True, 
+        text = True, 
+        OLS = True,
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
+    )
+ 
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    x = np.ma.log10(BR_SigmaGas__rg)
+    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
+    xlabel = r'$\log\ \Sigma_{\mathrm{gas}}(R)\ [M_\odot pc^{-2}]$'
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    xran = [0, 2]
+    yran = [-3.5, 0]
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title(r'BR13 $\tau_V^\star$')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(xlabel) 
+    ax.set_ylabel(ylabel)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+ 
+    xlabel = r'$\log\ \Sigma_{\mathrm{gas}}(R)\ [M_\odot pc^{-2}]$'
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
+    xran = [0, 2]
+    yran = [-3.5, 0]
+    x = np.ma.log10(BR_SigmaGas_Ha__rg)
+    xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
+    plot_text_ax(ax, '%.3f' % spearmanr(xm.compressed(), ym.compressed())[0], **kw_text)
+    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
+    ax.set_xlim(xran)
+    ax.set_ylim(yran)
+    ax.set_title(r'BR13 $\tau_V^{\mathrm{neb}}$')
+    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ax.set_xlabel(xlabel) 
+    #ax.set_ylabel(ylabel)
+    for i, p in enumerate(rs.xPrc):
+        ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
+    plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+ 
+    f.subplots_adjust(bottom = 0.2, top = 0.9, wspace = 0, right = 0.95, left = 0.1)
+    f.savefig('KS_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+
+    ############################################################
+    ############################################################
+    ############################################################
+    
+    NRows = 2
+    NCols = 2
+    f = plt.figure()
+    #page_size_inches = A4Size_inches[::-1]
+    page_size_inches = [NCols * 4, NRows * 4]
+    f.set_size_inches(page_size_inches)
+    grid_shape = (NRows, NCols)
+    row, col = 0, 0
+    bins = (20,20)
+    rs_kwargs = default_rs_kwargs.copy()
+    sc_kwargs = default_sc_kwargs.copy()
+    default_histo_kwargs = {} #dict(range = xrange) 
+    xlabel = r'$\tau_{\mathrm{dep}}$ [Gyr]'
+    
+    ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], BR_SigmaGas__rg, mask = mask__rg)
+    x = ym/xm * 1e-9
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'r', 'range' : [ 0, 2]})
+    plot_histo_axis(ax, x.compressed(), **histo_kwargs)
+    ax.set_title(r'BR13 $\tau_V^\star$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (0, 1))
+    xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], BR_SigmaGas_Ha__rg, mask = mask__rg)
+    x = ym/xm * 1e-9
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'b', 'range' : [ 0, 2 ]})
+    plot_histo_axis(ax, x.compressed(), **histo_kwargs)
+    ax.set_title(r'BR13 $\tau_V^{\mathrm{neb}}$')
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+    xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], SK_SigmaGas__rg, mask = mask__rg)
+    x = ym/xm * 1e-9
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'g', 'range' : [ 0, 2 ]})
+    plot_histo_axis(ax, x.compressed(), **histo_kwargs)
+    ax.set_title(r'KS syn.')
+    ax.set_xlabel(xlabel)
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+    xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], SK_SigmaGas_Ha__rg, mask = mask__rg)
+    x = ym/xm * 1e-9
+    histo_kwargs = default_histo_kwargs.copy()
+    histo_kwargs.update({'c' : 'k', 'range' : [ 0, 2 ]})
+    plot_histo_axis(ax, x.compressed(), **histo_kwargs)
+    ax.set_title(r'KS neb.')
+    ax.set_xlabel(xlabel)
+    ax.xaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
+
+    f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
+    f.savefig('Histo_tDep_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
+    plt.close(f)
+    
+    ############################################################
+    ############################################################
+    ############################################################

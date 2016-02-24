@@ -288,7 +288,7 @@
 \newlength{\@frontmattertopskip}%
 \newlength{\@frontmattertitletopskip}%
 \newlength{\frontmattertitleskip}%
-\addtolength{\frontmattertitleskip}{3cm}%
+\addtolength{\frontmattertitleskip}{1cm}%
 \addtolength{\@frontmattertitletopskip}{0cm}%
 \setlength{\@frontmattertopskip}{\frontmattertitleskip}%
 \addtolength{\@frontmattertopskip}{\@frontmattertitletopskip}%
