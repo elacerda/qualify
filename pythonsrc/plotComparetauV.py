@@ -476,7 +476,7 @@ if __name__ == '__main__':
     #     kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
     # )
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -535,7 +535,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -580,7 +580,6 @@ if __name__ == '__main__':
     plt.close(f)
   
     ###########################################################
-  
     NCols = 2
     NRows = 2
     f = plt.figure()
@@ -610,14 +609,7 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-    # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    # plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    plot_text_ax(ax, 'a)', 0.01, 0.99, 16, 'top', 'left', 'k')        
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -647,6 +639,7 @@ if __name__ == '__main__':
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
     ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'b)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -668,15 +661,8 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-    # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    # plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'c)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -706,6 +692,7 @@ if __name__ == '__main__':
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
     ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'd)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
@@ -746,7 +733,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -804,7 +791,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -882,7 +869,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -940,7 +927,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1014,14 +1001,7 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-    # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    # plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    plot_text_ax(ax, 'a)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -1051,6 +1031,7 @@ if __name__ == '__main__':
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < \varphi \leq %.2f$' % (zticks[i], zticks[j]), c = c)
     ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'b)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -1072,15 +1053,8 @@ if __name__ == '__main__':
     ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
-    # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    # plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'c)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
   
@@ -1110,6 +1084,7 @@ if __name__ == '__main__':
             ax.plot(rs.xS, rs.yS, label = r'$%.2f < x_Y \leq %.2f$' % (zticks[i], zticks[j]), c = c)
     ax.legend(loc = 'upper right', fontsize = 14, frameon = False)
     plt.setp(ax.get_yticklabels(), visible = False)
+    plot_text_ax(ax, 'd)', 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
@@ -1150,7 +1125,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1208,7 +1183,7 @@ if __name__ == '__main__':
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # rs.poly1d()
-    # p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    # p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     # ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
     # plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     # ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1257,9 +1232,9 @@ if __name__ == '__main__':
  
     #with PdfPages('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix)) as pdf:
     NCols = 2
-    NRows = 2
+    NRows = 1
     f = plt.figure()
-    page_size_inches = [10,10]
+    page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
@@ -1279,8 +1254,8 @@ if __name__ == '__main__':
         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
     )
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
-    xran = [0, 1.5]
-    yran = [0, 3]
+    xran = [0, 2]
+    yran = [0, 4]
     xm, ym = C.ma_mask_xyz(x = H.tau_V__Tg[iT], y = H.tau_V_neb__g, mask = mask__g) 
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
@@ -1301,12 +1276,12 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$\tau_V^\star$') 
     ax.set_ylabel(r'$\tau_V^{neb}$')
     rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
+    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
       
     ols_kwargs.update(dict(
@@ -1320,8 +1295,8 @@ if __name__ == '__main__':
         kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
     )
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-    xran = [0, 1.5]
-    yran = [0, 3]
+    xran = [0, 2]
+    yran = [0, 4]
     xm, ym = C.ma_mask_xyz(x = H.tau_V__Trg[iT], y = H.tau_V_neb__Trg[iT], mask = mask__rg) 
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
@@ -1340,103 +1315,107 @@ if __name__ == '__main__':
     #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.set_xlabel(r'$\tau_V^\star$') 
-    ax.set_ylabel(r'$\tau_V^{neb}$')
+    #ax.set_ylabel(r'$\tau_V^{neb}$')
     rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
     plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
+    plt.setp(ax.get_yticklabels(), visible = False)
   
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-    ax = plt.subplot2grid(grid_shape, loc = (1, 1))
-    xran = [0, 1.5]
-    yran = [0, 3]
-    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = H.integrated_tau_V_neb__g, mask = mask_GAL__g) 
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    # X, Y = np.meshgrid(xedges, yedges)
-    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
-    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
-    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
-    ax.set_xlim(xran)
-    ax.set_ylim(yran)
-    ax.set_title('integrado')
-    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    #for i in xrange(len(rs.xPrcS)):
-    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-    ax.set_xlabel(r'$\tau_V^\star$') 
-    ax.set_ylabel(r'$\tau_V^{neb}$')
-    rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
-    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
-  
-    sum_Ha__g = H.sum_prop_gal(H.F_obs_Ha__g, mask_zones = mask__g)
-    sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
-    tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
-  
-    ols_kwargs.update(dict(
-        va = 'top',
-        ha = 'right', 
-        pos_x = 0.98, 
-        fs = 15, 
-        rms = True, 
-        text = True, 
-        pos_y = 0.98, 
-        kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
-    )
-    ax = plt.subplot2grid(grid_shape, loc = (1, 0))
-    xran = [0, 1.5]
-    yran = [0, 3]
-    xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = tau_V_neb_resolved__g, mask = mask_GAL__g) 
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    # X, Y = np.meshgrid(xedges, yedges)
-    # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-    #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
-    plot_text_ax(ax, '%s' % xm.count(), **kw_text)
-    ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
-    ax.set_xlim(xran)
-    ax.set_ylim(yran)
-    ax.set_title('espacialmente resolvido')
-    rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    #for i in xrange(len(rs.xPrcS)):
-    #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
-    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
-    ax.set_xlabel(r'$\tau_V^\star$') 
-    ax.set_ylabel(r'$\tau_V^{neb}$')
-    rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
-    ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
-    plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
-    ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
-    plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
+  #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  #   ols_kwargs.update(dict(
+  #       va = 'top',
+  #       ha = 'right', 
+  #       pos_x = 0.98, 
+  #       fs = 15, 
+  #       rms = True, 
+  #       text = True, 
+  #       pos_y = 0.98, 
+  #       kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+  #   )
+  #   ax = plt.subplot2grid(grid_shape, loc = (1, 1))
+  #   xran = [0, 1.5]
+  #   yran = [0, 3]
+  #   xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = H.integrated_tau_V_neb__g, mask = mask_GAL__g) 
+  #   #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  #   # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+  #   # X, Y = np.meshgrid(xedges, yedges)
+  #   # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+  #   #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  #   #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+  #   kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
+  #   plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+  #   ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+  #   ax.set_xlim(xran)
+  #   ax.set_ylim(yran)
+  #   ax.set_title('integrado')
+  #   rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+  #   #for i in xrange(len(rs.xPrcS)):
+  #   #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+  #   ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+  #   ax.set_xlabel(r'$\tau_V^\star$') 
+  #   ax.set_ylabel(r'$\tau_V^{neb}$')
+  #   rs.poly1d()
+  #   p = [ rs.poly1d_slope, rs.poly1d_intercept ]
+  #   ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
+  #   plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+  #   ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+  #   plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+  #   ax.xaxis.set_major_locator(MaxNLocator(4))
+  #   ax.yaxis.set_major_locator(MaxNLocator(4))
+  # 
+  #   sum_Ha__g = H.sum_prop_gal(H.F_obs_Ha__g, mask_zones = mask__g)
+  #   sum_Hb__g = H.sum_prop_gal(H.F_obs_Hb__g, mask_zones = mask__g)
+  #   tau_V_neb_resolved__g = 2.886 * (np.ma.log(sum_Ha__g/sum_Hb__g) - np.ma.log(2.86))
+  # 
+  #   ols_kwargs.update(dict(
+  #       va = 'top',
+  #       ha = 'right', 
+  #       pos_x = 0.98, 
+  #       fs = 15, 
+  #       rms = True, 
+  #       text = True, 
+  #       pos_y = 0.98, 
+  #       kwargs_plot = dict(c = 'k', ls = '--', lw = 2)),
+  #   )
+  #   ax = plt.subplot2grid(grid_shape, loc = (1, 0))
+  #   xran = [0, 1.5]
+  #   yran = [0, 3]
+  #   xm, ym = C.ma_mask_xyz(x = H.integrated_tau_V__g, y = tau_V_neb_resolved__g, mask = mask_GAL__g) 
+  #   #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  #   # h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+  #   # X, Y = np.meshgrid(xedges, yedges)
+  #   # im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+  #   #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+  #   #density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+  #   kw_text = dict(pos_x = 0.01, pos_y = 0.99, fs = fs_xmcount, va = 'top', ha = 'left', c = 'k')
+  #   plot_text_ax(ax, '%s' % xm.count(), **kw_text)
+  #   ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8')
+  #   ax.set_xlim(xran)
+  #   ax.set_ylim(yran)
+  #   ax.set_title('espacialmente resolvido')
+  #   rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
+  #   #for i in xrange(len(rs.xPrcS)):
+  #   #    ax.plot(rs.xPrc[i], rs.yPrc[i], 'k--', lw = 1)
+  #   ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+  #   ax.set_xlabel(r'$\tau_V^\star$') 
+  #   ax.set_ylabel(r'$\tau_V^{neb}$')
+  #   rs.poly1d()
+  #   p = [ rs.poly1d_slope, rs.poly1d_intercept ]
+  #   ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
+  #   plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
+  #   ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), y_rms = ym.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
+  #   plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+  #   ax.xaxis.set_major_locator(MaxNLocator(4))
+  #   ax.yaxis.set_major_locator(MaxNLocator(4))
+  #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
       
-    f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.3, wspace = 0.25, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)  
+    #f.subplots_adjust(bottom = 0.1, top = 0.95, hspace = 0.3, wspace = 0.25, right = 0.95, left = 0.1)
     #pdf.savefig(f)
     f.savefig('CompareTauV_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
@@ -1490,7 +1469,7 @@ if __name__ == '__main__':
     ax.set_xlabel(xlabel) 
     ax.set_ylabel(ylabel)
     rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed(), y_rms = ym.compressed()))
     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, y_rms = ym.compressed(), x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1608,7 +1587,7 @@ if __name__ == '__main__':
     ax.set_xlabel(xlabel) 
     ax.set_ylabel(ylabel)
     rs.poly1d()
-    p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+    p = [ rs.poly1d_slope, rs.poly1d_intercept ]
     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, y_rms = ym.compressed(), x_rms = xm.compressed()))
     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, y_rms = ym.compressed(), x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1725,7 +1704,7 @@ if __name__ == '__main__':
 #     ax.set_xlabel(xlabel) 
 #     ax.set_ylabel(ylabel)
 #     rs.poly1d()
-#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     p = [ rs.poly1d_slope, rs.poly1d_intercept ]
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
 #     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
 #     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    
@@ -1844,7 +1823,7 @@ if __name__ == '__main__':
 #     ax.set_xlabel(xlabel) 
 #     ax.set_ylabel(ylabel)
 #     rs.poly1d()
-#     p = [ rs.poly1d_slope, rs.poly1d_intercep ]
+#     p = [ rs.poly1d_slope, rs.poly1d_intercept ]
 #     ols_kwargs.update(dict(c = 'k', label = 'poly1d', OLS = True, x_rms = xm.compressed()))
 #     plotOLSbisectorAxis(ax, p[0], p[1], **ols_kwargs)
 #     ols_kwargs.update(OLS = None, c = 'r', label = 'OLS', pos_y = 0.9, x_rms = xm.compressed(), kwargs_plot = dict(c = 'r', ls = '--', lw = 2))    

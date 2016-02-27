@@ -19,38 +19,35 @@
 \label{sec:amostra}
 
 Nem todas as regiões das galáxias que estudamos têm medidas das linhas espectrais necessárias para
-nosso estudo. Essa falta não é um defeito de observação e sim uma característica intrínseca de
-determinada região. As linhas espectrais geralmente estão ligadas ao gás e nem todas as partes da
-galáxia possuem gás. Nesse capítulo vamos descrever a amostra e todas as características impostas em
-nossa amostra, faremos um breve comentário sobre a classificação morfológica de nossas galáxias,
-além de calcular e exemplificar alguns perfis radiais, que utilizaremos em nossas discussões
-futuras.
+este estudo. Essa falta não é um defeito de observação e sim uma característica intrínseca de
+determinada região. As linhas em emissão geralmente estão ligadas ao gás e nem todas as partes da
+galáxia possuem gás. Nesse capítulo vamos descrever todas as características e máscaras impostas em
+nossa amostra. Faremos um breve comentário sobre a classificação morfológica destas galáxias, além
+de calcular e exemplificar os perfis radiais que utilizaremos em nossas discussões futuras.
 
 \section{Artigo - CALIFA, the Calar Alto Legacy Field Area survey III. Second public data
 release.}
 
 Esse artigo (Apêndice \ref{apendice:GBetal2015a}) descreve uma amostra de 200 galáxias que tiveram
-seus dados liberados no segundo lançamento público de dados ({\em data-release} - DR2) do CALIFA.
-Enveredando por todos as configurações de observação, procedimentos de redução dos dados, avaliação
-de erros e controle de qualidade. 
-
-Nesse artigo nosso grupo de populações estelares me encarregou de escrever os programas de análise e
-gerar as imagens que usamos para avaliar a qualidade da síntese de populações estelares com o
-\starlight em 170670 espectros para distintas posições em cada galáxia, além de comparar com os
-resultados para a amostra do primeiro {\em data-release} (DR1). Durante a análise dos resíduos vimos
-que os mesmos reduziram sensivelmente desde a última versão, além de nos ajudar a melhorar a máscara
-de remoção de linhas telúricas dos espectros. Também verificamos que os erros relacionados aos
-espectros observados possuem uma distribuição muito próxima a uma gaussiana. Todas os dados
-presentes nesse trabalho receberam passaram pelo mesmo pré-processamento detalhado neste artigo.
+seus dados liberados no segundo lançamento público de dados do CALIFA (DR2) passando por todas as
+configurações de observação, procedimentos de redução dos dados, avaliação de erros e controle de
+qualidade. Nosso grupo de populações estelares se encarregou de escrever alguns programas de análise
+e gerar as imagens nas quase nos embasamos para avaliar a qualidade da síntese de populações
+estelares com o \starlight em 170670 espectros para distintas posições em cada galáxia, além de
+realizarmos uma comparação com os resultados para a amostra do DR1. Durante esse trabalho notamos
+que os resíduos reduziram sensivelmente desde a última versão. Esta mesma análise nos ajudou a
+melhorar a máscara de remoção de linhas telúricas\footnote{Linhas provenientes de fenômenos que
+ocorrem na Terra.} dos espectros. Também verificamos que os erros relacionados aos espectros
+observados possuem uma distribuição muito próxima a uma gaussiana. Todas os dados presentes nesse
+trabalho receberam o mesmo pré-processamento detalhado neste artigo.
 
 \section{Definição da amostra deste trabalho}
 \label{sec:amostra:definicao}
 
-Neste trabalho estamos interessados em estudar a formação estelar recente em discos de galáxias.
 Nossa amostra começa contendo todas as 226176 regiões (zonas) das 305 galáxias espirais do \CAL.
 Cada uma dessas zonas dessa é composta por um ou mais pixels, com um espectro resultante da soma dos
 espectros destes, para que tenhamos relação sinal-ruído maior ou igual a 20 na janela de
-normalização do espectro resultante. Esse procedimento, conhecido como {\em Voronoi binning}, está
+normalização deste espectro. Esse procedimento, conhecido como {\em Voronoi binning}, está
 detalhado, juntamente com o procedimento de derivação das propriedades estelares através do código
 \starlight para cada uma das regiões destas galáxias, em \citet{CidFernandes.etal.2013a}.
 
@@ -73,13 +70,12 @@ $\SigmaSFR$;
 \Halpha - $\SigmaSFRN$;
 	\item metalicidade média das populações estelares, pesada pela massa estelar - $\meanM{\log
 Z_\star}$;
-	\item abundância de oxigênio (utilizada como medida de metalicidade nebular) - $\log(O/H)$).
+	\item metalicidade nebular - $\log(O/H)$.
   \end{itemize}
   \item fração de luz proveniente de populações estelares jovens maior que 0.05 (5\%) ($x_Y >
 0.05$);
   \item $\tauV$ e $\tauVN$ maiores que 0.05;
-  \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais (ver
-\ref{sec:amostra:rad};
+  \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais;
   \item distância maior que 70\% do raio que contém metade da luz ({\em half-light radius} - HLR).
 \end{itemize}
 \noindent O que aqui chamamos de população jovem discutiremos um pouco mais adiante, na Sec.
@@ -87,7 +83,7 @@ Z_\star}$;
 do bojo da galáxia (partes centrais onde as linhas são produzidas por diferentes fenômenos físicos,
 relacionados a um núcleo ativo). Esse valor (0.7 HLR) foi definido por nossos colaboradores
 analisando as curvas de brilho das galáxias e representa um valor máximo para localização de zonas
-centrais. Na figura \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
+centrais. Na Fig. \ref{fig:histosample} podemos ver os efeitos da máscara que forma nossa
 amostra sobre algumas propriedades. Em vermelho temos as 226176 regiões em 305 galáxias e, em
 azul, as 16479 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa
 seleção busca zonas mais compactas e mais jovens (maior fração de populações jovens diminuindo a idade
@@ -98,10 +94,11 @@ média). O corte mais brusco em nossa amostra é devido a baixa relação sinal-
 	\includegraphics[width=0.99\textwidth]{figuras/histosample.pdf}
 	\caption[Histogramas: densidade superficial de massa, idade média, fração de populações jovens e
 	relação axial.] 
-	{Histogramas da densidade superficial de massa, idade média, fração de populações jovens e relação
-axial. Em vermelho temos a distribuição de valores de 226176 regiões em 305 galáxias e, em azul,
-a de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da média,
-mediana, desvio padrão, máximo e mínimo de cada distribuição.}
+	{Histogramas da densidade superficial de massa ({\em painel a}), idade média das populações
+estelares ({\em painel b}), fração de populações jovens ({\em painel c}) e relação axial ({\em
+painel d}). Em vermelho temos a distribuição de valores de 226176 regiões em 305 galáxias e, em
+azul, a de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da
+média, mediana, desvio padrão, máximo e mínimo de cada distribuição.}
 	\label{fig:histosample}
 \end{figure}
 
@@ -128,14 +125,14 @@ morfológicas, o que realmente acontece.
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/sample_realsample_maskradius_integrated.pdf}
 	\caption[Classificação por morfologia.]
-	{\emph{Em sentido horário a partir do painel superior esquerdo}: gráfico da massa estelar, idade
-	estelar média, fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star < t_{SF})$) e
-	inclinação, divididos em classes morfológicas para 305 galáxias espirais da amostra total do
-	CALIFA. No primeiro painel, temos o número de galáxias dentro de cada classe morfológica. Cada
-	caixa tem altura definida pelo primeiro e terceiro quartil da distribuição dentro de um tipo
-	morfológico. Uma faixa preta marca a mediana e uma estrela a média. Em cada caixa, a linha
-	pontilhada vertical se estende mostrando o intervalo de $3\sigma$. Valores que ficam fora do
-	intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
+	{Algumas propriedades separadas em classes morfológicas. Massa estelar ({\em painel a}), idade
+estelar média ({\em painel b}), fração de luz proveniente das população jovens ({\em painel c}, $x_Y
+\equiv x_Y(t_\star < t_{SF})$) e inclinação ({\em painel d}) de 305 galáxias espirais da amostra
+observada do CALIFA. No primeiro painel, temos o número de galáxias dentro de cada classe
+morfológica. Cada caixa tem altura definida pelo primeiro e terceiro quartil da distribuição dentro
+de um tipo morfológico. Uma faixa preta marca a mediana e uma estrela a média. Em cada caixa, a
+linha pontilhada vertical se estende mostrando o intervalo de $3\sigma$. Valores que ficam fora do
+intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
 	\label{fig:amostraMorf}
 \end{figure}
 
@@ -153,17 +150,15 @@ permite estudo da evolução das propriedades ao longo do raio. Quando colocamos
 mesma análise, a vantagem dos {\em bins} radiais vem do balanceamento da influência de cada galáxia
 quando analisamos todas juntas. Para que seja possível este ``empilhamento'' de galáxias, estas
 médias radiais são feitas definindo-se um raio efetivo para cada galáxia. No nosso caso utilizamos
-como raio efetivo aquele que comporta metade da luz da galáxia ({\em half-light radius} - HLR) e
-definimos 30 anéis com espessura de 0.1 HLR (ou seja, indo até 3 HLR) partindo do pixel central de
-cada galáxia.
+como raio efetivo aquele que comporta metade da luz da galáxia (HLR) e definimos 30 anéis com
+espessura de 0.1 HLR (ou seja, indo até 3 HLR) partindo do pixel central de cada galáxia.
 
 No artigo de \citet{GonzalezDelgado.etal.2014a} os autores discutem as estruturas radiais de algumas
-propriedades estelares, aplicando este tipo de estudo para 107 galáxias contidas no CALIFA {\em
-Survey}. Nele são derivados os raios de metade da luz (HLR) e de metade da massa ({\em half-mass
-radius} - HMR) e deste resultado concluem que as galáxias são em geral 15\% mais compactas em massa
-do que em luz. Também mostram que algumas propriedades, como idade estelar média, extinção por
-poeira e densidade superficial de massa estelar são bem representados pelo seus valores medidas a 1
-HLR.
+propriedades estelares, aplicando este tipo de estudo para 107 galáxias no CALIFA. Nele são
+derivados os raios de metade da luz (HLR) e de metade da massa ({\em half-mass radius} - HMR) e
+deste resultado concluem que as galáxias são em geral 15\% mais compactas em massa do que em luz.
+Também mostram que algumas propriedades, como idade estelar média, extinção por poeira e densidade
+superficial de massa estelar são bem representados pelo seus valores medidas a 1 HLR.
 
 Escolhemos utilizar perfis radiais em anéis elípticos neste trabalho, calculando a média entre todas
 as zonas não mascaradas dentro de cana anel. Como um exemplo, podemos observar na Fig.
@@ -194,23 +189,24 @@ vistas na Fig. \ref{fig:RadProfProps} juntamente com seus histogramas na Fig.
 formação estelar, poeira e a conversão de densidade superficial de poeira em densidade superficial
 de gás em discos de galáxias espirais. Podemos ver que existem alguns gradientes negativos (crescem
 de fora para dentro) bem definidos de densidade superficial da taxa de formação estelar
-($\Sigma_{\mathrm{SFR}}$), abundância relativa de oxigênio (metalicidade nebular, $O/H$), densidade
-superficial de massa estelar ($\mu_\star$). Outras propriedaes parecem não variarem muito dentro do
-disco. Alguns perfis mudam de tendência ao passar de 2 HLR, mas vale ressaltar que na maioria das
-distribuições, os pontos acima de 2 HLR ultrapassam $1\sigma$. Embora não seja tão forte, existe um
-gradiente positivo na fração em luz de populações jovens. 
+($\Sigma_{\mathrm{SFR}}$), a metalicidade nebular, ($\log (O/H)$), densidade superficial de massa
+estelar ($\mu_\star$). Outras propriedaes parecem não variarem muito dentro do disco. Alguns perfis
+mudam de tendência ao passar de 2 HLR, mas vale ressaltar que na maioria das distribuições, os
+pontos acima de 2 HLR ultrapassam $1\sigma$ da distribuição. Embora não seja tão forte, existe um
+gradiente positivo na fração em luz de populações jovens.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{figuras/props_R.pdf}
 	\caption[Perfis radiais das propriedades físicas.]
-	{Perfis radiais das principais propriedades físicas abordadas neste trabalho. Da esquerda para
-direita e de cima para baixo temos: densidade superficial da taxa de formação estelar detectada por
-\Halpha e pela síntese, idade média das populações estelares, metalicidade nebular, fração em luz de
-populações jovens, densidade superficial de massa estelar, metalicidade média das populações
-estelares, coeficiente de extinção da síntese e do decremento de Balmer. Em cada painel vemos também
-os contornos definindo $1\sigma$, $2\sigma$ e $3\sigma$ da distribuição. As linhas marcam a mediana
-(linha contínua) e os 5, 16, 64, 95 percentis (linhas tracejadas).}
+	{Perfis radiais das principais propriedades físicas abordadas neste trabalho. Densidade
+superficial da taxa de formação estelar detectada por \Halpha e pela síntese ({\em painéis a e
+b}), idade média das populações estelares ({\em painel c}), metalicidade nebular ({\em painel d}),
+fração em luz de populações jovens ({\em painel e}), densidade superficial de massa estelar ({\em
+painel f}), metalicidade média das populações estelares ({\em painel g}), coeficiente de extinção da
+síntese e do decremento de Balmer ({\em painéis h e i}). Em cada painel vemos também os contornos
+definindo $1\sigma$, $2\sigma$ e $3\sigma$ da distribuição. As linhas marcam a mediana (linha
+contínua) e os 5, 16, 64, 95 percentis (linhas tracejadas).}
 	\label{fig:RadProfProps}
 \end{figure}
 

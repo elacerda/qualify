@@ -279,10 +279,12 @@ if __name__ == '__main__':
     #f.suptitle(suptitle_R, fontsize = 15)
     row, col = 0, 0
     props_order = [ 'Mcor', 'at_flux', 'xY', 'ba', ] # 'alogZmass', 'tauV', 'tauVNeb', 'Zneb',  ]
+    panel_letter = [ 'a)','b)','c)','d)' ]
     mode = 'integrated_mask'
-    for k in props_order:
+    for i_k, k in enumerate(props_order):
         zones_tot = 0
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        plot_text_ax(ax, '%s' % panel_letter[i_k], 0.01, 0.99, 20, 'top', 'left', 'k')
         p = props[k]
         Nboxes = Ntypes
         if mode.find('integrated') >= 0:
@@ -475,14 +477,17 @@ if __name__ == '__main__':
     f.set_dpi(100)
     grid_shape = (NRows, NCols)
     prop_histo = [ 'McorSD', 'at_flux', 'xY', 'ba' ]
+    x_pos_letter = [ 0.01, 0.99, 0.05, 0.99 ]
+    ha_letter = ['left', 'right', 'left', 'right']
     bins = 30
     row, col = 0, 0
-    for k in prop_histo:
+    for i_k, k in enumerate(prop_histo):
         p = props[k]
         pall = props_all[k]
         x = p['vm'].compressed()
         xall = pall['vm'][Hall.reply_arr_by_zones(mask_morf_all)].compressed()
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        plot_text_ax(ax, '%s' % panel_letter[i_k], x_pos_letter[i_k], 0.99, 20, 'top', ha_letter[i_k], 'k')
         ax.set_axis_on()
         ax.set_xlabel(p['label'])
         print k, len(x), len(xall)

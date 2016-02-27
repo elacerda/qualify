@@ -78,12 +78,13 @@ Com estas simplificações, podemos escrever a metalicidade do gás como:
 \end{equation}
 \noindent onde $y$ é o {\em yield} estelar (também conhecido como {\em true yield}). Invertendo
 \eqref{eq:Zgas_closedbox} podemos definir o {\em yield} efetivo ($y_{eff}$), ou seja, aquele que um
-sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa primeira equação foi derivada explicitamente pela primeira vez por \citet{Searle.Sargent.1972a} ao
-estudar duas regiões \Hii gigantes, ditas ``isoladas''. \citet{Garnett.2002a}, assumindo um {\em
-true yield} constante, calcula $y_{eff}$ para 31 galáxias espirais e 13 galáxias irregulares,
-encontrando valores distintos entre elas, o que o leva a concluir que o fluxo de gás ({\em outflow}
-e {\em inflow}) nestes sistemas são ambos processos muito importantes para a evolução química de
-uma galáxia. \citet{Tremonti.etal.2004a} calculam o $y_{eff}$ para $\sim 55000$ galáxias {\em
+sistema teria caso se comportasse como dito modelo ao longo de toda a linha do tempo. Essa primeira
+equação foi derivada explicitamente pela primeira vez por \citet{Searle.Sargent.1972a} ao estudar
+duas regiões \Hii gigantes, ditas ``isoladas''. \citet{Garnett.2002a}, assumindo um {\em true yield}
+constante, calcula $y_{eff}$ para 31 galáxias espirais e 13 galáxias irregulares, encontrando
+valores distintos entre elas, o que o leva a concluir que o fluxo de gás ({\em outflow} e {\em
+inflow}) nestes sistemas são ambos processos muito importantes para a evolução química de uma
+galáxia. \citet{Tremonti.etal.2004a} calculam o $y_{eff}$ para $\sim 55000$ galáxias {\em
 star-forming} do \SDSS, chegando a um valor de 0.0104. Ao adicionar outras medidas verifica que
 este valor varia em uma escala de $\sim 10$ vezes, o que falha com a assunção de um {\em yield}
 constante.
@@ -94,12 +95,12 @@ constante.
 Como explicado na Sec. \ref{sec:intro:galaxias}, a quantidade de gás de uma galáxia e a taxa de
 formação estelar estão relacionadas através de uma lei de potências (KS). A relação entre poeira e
 formação estelar é um resultado de indireto desta lei já que vemos que existe a ligação entre poeira
-e gás e que ela possui dependência com a metalicidade principalmente \citep[][e suas
+e gás e que ela possui dependência com a metalicidade nebular principalmente \citep[][e suas
 referências]{Magdis.etal.2011a, Leroy.etal.2011a, Santini.etal.2014a}. Pensando nisso, vamos estudar
-a relação entre poeira e formação estelar (aqui chamada de pseudo-KS), que pode ser vista na Fig.
-\ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como variável representante da poeira e no
-direito, $\tauVN$. O espalhamento nesta figura nos mostra que podemos explorar os resíduos em torno
-desse ajuste, mas é bastante claro que existe uma relação. A conversão de CO em gás também é
+a relação entre poeira e formação estelar (aqui chamada de pseudo-KS - $pKS$), que pode ser vista na
+Fig. \ref{fig:pseudoKS}. No painel esquerdo usamos $\tauVS$ como variável representante da poeira e
+no direito, $\tauVN$. O espalhamento nesta figura nos mostra que podemos explorar os resíduos em
+torno desse ajuste, mas é bastante claro que existe uma relação. A conversão de CO em gás também é
 dependente da metalicidade, mas utilizando o coeficiente de extinção em absorção não necessitamos
 medidas adicionais.
 
@@ -125,10 +126,10 @@ Primeiramente vamos definir o resíduo como:
 	\Delta(pKS)\ =\ \log\ \SigmaSFR - (0.751 \log\ \tauVS - 1.209).
 	\label{eq:DeltapKS}
 \end{equation}
-\noindent De todas as propriedades que vemos na Fig. \ref{fig:pseudoKSresid} as maiores correlações
+\noindent De todas as propriedades que vemos na Fig. \ref{fig:deltapKS} as maiores correlações
 com $\Delta(pKS)$ são com a densidade superficial de massa estelar, o raio, a metalicidade nebular e
 a fração em luz das populações jovens. Apesar da notável participação da metalicidade nebular no
-espalhamento da relação $\SigmaSFR - \tauVS$, ela possui intervalo pequeno de variação (90\% dos
+espalhamento da relação $pKS$, ela possui intervalo pequeno de variação (90\% dos
 pontos ficam no intervalo entre -0.4 e -0.11 $Z_\odot$), além do resíduo ir para o lado contrário
 que imaginaríamos assumindo que, para um $\tauVS$ fixo, com o aumento da metalicidade $\SigmaGas$
 (e consequentemente, $\SigmaSFR$) deveria diminuir (causando um resíduo na direção contrária). Em
@@ -150,7 +151,7 @@ da pKS. Não verificamos influência alguma da morfologia.
 	{No eixo y de todos os painéis temos $\Delta(pKS) = \log\ \SigmaSFR - (0.751 \log\ \tauVS -
 1.209)$, onde, o termo entre parenteses é o ajuste linear da mediana no painel esquerdo da Fig.
 \ref{fig:pseudoKS}. No eixo $x$ temos, na primeira fila, da esquerda para direita: metalicidade
-nebular ($\log\ ((O/H)/(O/H)_\odot)$), metalicidade estelar média pesada pela massa ($\meanM{\log
+nebular ($\log\ (O/H)$), metalicidade estelar média pesada pela massa ($\meanM{\log
 Z_\star}$), idade média das populações estelares ($\meanL{\log t_\star}$), fração em luz das
 populações estelares jovens ($x_Y$); na última fila, na mesma ordem: densidade superficial de massa
 estelar ($\log \mu_\star$), relação axial ($b/a$), raio e tipo morfológico. Em cada painel as linhas
@@ -164,12 +165,10 @@ número no canfo inferior esquerdo é o coeficiente de correlação de Spearman.
 Como primeiro passo vamos tentar remover o espalhamento utilizando a regressão linear representada
 no primeiro painel da Fig. \ref{fig:deltapKS}, ou seja, removendo o espalhamento causado pela
 metalicidade nebular. Dessa forma, vamos identificar as duas variáveis que utilizaremos:
-\begin{eqnarray}
-	\Delta_1 &=& 0.751 \log\ \tauVS + 1.188 \log \left(\frac{(O/H)}{(O/H)_\odot}\right) - 0.935 \\
+\begin{equation}
+	\Delta_1 = 0.751 \log\ \tauVS + 1.188 \log \left(\frac{(O/H)}{(O/H)_\odot}\right) - 0.935
 	\label{eq:Delta1}
-	\Delta_2 &=& 0.751 \log\ \tauVS + 0.404 \log\ \mu_\star - 2.098 \\
-	\label{eq:Delta2}
-\end{eqnarray}
+\end{equation}
 Definimos então um novo $\Delta(pKS)$, alterando \eqref{eq:DeltapKS} utilizando $\Delta_1$:
 \begin{equation}
 	\Delta(pKS)\ =\ \log\ \SigmaSFR - \Delta_1.
@@ -177,8 +176,12 @@ Definimos então um novo $\Delta(pKS)$, alterando \eqref{eq:DeltapKS} utilizando
 \noindent Este resultado pode ser observado na Fig. \ref{fig:deltapKS_noOH}. Vemos que apesar
 de diminuir em uma maneira geral o espalhamento, vemos que a densidade superficial de massa estelar
 continua cumprindo um papel importante nesta relação. Dessa forma, repetimos este último passo, mas
-agora removendo o espalhamento causado por $\mu_\star$ (utilizando $\Delta_2$). O novo valor de
-$\Delta(pKS)$ fica:
+agora removendo o espalhamento causado por $\mu_\star$:
+\begin{equation}
+	\Delta_2 = 0.751 \log\ \tauVS + 0.404 \log\ \mu_\star - 2.098.
+	\label{eq:Delta2}
+\end{equation}
+\noindent O novo valor de $\Delta(pKS)$ fica:
 \begin{equation}
 	\Delta(pKS)\ =\ \log \SigmaSFR - \Delta_2.
 \end{equation}
@@ -187,10 +190,10 @@ espalhamento diminui consideravelmente na relação geral e em todas as outras v
 com a metalicidade nebular. Esta propriedade, assim como $\mu_\star$, possui um gradiente no mesmo
 sentido em relação ao raio, e talvez esse seja o motivo pelo qual quando removemos o espalhamento
 causado por esta última resulte na diminuição do espalhamento causado pela primeira. Os efeitos com
-idade, fração em de populações jovens, b/a e morfologia serão estudados em um próximo passo de
+idade, fração em de populações jovens, $b/a$ e morfologia serão estudados em um próximo passo de
 nosso trabalho, principalmente no contexto do Cap. \ref{sec:difextin}. Parece que, em primeira
 ordem, encontramos o mais forte causador do espalhamento da Fig. \ref{fig:pseudoKS}, painel
-esquerdo. Na Fig. \ref{fig:pseudoKS_noscat} vemos o resultado desse processo na pKS.
+esquerdo. Na Fig. \ref{fig:pseudoKS_noscat} vemos o resultado desse processo na $pKS$.
 
 \begin{figure}
 	\centering
@@ -369,7 +372,7 @@ propriedades. O código de cores em todos os gráficos segue àquele definido na
 \ref{fig:propsGasR}. Para $\SigmaGas$ vemos que os resultados são bastante diferentes quando
 comparamos pelo método de conversão de poeira em absorção (utilizando um $\delta_{\mathrm{DGR}}$) e
 quando invertemos a lei de KS (\eqref{eq:SigmaGasKenn} e \eqref{eq:fGasKenn}). Já quando observamos
-frações de gás vemos que os resultados são mais robustos. 
+frações de gás vemos que os resultados são mais robustos.
 
 \begin{figure}
 	\centering
@@ -382,13 +385,32 @@ histogramas deste trabalho: média, mediana, desvio padrão, máximo e mínimo.}
 	\label{fig:histoGas}
 \end{figure}
 
+\begin{figure}
+	\centering
+ 	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
+ 	\caption[Propriedades físicas e $\SigmaGas$.]
+ 	{Densidade superficial de massa de gás ($\SigmaGas$) contra idade média das populações estelares,
+fração em luz das populações jovens, densidade superficial de massa estelar, todos na primeira
+fileira e, na segunda fileira, relação de semi-eixos, metalicidade média das populações estelares
+pesada pela massa e metalicidade nebular.}
+	\label{fig:propsSigmaGas}
+\end{figure}
+
+\begin{figure}
+	\centering
+ 	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
+ 	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
+ 	{Igual a Fig. \ref{fig:propsSigmaGas}, mas para a fração de gás.}
+ 	\label{fig:propsfGas}
+\end{figure} 
+
 Fechamos esta seção com a relação KS criada a partir dos valores de $\SigmaGas$ utilizando a
 conversão de BR13 (Fig. \ref{fig:KS}). Basicamente o resultado é: essa conversão não está
 ``melhorando'' os resultados na direção de uma relação mais inclinada do que a relação original
 (que seria o caso de ir em direção à relação de KS). Os resíduos de metalicidade na relação $pKS$
 (Fig. \ref{fig:deltapKS}, primeiro painel na primeira fila) estão indo para a direção contrária a
 direção que deveria ter no caso de usar a conversão de poeira para gás assumindo
-\eqref{eq:SigmaGasBR} para chegar em uma relação de KS (\eqref{eq:SFRKennicutt}).
+\eqref{eq:SigmaGasBR} para chegar em uma relação de KS \eqref{eq:SFRKennicutt}.
 
 \begin{figure}
 	\centering
@@ -415,8 +437,8 @@ O desvio padrão da relação KS construída utilizando $\SigmaGas$ vindo da con
 BR13 é próximo a 0.4 dex e, após a conversão, a inclinação da reta diminui, o que vai na direção
 contrária ao que imaginaríamos assumindo uma relação KS com inclinação $\sim 1.4$. 
 
-Um próximo passo também é adotar um outro tipo de abordagem é trabalhar com a eficiência da
-transformação de gás em estrelas, utilizando a relação:
+Um próximo passo também é adotar um outro tipo de abordagem, considerando a eficiência da
+formação estelar (transformação de gás em estrelas), utilizando a relação:
 \begin{equation}
 	\mathrm{SFE} = \frac{\Sigma_{\mathrm{SFR}}}{\Sigma_{\mathrm{gas}}} = \frac{1}{t_{\mathrm{dep}}},
 	\label{eq:SFE}
@@ -436,24 +458,6 @@ gás é consumido.
 As cores e valores no canto superior direito de cada painel seguem o mesmo padrão da Fig. \ref{fig:histoGas}.}
 	\label{fig:tdep}
 \end{figure}
-
-% \begin{figure}
-% 	\centering
-% 	\includegraphics[width=0.99\textwidth]{figuras/props_SigmaGas.pdf}
-% 	\caption[Propriedades físicas e $\SigmaGas$.]
-% 	{Densidade superficial de massa de gás ($\SigmaGas$) contra idade média das populações estelares,
-% fração em luz das populações jovens, densidade superficial de massa estelar, todos na primeira
-% fileira e, na segunda fileira, relação de semi-eixos, metalicidade média das populações estelares
-% pesada pela massa e metalicidade nebular. }
-% 	\label{fig:propsSigmaGas}
-% \end{figure}
-% \begin{figure}
-% 	\centering
-% 	\includegraphics[width=0.99\textwidth]{figuras/props_fGas.pdf}
-% 	\caption[Propriedades físicas e $f_{\mathrm{gas}}$.]
-% 	{Igual a Fig. \ref{fig:propsSigmaGas}, mas para a fração de gás.}
-% 	\label{fig:propsfGas}
-% \end{figure} 
 
 % \section{Eficiência e tempo de depleção do gás.}
 % \label{sec:gasfrac:SFE}

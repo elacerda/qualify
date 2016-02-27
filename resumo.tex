@@ -14,27 +14,27 @@
 Neste trabalho estamos estudando a conversão do coeficiente de extinção por poeira em densidade
 superficial de massa de gás em discos de galáxias espirais. Para tal finalidade estamos utilizando
 uma amostra de 184 galáxias do projeto CALIFA, um {\em survey} astronômico de espectroscopia de
-campo integrado. Utilizando as medidas de linhas de emissão provenientes dos espectros residuais da
-síntese, calculamos o coeficiente de extinção através do decremento de Balmer ($\tauVN$) de maneira
-a compará-lo com aquele proveniente da síntese de populações estelares ($\tauVS$). Para tal,
-construímos um objeto em \pyt que organiza essas medidas, facilitando a utilização desses resultados
-juntamente com os resultados da síntese (que são organizados pelo \pycasso).
+campo integrado ({\em Integral Field Spetroscopy} - IFU). Utilizando as medidas de linhas de emissão
+provenientes dos espectros residuais da síntese de populações estelares, calculamos o coeficiente de
+extinção através do decremento de Balmer ($\tauVN$) de maneira a compará-lo com aquele proveniente
+da síntese ($\tauVS$). Construímos um objeto em \pyt que organiza essas medidas, facilitando a
+utilização desses resultados juntamente com os resultados da síntese (que são organizados pelo
+\pycasso).
 
-Para não haver influências de regiões que não possuem populações jovens suficientes, regiões com
-baixa qualidade dos dados e radiações provenientes do bojo da galáxia, aplicamos uma máscara nos
-dados, removendo tais regiões. O corte mais brusco em nossa amostra é devido a baixa relação
-sinal-ruído da linha de \oIII ($(S/N)_{\oIII} < 3$) em 91142 zonas. Por final nossa amostra engloba
-16479 zonas reamostradas em $\sim 4500$ anéis radiais (elípticos) em uma unidade natural da galáxia
-(raio no qual abarca metade da luz - HLR).
+De maneira a selecionar zonas que possuem formação estelar em discos de galáxias e melhor a
+qualidade dos dados realizamos um corte aplicando várias restrições aos dados. O corte mais brusco
+em nossa amostra é devido a baixa relação sinal-ruído da linha de \oIII ($(S/N)_{\oIII} < 3$) em
+91142 zonas. Por final nossa amostra engloba 16479 zonas reamostradas em $\sim 4500$ anéis radiais
+(elípticos) em uma unidade natural da galáxia (raio no qual abarca metade da luz - HLR).
 
 Em paralelo estamos trabalhando em duas frontes. Na primeira estamos buscando o sentido real de
-$\tauVS$ e utilizando um modelo proposto juntamente com $\tauVN$ de maneira que possamos encontrar
-os coeficientes diretamente ligados ao meio interestelar e às nuvens formadoras de estrelas (regiões
+$\tauVS$ utilizando um modelo proposto juntamente com $\tauVN$ de maneira que possamos encontrar os
+coeficientes diretamente ligados ao meio interestelar e às nuvens formadoras de estrelas (regiões
 $\mathrm{H}_2$). A segunda, de certa forma, depende da primeira, pois estamos fazendo a conversão de
 poeira em gás, portanto, $\tau_V$ influencia diretamente nosso resultado. Nessa etapa investigamos
 relação entre formação estelar e poeira, de maneira a reproduzir uma relação como a de
-Kennicutt-Schmidt, encontrando uma boa correlação entre ambos. Através dos resíduos desta relação
-(que neste trabalho chamamos de {\em pseudo} Kennicut-Schmidt) vimos que algumas propriedades estão
+Kennicutt-Schmidt (KS), encontrando uma correlação entre ambos. Através dos resíduos desta relação
+(que neste trabalho chamamos de {\em pseudo} KS) vimos que algumas propriedades estão
 correlacionadas com o espalhamento desta relação, na qual, a mais forte parece ser com a densidade
 superficial de massa estelar ($\mu_\star$). Também utilizamos tanto $\tauVS$ quanto $\tauVN$ para
 calcular $\SigmaGas$, elemento que nos falta para calcular frações de gás, elemento muito importante

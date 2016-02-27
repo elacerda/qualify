@@ -24,35 +24,45 @@ proveniente das estrelas de diferentes idades e composições químicas (metalic
 correção pela aplicação de uma lei de extinção por poeira. Subtraindo os espectros observados dos
 espectros modelados obtêm-se os espectros residuais, compostos basicamente pelas linhas de emissão.
 Essas linhas são geradas principalmente através das ionizações e recombinações de átomos dos
-elementos encontrados no meio interestelar, e mais densamente, nas nuvens de gás.
-
-Neste capítulo descrevo um módulo em \pyt que desenvolvemos para incluir medidas de linhas de
-emissão e subprodutos delas derivados em nossa plataforma geral de análise dos cubos de dados do
-CALIFA.
+elementos encontrados no meio interestelar, e mais densamente, nas nuvens de gás. Neste capítulo
+descrevo um módulo em \pyt que desenvolvemos para incluir medidas de linhas de emissão (e seus
+subprodutos) derivados em nossa plataforma geral de análise dos cubos de dados do CALIFA.
 
 \section{EmLinesDataCube}
 \label{sec:emline:datacube}
 
 Dentre os diversos produtos indiretos da síntese de populações estelares, a medida dos fluxos
 integrados das linhas de emissão é peça fundamental em nosso projeto. Rubén García Benito, nosso
-colaborador e membro do \PCAL, desenvolveu um programa que, utilizando-se dos espectros residuais
-(obtidos pela subtração dos espectros modelados dos observados), ajusta perfis gaussianos para as
-linhas possibilitando então a medida dos fluxos integrados das linhas de emissão além de estimar os
-erros envolvidos neste processo. Provavelmente essas medidas sejam liberadas para a comunidade
-científica assim que o último lançamento público de dados do CALIFA for feito (DR3).
+colaborador e membro no projeto CALIFA, desenvolveu um programa que, utilizando-se dos espectros
+residuais  ajusta perfis gaussianos para as linhas possibilitando então a medida dos fluxos
+integrados das linhas de emissão além de estimar os erros envolvidos neste processo. Um exemplo
+desse processo pode ser observado na Fig. \ref{fig:rgbline}. Nela vemos a linha de \Hbeta na zona
+central do objeto UGC00148 e o ajuste feito pelo programa. Provavelmente essas medidas sejam
+liberadas para a comunidade científica assim que o último lançamento público de dados do CALIFA for
+feito (DR3).
 
-Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Para tal,
-escrevi um objeto em \pyt que além de organizar os resultados provenientes do programa de medida
-das linhas também calcula a abundância de oxigênio, um dos índices usados como metalicidade nebular
-($\log$ (O/H)), o coeficiente de extinção para as regiões nebulares ($\tauVN$), larguras
-equivalentes das linhas, assim como os erros propagados em cada cálculo, etc. Esse objeto foi
-adicionado ao \pycasso\footnote{ {\em Python CALIFA Stellar Synthesys Organizer} - \href{
-http://minerva.ufsc.br/~andre/PyCASSO-0.9.3/intro.html }{
-http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html} } \citep{CidFernandes.etal.2013a} para
-que os demais membros do projeto possam utilizá-lo. Nele também encontram-se as medidas dos fluxos
-em diversas linhas de emissão, a posição central das linhas medidas, amplitudes, desvios padrão,
-coeficientes para reconstrução do contínuo em cada linha de emissão, os erros nestas medidas, além
-das propriedades mencionadas anteriormente e seus erros propagados.
+\begin{figure}
+	\centering
+	\includegraphics[scale=0.6]{figuras/K0012-zone0-Hb.pdf}
+	\caption[Exemplo de ajuste de linha de emissão.]
+	{Espectro na região da linha de \Hbeta em emissão para a zona central da galáxia UGC00148 (objeto
+CALIFA 12) juntamente com o melhor ajuste. Em destaque a amplitude (A), o comprimento de onda
+central (x) e o desvio padrão neste ajuste (\sigma).}
+	\label{fig:rgbline}
+\end{figure}
+
+Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Escrevemos um
+objeto em \pyt (cujo nome titula esta seção) que, além de organizar os resultados provenientes do
+programa de medida das linhas de emissão, também calcula a abundância de oxigênio, índice que
+usamos como metalicidade nebular ($\log$ (O/H)), o coeficiente de extinção para as regiões nebulares
+($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada cálculo. Esse
+objeto foi adicionado ao \pycasso\footnote{{\em Python CALIFA Stellar Synthesys Organizer} - 
+\href{http://minerva.ufsc.br/~andre/PyCASSO-0.9.3/intro.html}
+{http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html}} \citep{CidFernandes.etal.2013a}
+para que os demais membros do projeto possam utilizá-lo. Nele também encontram-se as medidas dos
+fluxos em diversas linhas de emissão, a posição central das linhas medidas, amplitudes, desvios
+padrão, coeficientes para reconstrução do contínuo em cada linha de emissão, os erros nestas
+medidas, além das propriedades mencionadas anteriormente e seus erros propagados.
 
 \subsection{Extinção estimada através do decremento de Balmer}
 \label{sec:emline:datacube:tauvneb}
@@ -118,14 +128,18 @@ incerteza em $\tauVN$ por:
 \subsection{Metalicidade Nebular}
 \label{sec:emline:datacube:Zneb}
 
-Todos os demais elementos, além do hidrogênio e do hélio, são considerados metais em astrofísica.
-Os indicadores de metalicidade nebular mais utilizados são os que utilizam as medidas da
-linha de \OIII e \NII. As calibrações destes indicadores utilizadas pelo nosso projeto foram feitas por
-\citet[][M13 daqui em diante]{Marino.etal.2013a} de forma empírica utilizando medidas de temperatura
-eletrônica de 603 regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}.
+Todos os elementos, além do hidrogênio e do hélio, são considerados metais em astrofísica.
+Um método direto para medir a abundância de oxigênio é através do calculo da temperatura eletrônica
+das regiões \Hii. Este método necessita a medida da linha de [O\thinspace\textsc{iii}] $\lambda
+4363$\xspace que é muito fraca e quase impossível de ser detectada em regiões com alta metalicidade.
+Os indicadores de metalicidade nebular geralmente são baseados em métodos de linhas fortes
+\citep[{\em strong-line methods; }][]{Pagel.etal.1979a}, principalmente os que utilizam as razões
+das linhas de \OIII e \NII buscando correlações com a abundância relativa de oxigênio. As calibrações
+destes indicadores que estão sendo utilizadas pelo CALIFA foram feitas por \citet[][M13 daqui em
+diante]{Marino.etal.2013a} de forma empírica utilizando medidas de temperatura eletrônica de 603
+regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}.
 O indicador que estamos utilizando para esse projeto é aquele que calibra a fração relativa de
-oxigênio por hidrogênio utilizando a razão entre as linhas de \oIII e \nII. O valor encontrado pelos
-autores para a calibração do $\log$ (O3N2) foi:
+oxigênio utilizando a razão entre as linhas de \oIII e \nII. O valor encontrado pelos autores foi:
 \begin{equation}
 	12 + \log \textrm{(O/H)} = 8.533[\pm0.012] - 0.214[\pm0.012]\times \textrm{O3N2}
 \end{equation}
@@ -147,14 +161,14 @@ A Fig. \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por M13.
 \subsection{Exemplo de utilização}
 \label{sec:emline:datacube:exemple}
 
-Com a criação do objeto \emldc e adição ao \pycasso torna o processo de análise e produção de
-gráficos extremamente simples. Podemos apreciar um exemplo de como produzir um gráfico BPT
-\citep{Baldwin.Phillips.Terlevich.1981a} que utiliza fluxos de quatro linhas de emissão (\Halpha,
-\Hbeta, \OIII e \NII) no código da Fig. \ref{fig:BPTprog} que resulta na Fig. \ref{fig:BPTfig}.
-Primeiro carregam-se os arquivos de dados utilizando o \pycasso e o \emldc então todas as
-informações já estão prontas para serem utilizadas. Neste caso estamos usando os dados da galáxia
-NGC2916 (objeto CALIFA 277). Calculam-se então as razões entre as linhas e, por último, o gráfico é
-feito utilizando a biblioteca gráfica M\textsc{atplotlib} \footnote{
+Com a criação do objeto \emldc e sua adição ao \pycasso, o processo de análise e produção de
+gráficos torna-se extremamente simples. Um exemplo de programa para produzir um gráfico BPT
+\citep{Baldwin.Phillips.Terlevich.1981a} utilizando os fluxos de quatro linhas de emissão (\Halpha,
+\Hbeta, \OIII e \NII) pode ser visto na Fig. \ref{fig:BPTprog} e sua saída resulta na Fig.
+\ref{fig:BPTfig}. Primeiro carregam-se os arquivos de dados utilizando o \pycasso e o \emldc então
+todas as informações já estão prontas para serem utilizadas. Neste caso estamos usando os dados da
+galáxia NGC2916 (objeto CALIFA 277). Calculam-se então as razões entre as linhas e, por último, o
+gráfico é feito utilizando a biblioteca gráfica M\textsc{atplotlib} \footnote{
 	\href{http://matplotlib.org/}{http://matplotlib.org/}
 }.
 
@@ -186,18 +200,18 @@ O3Hb__z = np.log10(O3_obs__z) - np.log10(Hb_obs__z)
 f = plt.figure()
 ax = f.gca()
 sc = ax.scatter(N2Ha__z, O3Hb__z, c = K.zoneDistance_HLR,
-           cmap = 'viridis', vmax = 2, vmin = 0,
-           marker = 'o', s = 10, alpha = 0.8, edgecolor = 'none')
+           cmap = 'viridis_r', marker = 'o', s = 10, 
+           alpha = 0.8, edgecolor = 'none')
 ax.set_xlabel(r'$\log\ [NII]/H\alpha$')
 ax.set_ylabel(r'$\log\ [OIII]/H\beta$')
-cb = plt.colorbar(sc)
+cb = plt.colorbar(sc, ticks = [0, 0.5, 1, 1.5, 2])
 cb.set_label('R [HLR]')
 plt.axis([-0.6, 0.3, -1.5, 1])
 f.savefig('%s-BPT.pdf' % K.califaID)
 	\end{python}
 	\caption[Exemplo de programa utilizando o EmLinesDataCube.]
 	{Exemplo de programa utilizando os fluxos de \Halpha, \Hbeta, \OIII e \NII 
-	para construção de um gráfico BPT.}
+para construção de um gráfico BPT utilizando o objeto \emldc juntamente com o \pycasso.}
 	\label{fig:BPTprog}
 \end{figure}
 
@@ -206,8 +220,9 @@ f.savefig('%s-BPT.pdf' % K.califaID)
 	%\includegraphics[scale=0.8, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
 	\includegraphics[scale=0.6]{figuras/K0277-BPT.pdf}
 	\caption[Diagrama BPT produzido pelo programa no exemplo da Fig. \ref{fig:BPTprog}.]
-	{Diagrama BPT para as regiões da galáxia NGC29116 (objeto CALIFA 277) produzida pelo exemplo
-	\ref{fig:BPTprog}. Nela utiliza-se os fluxos de \Halpha, \Hbeta, \OIII e \NII.}
+	{Diagrama BPT para as regiões da galáxia NGC29116 (objeto CALIFA 277) produzida pelo exemplo da
+Fig. \ref{fig:BPTprog}. As cores marcam a distância ao centro da galáxia em unidades do raio que
+contém metade da luz (HLR). Nela utiliza-se os fluxos de \Halpha, \Hbeta, \OIII e \NII.}
 	\label{fig:BPTfig}
 \end{figure}
 
@@ -242,14 +257,15 @@ Simple Stellar Population} - SSP):
 Integrando \eqref{eq:dLambda} dentro do tempo do Universo ($T_U\ \sim$ 14 bilhões de
 anos) teremos hoje um total de
 \begin{eqnarray}
+	\Lambda = \Lambda(t = T_U) &=& \int_0^{T_U} l(t)\ \textrm{d}\textrm{M}(t) \\
 	\mathrm{d}\mathrm{M}(t) &=& \psi(t)\ \mathrm{d}t \\
-	\Lambda = \Lambda(t = T_U) &=& \int_0^{T_U} l(t)\ \textrm{d}\textrm{M}(t) = \int_0^{T_U} \psi(t)\
-	l(t)\ \textrm{d}t
+	\label{eq:dM_t}
+	\Lambda(T_U) &=& \int_0^{T_U} \psi(t)\ l(t)\ \textrm{d}t
 	\label{eq:Lambda}
 \end{eqnarray}
 \noindent luz $l$. Assumindo o caso B de recombinação do hidrogênio, um em cada 2.226 fótons
 ionizantes produzem um fóton de \Halpha \citep{Osterbrock.Ferland.2006a}. Esse número não varia
-muito em função da temperatura e da densidade nas regiões $\mathrm{H}_2$. Portanto:
+muito em função da temperatura e da densidade nas regiões \Hii. Portanto:
 \begin{equation}
 	\LHalpha = h \nu_{\Halpha} \frac{\mathrm{Q}_H}{2.226},
 	\label{eq:LHa_recomb_theory}
@@ -257,13 +273,11 @@ muito em função da temperatura e da densidade nas regiões $\mathrm{H}_2$. Por
 \noindent onde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo assume-se que
 nenhuma radiação ionizante escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido por
 extinção, também assume-se que a poeira não absorve muito os fótons com $h\nu\ < 13.6$ eV.
-Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}. Integrando como a equação \eqref{eq:Lambda}
-obtemos:
-\begin{eqnarray}
-	Q_H &=& \int dQ_H = \int q_H(t)\ \mathrm{d}\mathrm{M}(t) \\ 
-	Q_H(t = T) &=& \int_0^T \psi(t)\ q_H(t)\ dt
-	\label{eq:QH}
-\end{eqnarray}
+Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}.
+\begin{equation}
+	Q_H(t)\ =\ \int dQ_H = \int q_H(t)\ \mathrm{d}\mathrm{M}(t) 
+	\label{eq:QH_t}
+\end{equation}
 \noindent Nas equações acima, $q_H$ é a taxa de fótons H-ionizantes por unidade de massa formada.
 Nós podemos utilizá-lo como nosso tipo de luz $l$ na equação \eqref{eq:Lambda} considerando os
 fótons que possam ionizar o hidrogênio ($h\nu\ \geq\ 13.6$ eV ou $\lambda\ \leq\ 912\AA$) e assim
@@ -280,6 +294,7 @@ $q_H$ evolui com o tempo, para então obter a SFR ($\psi$). Integrando $q_H$ de 
 obtemos o número de fótons H-ionizantes produzidos pelas fontes que emitem a luz $l$:
 \begin{equation}
 	\mathcal{N}_H = \int_0^{T_U} q_H(t)\ dt
+	\label{eq:Nh}
 \end{equation}
 Para nossa configuração de modelos podemos ver a evolução de $\mathcal{N}_H$ no tempo na Fig.
 \ref{fig:Nh_qh}. Esta figura mostra a evolução de $\mathcal{N}_H$ no tempo, em valores absolutos
@@ -288,9 +303,10 @@ Em \citet[Fig. 2b]{CidFernandes.etal.2011a} nós podemos ver a evolução tempor
 todas as idades e metalicidades\footnote{Naquele estudo, o
 grupo \href{http://starlight.ufsc.br}{SEAGal/\STARLIGHT} utilizou as isócronas de Padova 1994 com a
 IMF de \citet{Chabrier.2003a}.}. A mesma figura é reproduzida no painel inferior. É notável que o
-número de fótons H-ionizantes rapidamente converge ao máximo perto de $t = 10^7$ anos. Para uma SFR
-constante dentro dessa escala temporal ($\psi(t)\rightarrow \psi$) a equação \eqref{eq:QH} converge
-para
+número de fótons H-ionizantes rapidamente converge ao máximo perto de $t = 10^7$ anos. Utilizando
+\eqref{eq:dM_t} em \eqref{eq:QH_t} e com uma simplificação graças a SFR constante dentro desta
+escala temporal ($\psi(t)\rightarrow \psi$), podemos reescrever \eqref{eq:QH_t} usando
+\eqref{eq:Nh}:
 \begin{equation}
 	Q_H = \psi\ \mathcal{N}_H(t\ =\ 10^7\ \textrm{anos, IMF, Z}{}_\star).
 	\label{eq:QH_converge}
@@ -300,11 +316,11 @@ para
 	\psi_{\Halpha} = \frac{2.226}{\mathcal{N}_H\ h \nu_{\Halpha}} \times \LHalpha
 	\label{eq:SFR_theoric}
 \end{equation}
-\noindent Este método nos dá uma SFR recente, em termos de que usamos o valor de $\mathcal{N}_H$
+\noindent Este método resulta em uma SFR recente, em termos de que usamos o valor de $\mathcal{N}_H$
 para $t = 10^7$ anos. Finalmente, resolvendo \eqref{eq:SFR_theoric} encontramos o valor para $k$ em
 \eqref{eq:SFRHa} ($\psi \equiv \mathrm{SFR}$):
 \begin{equation}
-	\mathrm{SFR}_{\Halpha}\ [\mathrm{M}_\odot\ \mathrm{ano}^{-1}] = 3.13 \times
+	\mathrm{SFR}_{\Halpha}\ [\mathrm{M}_\odot\ \mathrm{yr}^{-1}] = 3.13 \times
 	\left(\frac{\LHalpha}{10^8\ \mathrm{L}_\odot}\right) = 8.1 \times 10^{-42}\ \LHalpha\ [ergs\ s^{-1}]
 	\label{eq:SFRNeb}
 \end{equation}

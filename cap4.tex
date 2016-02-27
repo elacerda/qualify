@@ -18,14 +18,14 @@
 \chapter{Propriedades estelares e propriedades nebulares}
 \label{sec:synvsneb}
 
-Para nosso trabalho precisamos entender as diferenças entre as propriedades que obtemos através da
-síntese espectral e aquelas calculadas com as linhas de emissão. As propriedades da síntese são
-relacionadas às populações estelares e comparações com as nebulares podem nos ajudar a entender
-melhor a história de formação estelar de cada região. Através dos últimos anos esses estudos
-cruzados entre propriedades sintéticas e nebulares de quase um milhão de galáxias do \SDSS renderam
-ótimos resultados para nosso grupo. Nesse capítulo faremos esse tipo de comparação utilizando as
-propriedades mais importantes diretamente para a conversão de poeira em gás: taxa de formação
-estelar, coeficiente de extinção por poeira e metalicidade.
+Precisamos entender as diferenças entre as propriedades que obtemos através da síntese espectral e
+aquelas calculadas com as linhas de emissão. As propriedades da síntese são relacionadas às
+populações estelares e comparações com as nebulares podem nos ajudar a entender melhor a história de
+formação estelar de cada região. Através dos últimos anos esses estudos cruzados entre propriedades
+sintéticas e nebulares de quase um milhão de galáxias do \SDSS renderam ótimos resultados para o
+GAS-UFSC. Nesse capítulo faremos esse tipo de comparação utilizando as propriedades mais importantes
+diretamente para a conversão de poeira em gás: taxa de formação estelar, coeficiente de extinção por
+poeira e metalicidade.
 
 \section{Comparação entre as taxas de formação estelar}
 \label{sec:synvsneb:SFR}
@@ -48,19 +48,17 @@ medidas, de forma a encontrar uma escala de tempo que defina as populações jov
 seja, populações recém formadas e que geralmente ainda residem nas regiões de formação estelar. Na
 Fig. \ref{fig:SFRsynvsneb} vemos a correlação entre as SFRs, calculando
 $\overline{\mathrm{SFR}_\star}(t_\star)$ para diferentes idades. O mesmo é válido para cortes em
-distância radial. Encontramos $t_{SF}$ como sendo próximo a $3.2 \times 10^7$ anos, escolhida pois é
-a que possui o menor desvio médio quadrático e melhor coeficente de correlação entre os perfis
-radiais da densidade de coluna da SFR $\Sigma_{\mathrm{SFR}}$. As correlações entre densidades de
-coluna são mais confiáveis pois removem o termo $d^2$ existente no cálculo da SFR que induz uma
-correlação direta entre $\mathrm{SFR}_\star$ e $\mathrm{SFR}_{\Halpha}$. Neste gráfico os cortes
-definidos na Sec. \ref{sec:amostra:mask} com relação a idade e coeficiente de extinção mínimos não
-estão aplicados, mas o resultado não se altera basicamente quando aplicamos os cortes. O que
-acontece é que a correlação para idades mais baixas que nosso $t_{SF}$ escolhido aumentem e o o
-desvio quadrático diminua. Podemos ver esta diferença na comparando a Fig. \ref{fig:SFRsynvsneb} com
-a Fig. \ref{fig:SFRsynvsneb_cuts}. Esse número não está muito distante da escala de tempo de vida
-das estrelas que produzem a maioria dos fótons capazes de produzirem a linha de \Halpha ($\sim10^7$
-anos). Vemos também que o valor máximo de correlação não altera substancialmente entre $10^7$ e
-$10^{7.5}$ anos.
+distância radial. Encontramos $t_{SF} = 32$ milhões de anos, pois é a idade na qual há o menor
+desvio médio quadrático e o maior coeficente de correlação entre os perfis radiais da densidade de
+coluna da SFR ($\Sigma_{\mathrm{SFR}}$). As correlações entre densidades de coluna são mais
+confiáveis pois removem o termo $d^2$ existente no cálculo da SFR que induz uma correlação direta entre
+$\mathrm{SFR}_\star$ e $\mathrm{SFR}_{\Halpha}$. Neste gráfico os cortes definidos na Sec.
+\ref{sec:amostra:mask} com relação a idade e coeficiente de extinção mínimos não estão aplicados,
+mas o resultado não se altera basicamente quando aplicamos os cortes. O que acontece é que a
+correlação para idades mais baixas que nosso $t_{SF}$ escolhido aumentem e o o desvio quadrático
+diminua. Esse número não está muito distante da escala de tempo de vida das estrelas que produzem a
+maioria dos fótons capazes de produzirem a linha de \Halpha ($\sim10^7$ anos). Vemos também que o
+valor máximo de correlação não altera substancialmente entre $10^7$ e $10^{7.5}$ anos.
 
 Este procedimento de comparação foi feito também em \citet{Asari.etal.2007a}, no qual os autores
 encontraram $t_{SF}$ igual a 25 milhões de anos, para 82302 galáxias do \SDSS. A síntese de
@@ -84,14 +82,14 @@ em relação ao ajuste.}
 	\label{fig:SFRsynvsneb}
 \end{figure}
 
-\begin{figure}
-	\centering
-	\includegraphics[scale=0.7, clip]{figuras/Rs_allSFR_cuts.pdf}
-	\caption[Comparação entre as SFR após cortes.]
-	{Igual a Fig. \ref{fig:SFRsynvsneb} mas com a aplicação dos cortes definidos em
-	\ref{sec:amostra:mask}.}
-	\label{fig:SFRsynvsneb_cuts}
-\end{figure}
+% \begin{figure}
+% 	\centering
+% 	\includegraphics[scale=0.7, clip]{figuras/Rs_allSFR_cuts.pdf}
+% 	\caption[Comparação entre as SFR após cortes.]
+% 	{Igual a Fig. \ref{fig:SFRsynvsneb} mas com a aplicação dos cortes definidos em
+% 	\ref{sec:amostra:mask}.}
+% 	\label{fig:SFRsynvsneb_cuts}
+% \end{figure}
 % Figuras:
 % - melhor comparação e ajuste
 
@@ -107,29 +105,29 @@ a extinção em regiões \Hii é aproximadamente duas vezes maior do que a das e
 0.44 \tauVN$). \citet{Charlot.Fall.2000a} propõe um modelo onde populações jovens são atenuadas pela
 núvem de gás que a gerou e encontra que o coeficiente de extinção das BC é cerca de 3 vezes maior
 que o do ISM. \citet{Kreckel.etal.2013a} através de dados de espectrografia de campo integrado do
-KINGFISH calcula a densidade superficial de poeira dessas galáxias e chega a conclusão que o
+KINGFISH calculam a densidade superficial de poeira dessas galáxias e chegam a conclusão que o
 coeficiente de extinção derivados do contínuo estelar não correlaciona com a quantidade total de
 massa de poeira, diferentemente daquele derivado do decremento Balmer.
 
 Apesar do modelo de extinção ser o mesmo, o coeficiente calculado por cada um dos procedimentos é
-diferente, como podemos ver na Fig. \ref{fig:tauVsynvsneb}. Esta figura apresenta a comparação entre
-os coeficientes de extinção para zonas e também para os perfis radiais. O coeficiente que vem do
-\starlight é calculado no processo de ajuste espectral, já o do decremento de Balmer representa
-melhor as regiões onde existem os observáveis necessários para seu cálculo, ou seja, regiões onde existam
-linhas de \Halpha e \Hbeta, portanto, regiões mais jovens. Verificamos que a medida que vamos sendo
-mais exigente com fração de luz proveniente das populações jovens ($x_Y$), valor mínimo de $\tauVS$
-e $\tauVN$, e distância radial de cada zona considerada na comparação (ver Fig.
-\ref{fig:tauVsynvsnebMask}), as diferenças entre os dois coeficientes diminui, iluminando um caminho
-que vamos nos aprofundar um pouco melhor no próximo capítulo e que pode nos ajudar a um melhor
-entendimento do significado de $\tauVS$.
+diferente, como podemos ver através dos resultados da Fig. \ref{fig:tauVsynvsneb}. Esta figura
+apresenta a comparação entre os coeficientes de extinção para zonas e também para os perfis radiais.
+O coeficiente que vem do \starlight é calculado no processo de ajuste espectral, já o do decremento
+de Balmer representa melhor as regiões onde existem os observáveis necessários para seu cálculo, ou
+seja, regiões onde existam linhas de \Halpha e \Hbeta, portanto, regiões mais jovens. Verificamos
+que a medida que vamos sendo mais exigente com fração de luz proveniente das populações jovens
+($x_Y$), valor mínimo de $\tauVS$ e $\tauVN$, e distância radial de cada zona considerada na
+comparação (ver Fig. \ref{fig:tauVsynvsnebMask}), as diferenças entre os dois coeficientes diminui,
+iluminando um caminho que vamos nos aprofundar um pouco melhor no próximo capítulo e que pode nos
+ajudar a um melhor entendimento do significado de $\tauVS$.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/CompareTauV.pdf}
 	\caption[Comparação entre os coeficientes de extinção.] 
 	{Comparação entre os coeficientes de extinção por poeira provenientes da síntese ($\tauVS$) e
-do decremento de Balmer ($\tauVN$). Os contornos azul, amarelo e vermelho representam os intervalos
-de confiança ($1\sigma$, $2\sigma$ e $3\sigma$). A linha preta representa a mediana e as linhas
+do decremento de Balmer ($\tauVN$). Os contornos azul, amarelo e vermelho representam os
+intervalos de confiança ($1\sigma$, $2\sigma$ e $3\sigma$). A linha preta representa a mediana e as linhas
 pontilhadas representam o ajuste utilizando {\em OLS bisector} (vermelha) e mínimos quadrados
 (preta). Como em todos os gráficos com ajustes lineares, em detalhe temos o coeficiente angular, a
 interceptação da reta com o eixo vertical, e a média quadráticas dos desvios em relação a cada
@@ -156,18 +154,17 @@ ajuste. Este gráfico não possui a máscara da definição da amostra aplicada.
 
 \subsection{Artigo - Insights on the Stellar Mass-Metallicity Relation from the CALIFA Survey.}
 
-No artigo de \citet{GonzalezDelgado.etal.2014b}, (GD14 daqui em diante) cuja versão completa está no
-apêndice \ref{apendice:GDetal2014b} e eu tenho participação, analisamos a relação entre massa
-estelar ($M_\star$ - efeitos globais) e a densidade superficial de massa estelar ($\mu_\star$ -
-efeitos locais) com a metalicidade estelar ($Z_\star$) de uma amostra de 300 galáxias do CALIFA de
-todos os tipos morfológicos (desde E a Sd). \citet{Tremonti.etal.2004a} investigam a mesma relação,
-embora para a metalicidade do gás ($\ZN$) e apenas para galáxias SF, essa relação é conhecida como
-relação massa-metalicidade ({\em mass-metallicity relation} - MZR). Verificamos em nosso artigo que
-as galáxias seguem uma MZR, mas expandindo um intervalo muito maior de metalicidade. A relação
-totalmente estelar é mais inclinada que a relação comparando com a metalicidade do gás pois esta
-última nos fornece informações sobre o estado atual do gás e a primeira, sobre toda a história de
-formação estelar da galáxia. A metalicidade estelar para cada pixel (par $x,y$) é calculada segundo
-a equação:
+No artigo de \citet{GonzalezDelgado.etal.2014b} (GD14 daqui em diante), cuja versão completa está no
+apêndice \ref{apendice:GDetal2014b}, analisamos a relação entre massa estelar ($M_\star$ - efeitos
+globais) e a densidade superficial de massa estelar ($\mu_\star$ - efeitos locais) com a
+metalicidade estelar ($\meanM{\log Z_\star}$) de uma amostra de 300 galáxias do CALIFA de todos os
+tipos morfológicos (desde E a Sd). \citet{Tremonti.etal.2004a} investigam a mesma relação, embora
+para a metalicidade do gás ($\ZN$) e apenas para galáxias SF. Essa relação é conhecida como relação
+massa-metalicidade ({\em mass-metallicity relation} - MZR). Verificamos que a MZR estelar é mais
+inclinada e se estende em um intervalo muito maior comparando com aquela utilizando a metalicidade
+do gás pois esta última nos fornece informações sobre o estado atual do gás e a primeira, sobre toda
+a história de formação estelar da galáxia. A metalicidade estelar para cada pixel (par $x,y$) é
+calculada segundo a equação:
 \begin{equation}
  	\label{eq:logZmass}
  	\langle \log Z_\star \rangle_{M,xy} = 
@@ -202,45 +199,42 @@ oxigênio presa dentro das estrelas ({\em lock-up fraction}) de baixa massa é d
 produzida pelas estrelas de alta massa. Os modelos de evolução química evoluíram bastante nos
 últimos anos \citep[e.g., ][]{Lilly.etal.2013a, Peng.Maiolino.2014a, Ascasibar.etal.2015a,
 Peng.Maiolino.Cochrane.2015a} e esperamos que logo tenhamos melhores resultados na área. O tema é
-muito interessante e tem muito ainda a ser explorado, principalmente os efeitos locais, quando
-analisamos esta relação internamente nas galáxias e seus efeitos em parâmetros globais.
+muito interessante e tem muito ainda a ser explorado, principalmente quanto aos efeitos locais,
+quando analisamos esta relação internamente nas galáxias e seus efeitos em parâmetros globais.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/stellar_muZR_realsample.pdf}
 	\caption[Relação $\mu$ZR e comparação entre as metalicidades.]
-	{\emph{Painéis superiores}: relação $\mu$ZR para zonas (painel esquerdo), {\em bins} radiais
-(painel central) e galáxias integradas (painel direito). Os pontos desenhados em cada gráfico
-representam $\meanM{\log Z_\star}$ calculado para todas as populações com distintas idades,
-coloridos pela distância radial (barra de cores em HLR). Cada gráfico possui a mediana da
-distribuição de $\meanM{\log Z_\star}$ para diferentes intervalos de população ($t_\star \leq$ 1,
-2, 5, 8, 11.3 e 14.2 bilhões de anos), além da mediana para $\ZN$
-($\log\left((O/H)/(O/H)_\odot\right)$). \emph{Painéis inferiores}: Comparação $\meanM{\log Z_\star}$
-e $\ZN$ seguindo a mesma configuração acima (zonas, raio e integrado) com as medianas por diferentes
-intervalos de população no cálculo de $\meanM{\log Z_\star}$ também. Seguindo o mesmo padrão de
-cores para as medianas, abaixo de cada gráfico vemos o coeficiente de correlação de Spearmann entre
-$\meanM{\log Z_\star}$ e $\ZN$.}
+	{Relação $\mu$ZR para zonas ({\em painel a}), {\em bins} radiais ({\em painel b}) e galáxias
+integradas ({\em painel c}). Os pontos desenhados em cada gráfico representam $\meanM{\log Z_\star}$
+calculado para todas as populações com distintas idades, coloridos pela distância radial (barra de
+cores em HLR). Cada gráfico possui a mediana da distribuição de $\meanM{\log Z_\star}$ para
+diferentes intervalos de população ($t_\star \leq$ 1, 2, 5, 8, 11.3 e 14.2 bilhões de anos), além
+da mediana para $\ZN$ ($\log\left((O/H)/(O/H)_\odot\right)$). Comparação $\meanM{\log Z_\star}$ e
+$\ZN$ seguindo a mesma configuração acima (zonas ({\em painel d}), raio ({\em painel e}) e
+integrados ({\em painel f})) com as medianas por diferentes intervalos de população no cálculo de
+$\meanM{\log Z_\star}$ também. Seguindo o mesmo padrão de cores para as medianas, abaixo de cada
+gráfico vemos o coeficiente de correlação de Spearmann entre $\meanM{\log Z_\star}$ e $\ZN$.}
 	\label{fig:ZstarvsZneb}
 \end{figure}
 
 Na Fig. \ref{fig:compareZR} vemos em detalhe a comparação entre as metalicidades estelar e nebular
-para os perfis radiais e das galáxias de nossa amostra (painel central da segunda fileira na Fig.
-\ref{fig:ZstarvsZneb}). A comparação entre essas duas propriedades deve ser analisada com cuidado,
-porque estamos tratando de coisas bem diferentes derivadas de maneira completamente diferente,
-todavia a correlação existe e já foi identificada por diversos artigos
-\citep{CidFernandes.etal.2005a, Gallazzi.etal.2005a, CidFernandes.etal.2007a, Asari.etal.2007a}.
-\citet{Stasinska.etal.2006a} enfatiza que esse método de derivação de metalicidade nebular
-utilizando métodos com linhas fortes ({\em strong-line methods} \citep{Pagel.etal.1979a}) são
-calibrados geralmente em gigantes regiões \Hii, portanto ainda são necessários estudos sobre os
-gradientes de metalicidades dentro de galáxias. Ainda sim, vejo uma boa correlação entre as duas
-medidas. Os valores para zonas possuem muito espalhamento, mas quando verificamos os valores os
-perfis radiais (e também os valores integrados, embora aqui não demonstrados) vemos que existe uma
-boa correlação entre as duas com um esplhamento pequeno (em todos os {\em bins} menor que 0.2 dex).
-Vemos também que temos uma tendência para que populações na parte mais interna do disco possuam
-metalicidades mais altas que nas partes externas. Essa discussão é muito interessante e precisa ser
-muito desenvolvida, mas não é parte dessa nossa primeira etapa. Entretanto, a conversão de poeira
-para gás (coeficiente $\kappa$ em \eqref{eq:dust2gas}) é dependente de metalicidade, portanto, o
-tema surgirá nas próximas etapas deste trabalho.
+para os perfis radiais e das galáxias de nossa amostra (Fig. \ref{fig:ZstarvsZneb}, {\em painel e}).
+A comparação entre essas duas propriedades deve ser analisada com cuidado, porque estamos tratando
+de coisas bem diferentes derivadas de maneira completamente diferente, todavia a correlação existe e
+já foi identificada por diversos artigos \citep{CidFernandes.etal.2005a, Gallazzi.etal.2005a,
+CidFernandes.etal.2007a, Asari.etal.2007a}. \citet{Stasinska.etal.2006a} enfatiza que esse método de
+derivação de metalicidade nebular utilizando {\em strong-line methods} são calibrados geralmente em
+gigantes regiões \Hii, portanto ainda são necessários estudos sobre os gradientes de metalicidades
+dentro de galáxias. Ainda sim, vejo uma boa correlação entre as duas medidas. Os valores para zonas
+possuem muito espalhamento, mas quando verificamos os valores os perfis radiais (e também os valores
+integrados, embora aqui não demonstrados) vemos que existe uma boa correlação entre as duas com um
+esplhamento pequeno (em todos os {\em bins} menor que 0.2 dex). Vemos também que temos uma tendência
+para que populações na parte mais interna do disco possuam metalicidades mais altas que nas partes
+externas. Essa discussão é muito interessante e precisa ser muito desenvolvida, mas não faz parte
+dessa nossa primeira etapa. Entretanto, a conversão de poeira para gás deve ser dependente de
+metalicidade, portanto, o tema surgirá nas próximas etapas deste trabalho.
 
 \begin{figure}
 	\centering
@@ -266,15 +260,15 @@ quadráticas dos desvios em relação ao ajuste.}
 population properties in galaxies}
 
 Durante o tempo que estive no IAA tive participação em dois artigos. O segundo deles \citep[][GD15
-daqui em diante]{GonzalezDelgado.etal.2015a} (em anexo, \ref{apendice:GDetal2015a}) é um artigo
-onde resolvemos espacialmente as propriedes estelares baseados na síntese com o \starlight para 300
+daqui em diante]{GonzalezDelgado.etal.2015a} (em anexo, \ref{apendice:GDetal2015a}) é um artigo onde
+resolvemos espacialmente as propriedes estelares baseados na síntese com o \starlight para 300
 galáxias do \CAL entre todos os tipos morfológicos. Verificamos que as galáxias mais massivas são
-mais compactas, velha, mais rica em metais e menos extinguída por poeira. Discutimos algumas como as
-propriedades se comportam em partes distintas da galáxia (bojo e disco) e o quanto essas
+mais compactas, velhas, mais ricas em metais e menos extinguídas por poeira. Discutimos algumas como
+as propriedades se comportam em partes distintas da galáxia (bojo e disco) e o quanto essas
 propriedades variam quando dividimos em classes de massa, idade e tipo morfológico. Encontramos
 gradientes negativos de \meanM{\log Z_\star} menos inclinados que os previstos por modelos de
 crescimento isolado. Galáxias do tipo Sb-Sbc possuem gradientes de \meanM{\log Z_\star} compatíveis
-com aqueles medidos para a Via Láctea. Galáxias tipo Sc possuem com gradientes mais planos, nos
+com aqueles medidos para a Via Láctea. Galáxias tipo Sc possuem gradientes mais planos, nos
 mostrando que a evolução química do disco contribui bastante com a evolução química das galáxias
 desta classe morfológica. Em uma visão geral, concluímos que o processo de parada de formação
 estelar\footnote{Geralmente conhecido como {\em quenching}.} é geralmente independente da massa

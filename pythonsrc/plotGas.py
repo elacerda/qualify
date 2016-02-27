@@ -917,10 +917,11 @@ if __name__ == '__main__':
     yaxis = [ 'alogSFRSDHakpcR', 'alogSFRSDkpcR', 'atfluxR', 'logO3N2M13R', 'xYR', 'logMcorSDR', 'alogZmassR', 'logtauVR', 'logtauVNebR' ]
     row, col = 0, 0
     bins = (20,20)
-    for yk in yaxis:
+    for i_y, yk in enumerate(yaxis):
         rs_kwargs = default_rs_kwargs.copy()
         sc_kwargs = default_sc_kwargs.copy()
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
+        plot_text_ax(ax, '%s)' % chr(ord('a') + i_y), 0.01, 0.99, 16, 'top', 'left', 'k')
         _, ydict = H.get_plot_dict(iT, -1, yk)
         x = H.Rtoplot()
         y = ydict['v']
@@ -959,7 +960,7 @@ if __name__ == '__main__':
     grid_shape = (NRows, NCols)
     row, col = 0, 0
     bins = (20,20)
-    for yk in yaxis:
+    for i_y, yk in enumerate(yaxis):
         rs_kwargs = default_rs_kwargs.copy()
         sc_kwargs = default_sc_kwargs.copy()
         ax = plt.subplot2grid(grid_shape, loc = (row, col))
@@ -967,6 +968,7 @@ if __name__ == '__main__':
         y = ydict['v']
         mask_aux = (mask__rg | y.mask)
         plot_histo_axis(ax, np.ma.masked_array(y, mask = mask_aux).compressed())
+        plot_text_ax(ax, '%s)' % chr(ord('a') + i_y), 0.01, 0.99, 16, 'top', 'left', 'k')
         ax.set_xlim(ydict['lim'])
         ax.set_xlabel(ydict['label'])
         ax.xaxis.set_major_locator(MaxNLocator(4))
