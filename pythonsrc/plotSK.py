@@ -643,7 +643,7 @@ if __name__ == '__main__':
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     x = np.ma.log10(H.tau_V__Trg[iT])
-    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6) 
+    y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
     xlabel = r'$\log\ \tau_V^{\star}(R)$'
     ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
     xran = [-1.5, 0.5]
@@ -667,7 +667,6 @@ if __name__ == '__main__':
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xlabel = r'$\log\ \tau_V^{\mathrm{neb}}(R)$'
-    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
     xran = [-1.5, 0.5]
     yran = [-3.5, 0]
     x = np.ma.log10(H.tau_V_neb__Trg[iT])
@@ -681,7 +680,6 @@ if __name__ == '__main__':
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.set_xlabel(xlabel) 
-    #ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -708,13 +706,9 @@ if __name__ == '__main__':
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    #rs.OLS_bisector()
     a = rs.poly1d_median_slope
     b = rs.poly1d_median_intercept    
-    #deltapKS = ym - ((a * xm + b) + (0.308 * np.ma.log10(H.McorSD__Trg[iT]) - 0.656))
     deltapKS = ym - (a * xm + b)
-    #deltapKS = deltapKS - (1.188 * (H.logO3N2_M13__Trg[iT] - 8.69) + 0.274)
-    #deltapKS = deltapKS - (0.404 * np.ma.log10(H.McorSD__Trg[iT]) - 0.889)
     a_orig = a
     b_orig = b
 
@@ -969,12 +963,12 @@ if __name__ == '__main__':
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    #rs.OLS_bisector()
     a = rs.poly1d_median_slope
     b = rs.poly1d_median_intercept    
-    deltapKS = ym - (a * xm + b)
-    deltapKS = deltapKS - (a_OH * (H.logO3N2_M13__Trg[iT] - 8.69) + b_OH)
-    #deltapKS = deltapKS - (a_McorSD * np.ma.log10(H.McorSD__Trg[iT]) + b_McorSD)
+    xxm = (H.logO3N2_M13__Trg[iT] - 8.69)
+    c = b + b_OH
+    deltapKS = ym - (a * xm + a_OH * xxm + c)
+    print a, a_OH, c
 
     props__r = [ 
         deltapKS,
@@ -1029,16 +1023,15 @@ if __name__ == '__main__':
     sign_b_OH = '+'
     if b < 0:
         sign_b = '-'
-        b *= -1.
     if a_OH < 0: 
         sign_a_OH = '-'
-        a_OH *= -1.
     if b_OH < 0: 
         sign_b_OH = '-'
-        b_OH *= -1
     delta_txt = r'$\Delta(pKS) = \log\ \Sigma_{SFR}^\star -'
-    delta_txt = r'%s (%.3f\ \log\ \tau_V^\star\ %s\ %.3f' % (delta_txt, a, sign_b, b)
-    delta_txt = r'%s\ %s\ %.3f\ \log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)\ %s\ %.3f)\ [rms: %.3f]$' % (delta_txt, sign_a_OH, a_OH, sign_b_OH, b_OH, 
+    delta_txt = r'%s (%.3f\ \log\ \tau_V^\star\ %s\ %.3f' % (delta_txt, abs(a), sign_b, abs(b))
+    delta_txt = r'%s\ %s\ %.3f\ \log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)\ %s\ %.3f)\ [rms: %.3f]$' % (delta_txt, 
+                                                                                                          sign_a_OH, abs(a_OH), 
+                                                                                                          sign_b_OH, abs(b_OH), 
                                                                                                           deltapKS.std())
     
     f.suptitle(delta_txt, fontsize = 15)
@@ -1238,12 +1231,12 @@ if __name__ == '__main__':
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
-    #rs.OLS_bisector()
     a = rs.poly1d_median_slope
     b = rs.poly1d_median_intercept    
-    deltapKS = ym - (a * xm + b)
-    #deltapKS = deltapKS - (a_OH * (H.logO3N2_M13__Trg[iT] - 8.69) + b_OH)
-    deltapKS = deltapKS - (a_McorSD * np.ma.log10(H.McorSD__Trg[iT]) + b_McorSD)
+    c = b + b_McorSD
+    xxm = np.ma.log10(H.McorSD__Trg[iT])
+    deltapKS = ym - (a * xm + a_McorSD * xxm + c)
+    print a, a_McorSD, c
 
     props__r = [ 
         deltapKS,
@@ -1298,17 +1291,16 @@ if __name__ == '__main__':
     sign_b_McorSD = '+'
     if b < 0:
         sign_b = '-'
-        b *= -1.
     if a_McorSD < 0: 
         sign_a_McorSD = '-'
-        a_McorSD *= -1.
     if b_McorSD < 0: 
         sign_b_McorSD = '-'
-        b_McorSD *= -1
     delta_txt = r'$\Delta(pKS) = \log\ \Sigma_{SFR}^\star -'
-    delta_txt = r'%s (%.3f\ \log\ \tau_V^\star\ %s\ %.3f' % (delta_txt, a, sign_b, b)
-    delta_txt = r'%s\ %s\ %.3f\ \log\ \mu_\star\ %s\ %.3f)\ [rms: %.3f]$' % (delta_txt, sign_a_McorSD, a_McorSD, sign_b_McorSD, b_McorSD, 
-                                                                                                          deltapKS.std())
+    delta_txt = r'%s (%.3f\ \log\ \tau_V^\star\ %s\ %.3f' % (delta_txt, abs(a), sign_b, abs(b))
+    delta_txt = r'%s\ %s\ %.3f\ \log\ \mu_\star\ %s\ %.3f)\ [rms: %.3f]$' % (delta_txt, 
+                                                                             sign_a_McorSD, abs(a_McorSD), 
+                                                                             sign_b_McorSD, abs(b_McorSD),
+                                                                             deltapKS.std())
     
     f.suptitle(delta_txt, fontsize = 15)
     
@@ -1523,11 +1515,12 @@ if __name__ == '__main__':
     )
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
+    print a, a_OH, b, b_OH
     x = (a * np.ma.log10(H.tau_V__Trg[iT]) + a_OH * (H.logO3N2_M13__Trg[iT] - 8.69) + b_OH + b)
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6) 
     xlabel = r'$\Delta_1$'
     ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
-    xran = [0, 1.5]
+    xran = [-3.5, 0]
     yran = [-3.5, 0]
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -1548,10 +1541,10 @@ if __name__ == '__main__':
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xlabel = r'$\Delta_2$'
-    ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
-    xran = [1.5, 3.5]
+    xran = [-3.5, 0]
     yran = [-3.5, 0]
     x = (a * np.ma.log10(H.tau_V__Trg[iT]) + a_McorSD * np.ma.log10(H.McorSD__Trg[iT]) + b_McorSD + b)
+    print a, a_McorSD, b, b_McorSD
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
@@ -1562,7 +1555,6 @@ if __name__ == '__main__':
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.set_xlabel(xlabel) 
-    #ax.set_ylabel(ylabel)
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
