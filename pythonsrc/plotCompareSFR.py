@@ -13,8 +13,9 @@ from CALIFAUtils.scripts import mask_radius_iT, mask_zones_iT
 #from matplotlib.ticker import MaxNLocator
 from CALIFAUtils.plots import plotOLSbisectorAxis
 from CALIFAUtils.plots import plot_linreg_params
-from CALIFAUtils.plots import plot_text_ax
+from CALIFAUtils.plots import density_contour
 from CALIFAUtils.scripts import OLS_bisector
+from CALIFAUtils.plots import plot_text_ax
 #from CALIFAUtils.plots import plot_zbins
 #from CALIFAUtils.objects import runstats
 from os.path import basename
@@ -86,7 +87,7 @@ if __name__ == '__main__':
     H = C.H5SFRData(args.hdf5)
     
     minR = 0
-    fnamesuffix = '.png'
+    fnamesuffix = '.pdf'
     
     if args.maskradius is None:
         ticks_r = [0, 1.5, 3]
@@ -274,8 +275,8 @@ if __name__ == '__main__':
             age = tSF__T[iT]
             C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
             #print 'SFRSD x SFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())
-            xran = [-3.5, 1]
-            yran = [-3.5, 1]
+            xran = [-4, 0.5]
+            yran = [-4, 0.5]
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
             a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
@@ -351,7 +352,7 @@ if __name__ == '__main__':
     f, axArr = plt.subplots(NRows, NCols)
     f.set_dpi(96)
     f.set_size_inches(11.69, 8.27)
-    f.suptitle(txt_suptitle, fontsize = 11)
+    #f.suptitle(txt_suptitle, fontsize = 11)
     plt.setp([a.get_xticklabels() for a in f.axes], visible = False)
     plt.setp([a.get_yticklabels() for a in f.axes], visible = False)
     xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
@@ -378,9 +379,11 @@ if __name__ == '__main__':
             age = tSF__T[iT]
             C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
             #print 'SFRSD x SFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())
-            xran = [-3.5, 1]
-            yran = [-3.5, 1]
+            xran = [-4, 0.5]
+            yran = [-4, 0.5]
+            bins = (30,30)
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
+            density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
             a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
@@ -393,13 +396,13 @@ if __name__ == '__main__':
             else:
                 txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
-            plot_text_ax(ax, txt, 0.96, 0.09, 8, 'bottom', 'right', color = 'b')
+            plot_text_ax(ax, txt, 0.96, 0.09, 12, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
-            plot_text_ax(ax, txt, 0.05, 0.96, 8, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.96, 12, 'top', 'left')
             txt = '%.4f' % (Rs[iT])
-            plot_text_ax(ax, txt, 0.05, 0.89, 8, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.89, 12, 'top', 'left')
             txt = '%.4f' % (Rp[iT])
-            plot_text_ax(ax, txt, 0.05, 0.84, 8, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.84, 12, 'top', 'left')
             ax.set_xlim(xran)
             ax.set_ylim(yran)
             ax.plot(ax.get_xlim(), ax.get_xlim(), ls = "--", c = ".3")
@@ -845,8 +848,8 @@ if __name__ == '__main__':
     age = tSF__T[iT]
     C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
     #print 'SFRSD x SFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())
-    xran = [-3.5, 1]
-    yran = [-3.5, 1]
+    xran = [-4, 0.5]
+    yran = [-4, 0.5]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
@@ -876,8 +879,8 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     age = tSF__T[iT]
     C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
-    xran = [-3.5, 1]
-    yran = [-3.5, 1]
+    xran = [-4, 0.5]
+    yran = [-4, 0.5]
     h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
     X, Y = np.meshgrid(xedges, yedges)
     im = ax.pcolormesh(X, Y, h.T, cmap = cmap)

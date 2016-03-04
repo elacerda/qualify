@@ -15,13 +15,13 @@
 %                                                               %
 %***************************************************************%
 
-\chapter{Propriedades estelares e propriedades nebulares}
+\chapter{Comparações entre propriedades estelares e propriedades nebulares}
 \label{sec:synvsneb}
 
 Precisamos entender as diferenças entre as propriedades que obtemos através da síntese espectral e
 aquelas calculadas com as linhas de emissão. As propriedades da síntese são relacionadas às
 populações estelares e comparações com as nebulares podem nos ajudar a entender melhor a história de
-formação estelar de cada região. Através dos últimos anos esses estudos cruzados entre propriedades
+formação estelar de cada região. Durante os últimos anos esses estudos cruzados entre propriedades
 sintéticas e nebulares de quase um milhão de galáxias do \SDSS renderam ótimos resultados para o
 GAS-UFSC. Nesse capítulo faremos esse tipo de comparação utilizando as propriedades mais importantes
 diretamente para a conversão de poeira em gás: taxa de formação estelar, coeficiente de extinção por
@@ -37,22 +37,26 @@ formação dentro de um intervalo de tempo:
 \begin{eqnarray}
 	\eta_\star(t_\star)\ &=&\ \sum\limits_{t_{\star,j} < t_\star} \mu_j \\
 	\overline{\mathrm{SFR}_\star}(t_\star)\ &=&\ M_\star \frac{(1\ -\ \eta_\star(t_\star))}{t_\star},
+	\label{eq:SFRSyn}
 \end{eqnarray}
 \noindent onde $M_\star$ é a massa total convertida em estrelas durante toda a história de
 formação estelar de uma galáxia. 
 
 Como explicado na Sec. \ref{sec:emlines:SFR}, podemos medir a taxa de formação estelar recente
-medindo a luminosidade intrínseca de \Halpha. Com as duas taxas de formação estelar, uma recente e
-uma em função do tempo ($t_\star$) podemos encontrar o tempo que melhor correlaciona as duas
-medidas, de forma a encontrar uma escala de tempo que defina as populações jovens ($t_{SF}$), ou
-seja, populações recém formadas e que geralmente ainda residem nas regiões de formação estelar. Na
-Fig. \ref{fig:SFRsynvsneb} vemos a correlação entre as SFRs, calculando
-$\overline{\mathrm{SFR}_\star}(t_\star)$ para diferentes idades. O mesmo é válido para cortes em
-distância radial. Encontramos $t_{SF} = 32$ milhões de anos, pois é a idade na qual há o menor
-desvio médio quadrático e o maior coeficente de correlação entre os perfis radiais da densidade de
-coluna da SFR ($\Sigma_{\mathrm{SFR}}$). As correlações entre densidades de coluna são mais
-confiáveis pois removem o termo $d^2$ existente no cálculo da SFR que induz uma correlação direta entre
-$\mathrm{SFR}_\star$ e $\mathrm{SFR}_{\Halpha}$. Neste gráfico os cortes definidos na Sec.
+medindo a luminosidade intrínseca de \Halpha. Com as duas taxas de formação estelar, uma referente
+às estrelas com idade menor que 10 milhões de anos e estimada pela linha de emissão de \Halpha
+\eqref{eq:SFRNeb}, outra proveniente da síntese de populações estelares, que pode ser avaliada em
+diferentes tempos $t_\star$ \eqref{eq:SFRSyn}. Geramos diversas figuras como a Fig.
+\ref{fig:aSFRSDsynvsaSFRSDneb} para encontrar a idade que melhor relaciona as duas medidas (aqui a
+chamamos de $t_{SF}$).
+
+Na Fig. \ref{fig:SFRsynvsneb} vemos a correlação entre as SFRs, calculando
+$\overline{\mathrm{SFR}_\star}(t_\star)$ para diferentes idades. Encontramos $t_{SF} = 32$ milhões
+de anos, pois é a idade na qual há o menor desvio médio quadrático e o maior coeficente de
+correlação entre os perfis radiais da densidade de coluna da SFR ($\Sigma_{\mathrm{SFR}}$). As
+correlações entre densidades de coluna são mais confiáveis pois removem o termo $d^2$ existente no
+cálculo da SFR que induz uma correlação direta entre $\mathrm{SFR}_\star$ e
+$\mathrm{SFR}_{\Halpha}$. Neste gráfico os cortes definidos na Sec.
 \ref{sec:amostra:mask} com relação a idade e coeficiente de extinção mínimos não estão aplicados,
 mas o resultado não se altera basicamente quando aplicamos os cortes. O que acontece é que a
 correlação para idades mais baixas que nosso $t_{SF}$ escolhido aumentem e o o desvio quadrático
