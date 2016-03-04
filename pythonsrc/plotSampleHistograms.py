@@ -551,8 +551,8 @@ if __name__ == '__main__':
         elif k == 'at_flux':
             ax.set_xlim(6, 10)
             
-        if col == 0:
-            ax.set_ylabel(r'$\mathrm{frac\c\~ao}$')
+        #if col == 0:
+            #ax.set_ylabel(r'N. norm.')
             
         ax.xaxis.set_major_locator(MaxNLocator(4))
         ax.yaxis.set_major_locator(MaxNLocator(4))            

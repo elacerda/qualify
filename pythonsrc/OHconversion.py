@@ -154,39 +154,38 @@ if __name__ == '__main__':
     mpl.rcParams['font.serif'] = 'Times New Roman'
 
     default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.005, gs_prc = True, OLS = True)
+    default_ols_plot_kwargs = dict(c = 'r', ls = '--', lw = 2, label = '')
+    default_ols_kwargs = dict(c = 'k', pos_x = 0.98, pos_y = 0.01, fs = 15, rms = True, text = True, kwargs_plot = default_ols_plot_kwargs)
+    ols_kwargs = default_ols_kwargs.copy()
+    ols_kwargs.update(dict(
+        va = 'top',
+        ha = 'left', 
+        pos_x = 0.01, 
+        fs = 14, 
+        rms = True, 
+        text = True, 
+        pos_y = 0.98, 
+        kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
+    )
     
     f = plt.figure()
     f.set_dpi(100)
-    f.set_size_inches(7, 5)    
+    f.set_size_inches(6, 5)    
     ax = f.gca()
     #xran = (0, 1.2)
     #yran = (0, 3)
-    xran = (-1, 0.1)
-    yran = (-1.25, 1)
-    bins = (50,50)
-    ax.hist2d(xm, ym, bins = bins, range = [xran, yran], cmap = 'gray_r')
+    xran = (-.8, 0.)
+    yran = (-1, .5)
+    bins = (60, 60)
+    cmap = plt.get_cmap('gist_yarg')
+    ax.hist2d(xm, ym, bins = bins, range = [xran, yran], cmap = cmap)
     #ax.scatter(xm, ym,  marker = '.', s = 1, c = '0.5', edgecolor = 'none', alpha = 0.9, label='')
     rs = CALIFAUtils.runstats(xm, ym, **default_rs_kwargs)
     density_contour(rs.x, rs.y, bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-    ax.plot(rs.xS, rs.yS, 'k-', lw = 4)
-    rs.OLS_bisector()
-    yOLS = rs.OLS_median_intercept + rs.OLS_median_slope * rs.x
-    rmsOLS = (rs.y - yOLS).std()
-    cmap = plt.get_cmap('viridis')
-    ax.plot(rs.x, yOLS, label = '%s (rms: %.3f)'% ('ajuste OLS', rmsOLS), c = cmap(0.25))
-    print rs.OLS_median_slope, rs.OLS_median_intercept, rmsOLS 
+    ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
+    ols_kwargs.update(dict(c = 'k', y_rms = rs.y, x_rms = rs.x))
+    plotOLSbisectorAxis(ax, rs.xS, rs.yS, **ols_kwargs)
     
-    p = []
-    for i in range(3):
-        order = i + 1
-        c = cmap(float(order) / 4.)
-        p.append(np.polyfit(rs.xS, rs.yS, order))
-        linename = r'ajuste %d ord' % order
-        l.addLine(linename, np.polyval, p[i], np.linspace(yran[0], yran[1], l.xn + 1))
-        rms = (ym - np.polyval(p[i], xm)).std()
-        print order, p[i], rms 
-        ax.plot(l.x[linename], l.y[linename], label = '%s (rms: %.3f)'% (linename, rms), c = c)
-
     ols_kwargs = dict(
         c = 'k',
         va = 'bottom',
@@ -200,14 +199,14 @@ if __name__ == '__main__':
         kwargs_plot = dict(c = 'k', ls = '--', lw = 2, label = 'OLS (rms: %.3f)')
     )
     
-    ax.set_xlim(-1, 0.1)
-    ax.set_ylim(-1.25, 1) 
+    ax.set_xticks([-.5, -.25, 0])
+    ax.set_yticks([-1, -.5, 0, .5])
+    ax.set_xlim(xran)
+    ax.set_ylim(yran) 
     ax.set_xlabel(r'$\log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)$ [M13]')
     ax.set_ylabel(r'$\log\ \left(\frac{(O/H)}{(O/H)_\odot}\right)$ [MPA/JHU]')    
-    ax.legend(loc = 'best', frameon = False, fontsize = 14)
-    #ax.grid()
-    #f.tight_layout()
-    f.subplots_adjust(bottom = 0.2, top = 0.92, right = 0.95, left = 0.15)
+    ax.legend(loc = 'upper left', frameon = False, fontsize = 14)
+    f.subplots_adjust(left = 0.2, right = 0.95, top = 0.95, bottom = 0.2)
     f.savefig('logOH_ZnebMPA.pdf')
     plt.close(f)
 

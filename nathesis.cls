@@ -85,7 +85,7 @@
 \lstnewenvironment{python}[1][]{
 \lstset{
 numbers=left,
-numberstyle=\footnotesize,
+numberstyle=\scriptsize,
 numbersep=1em,
 xleftmargin=1em,
 framextopmargin=1em,
@@ -96,7 +96,9 @@ showstringspaces=false,
 frame=l,
 tabsize=4,
 % Basic
-basicstyle=\ttfamily\small\setstretch{1},
+basicstyle=\ttfamily\scriptsize,
+%
+%\setstretch{1},
 backgroundcolor=\color{Background},
 language=Python,
 % Comments

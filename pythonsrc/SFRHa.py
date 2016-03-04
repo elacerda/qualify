@@ -80,21 +80,23 @@ if __name__ == '__main__':
             ax2 = plt.subplot(gs[0, 1])
             ax3 = plt.subplot(gs[1, :])
     
-            subpos = [0.68,  0.20, 0.45, 0.35]
+            subpos = [0.58,  0.20, 0.55, 0.35]
             subax = add_subplot_axes(ax2, subpos)
-    
+            
+            cmap = plt.get_cmap('spectral_r')
             for iZ, Z in enumerate(base.metBase):
+                c = cmap(float(iZ) / base.nMet)
                 ax1.plot(np.ma.log10(base.ageBase), Nh__Zt[iZ, :] / 1e60,
-                         c = plotConf__Z[iZ]['c'], lw = plotConf__Z[iZ]['lw'],  
+                         c = c, lw = plotConf__Z[iZ]['lw'],  
                          label = r'Z $=\ %.2f Z_\odot$' % (Z / base.metBase[4]))
                 ax2.plot(np.ma.log10(base.ageBase), Nh__Zt[iZ, :] / Nh__Zt[iZ, -1], 
-                         c = plotConf__Z[iZ]['c'], lw = plotConf__Z[iZ]['lw'], 
+                         c = c, lw = plotConf__Z[iZ]['lw'], 
                          label = r'Z $=\ %.2f Z_\odot$' % (Z / base.metBase[4]))
                 subax.plot(np.ma.log10(base.ageBase), Nh__Zt[iZ, :] / Nh__Zt[iZ, -1], 
-                           c = plotConf__Z[iZ]['c'], lw = plotConf__Z[iZ]['lw'], 
+                           c = c, lw = plotConf__Z[iZ]['lw'], 
                            label = r'Z $=\ %.2f Z_\odot$' % (Z / base.metBase[4]))
                 ax3.plot(np.ma.log10(base.ageBase), np.ma.log10(qh__Zt[iZ, :]),
-                         c = plotConf__Z[iZ]['c'], lw = plotConf__Z[iZ]['lw'], 
+                         c = c, lw = plotConf__Z[iZ]['lw'], 
                          label = r'Z $=\ %.2f Z_\odot$' % (Z / base.metBase[4]))
                     
             ax3.legend(loc = 1, fontsize=14, frameon=False)

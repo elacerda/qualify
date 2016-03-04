@@ -914,7 +914,7 @@ if __name__ == '__main__':
     page_size_inches = [NCols * 4, NRows * 4]
     f.set_size_inches(page_size_inches)
     grid_shape = (NRows, NCols)
-    yaxis = [ 'alogSFRSDHakpcR', 'alogSFRSDkpcR', 'atfluxR', 'logO3N2M13R', 'xYR', 'logMcorSDR', 'alogZmassR', 'logtauVR', 'logtauVNebR' ]
+    yaxis = [ 'alogSFRSDHakpcR', 'alogSFRSDkpcR', 'atfluxR', 'logO3N2M13R', 'xYR', 'logMcorSDR', 'alogZmassR', 'tauVR', 'tauVNebR' ]
     row, col = 0, 0
     bins = (20,20)
     for i_y, yk in enumerate(yaxis):
