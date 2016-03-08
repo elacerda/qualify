@@ -19,11 +19,11 @@
 \chapter{Extinção diferencial}
 \label{sec:difextin}
 
-O objetivo deste trabalho é conseguir estimar fração de gás para nossas galáxias do \CAL através da
-conversão de poeira em gás explorando uma conversão do tipo da Eq. \ref{eq:dust2gas}. Para isso
+O objetivo deste trabalho é conseguir estimar a fração de gás para nossas galáxias do \CAL através
+da conversão de poeira em gás explorando uma conversão do tipo da Eq. \ref{eq:dust2gas}. Para isso
 vamos tentar entender melhor a diferença entre os coeficientes de extinção por poeira adotados,
 realizando um procedimento parecido e fazendo algumas comparações com um estudo de nosso grupo de
-populações estelares, que ainda está para ser públicado, sobre extinção diferencial em galáxias do
+populações estelares, que ainda está para ser publicado, sobre extinção diferencial em galáxias do
 \SDSS. Este estudo sobre extinção diferencial nas galáxias do \SDSS é parte da tese de Marielli de
 Souza Schlickmann.
 
@@ -31,8 +31,8 @@ Souza Schlickmann.
 \section{Estudo empírico}
 \label{sec:difextin:emp}
 
-De maneira a explorar as diferenças entre os coeficientes de extinção, identificamos duas variáveis
-que nos ajudarão nesse processo:
+Para explorar as diferenças entre os coeficientes de extinção nebular e estelar, identificamos duas
+variáveis que nos ajudarão nesse processo:
 \begin{eqnarray}
 	\mathcal{D}_\tau\ &\equiv&\ \tauVN - \tauVS \\
 	\label{eq:difftau}
@@ -43,17 +43,18 @@ que nos ajudarão nesse processo:
 \subsection{Comparação direta entre os coeficientes}
 \label{sec:difextin:emp:comparetauV}
 
-Neste capítulo (e nos seguintes) nos atemos em uma discussão utilizando perfis radiais. Na Fig.
-\ref{fig:tauVhisto} vemos a comparação direta entre os coeficientes, juntamente com os histogramas
-de $\Dtau$ e $\Rtau$. O primeiro painel mostra a comparação entre os coeficientes como na Fig.
-\ref{fig:tauVsynvsnebMask} para perfis radiais. Os dois histogramas são de $\Dtau$ e $\Rtau$. Os
-valores da mediana (média) de $\Dtau$ são 0.31 (0.32) e de $\Rtau$, 2.06 (2.46) e ambos mostram
-claramente a existência de uma extinção diferencial. Esse resultado aparece da mesma forma para
-zonas e para as galáxias integradas. No trabalho de Marielli (com 107231 espectros de galáxias
+Neste capítulo (e no seguinte) nos atemos em uma discussão utilizando perfis radiais. Na Fig.
+\ref{fig:tauVhisto} vemos a comparação direta entre $\tauVS$ e $\tauVN$, juntamente com os
+histogramas de $\Dtau$ e $\Rtau$. O primeiro painel mostra a comparação entre os coeficientes como
+na Fig. \ref{fig:tauVsynvsnebMask} para perfis radiais. Os dois histogramas são de $\Dtau$ e
+$\Rtau$. Os valores da mediana (média) de $\Dtau$ são 0.31 (0.32) e de $\Rtau$, 2.06 (2.46) e ambos
+mostram claramente a existência de uma extinção diferencial. Esse resultado aparece da mesma forma
+para zonas e para as galáxias integradas. No trabalho de Marielli (com 107231 espectros de galáxias
 integradas do \SDSS-DR7) cabe lembrar que a síntese de populações estelares foi feita apenas para
-espectros integrados e com diferentes base de populações estelares e IMF, além do intervalo de
+espectros integrados e com diferentes bases de populações estelares e IMF, além do intervalo de
 normalização ser feito em uma janela diferente, portanto, alterando também o resultado de $x_Y$;
-ainda sim encontramos valores que evidenciam o mesmo fenômeno e que servem de base para a discussão.
+ainda sim encontramos valores que evidenciam o mesmo fenômeno e que servem de base para a discussão
+que segue.
 
 \begin{figure}
 	\centering
@@ -68,12 +69,12 @@ superior direito marcam a média, mediana, desvio padrão, máximo e mínimo das
 \subsection{O papel de $x_Y$ e de $b/a$}
 \label{sec:difextin:emp:xYcosi}
 
-Pela relação entre os coeficientes vemos que há um espalhamento notável, entretanto, parece óbvio
+Pela relação entre $\tauVS$ e $\tauVN$ vemos que há um espalhamento notável, entretanto, parece óbvio
 que a extinção diferencial existe. Ao estudar algumas propriedades, galáxia por galáxia, vimos que
 existe uma relação interessante entre as variáveis que criamos aqui ($\Dtau$ e $\Rtau$), a fração
 de populações jovens ($x_Y$) e também a relação axial da galáxia ($b/a$). A primeira pela fato que
 relaciona regiões onde existam populações mais jovens, ou seja, mais relacionadas a regiões
-formadoras de estrelas, ajudando-nos a quebrar um pouco nessa ambiguidade nos valores de $\tauVS$ e
+formadoras de estrelas, ajudando-nos a quebrar um pouco essa ambiguidade nos valores de $\tauVS$ e
 a última pelo fato de afetar diretamente a forma de modelar a extinção por poeira.
 
 Para utilizar a relação axial vamos fazer uma pequena correção para a projeção do disco no plano do
@@ -83,30 +84,30 @@ céu:
 	&\mbox{se }b/a > 0.13 \\ 0.05, &\mbox{se }b/a <= 0.13 \end{matrix}\right
 \end{equation}
 \noindent onde $i$ é o ângulo de inclinação da galáxia e $0.13$ é o valor da relação
-axial intrinseca de uma galáxia mais frontal possível ({\em edge-on}). Valores com $b/a$ <= 0.13
+axial intrinseca de uma galáxia mais de lado possível ({\em edge-on}). Valores com $b/a$ <= 0.13
 recebem o valor da menor inclinação de nossa amostra (0.05) ao invés de 0 para não haver problemas
 matemáticos futuros. Esse é um refinamento que altera levemente o valor de $b/a$ e praticamente só
-afeta as galáxias com $b/a$ < 0.4.
+afeta as galáxias com $b/a$ < 0.4, ou seja, na prática $\cos i \sim b/a$.
 
 Na Fig. \ref{fig:Dtau} vemos como $\Dtau$ se relaciona com $\varphi$ e $x_Y$. Nos painéis $a$ e $c$
-vemos as distribuições, e nos $b$ e $d$ vemos as medianas para diferentes classes da variável
-cruzada, isto é, distribuição contra $x_Y$ com os pontos divididos em classes de $\varphi$ e
-distribuição contra $\varphi$ em classes de $x_Y$. É clara a tendência de $\Dtau\ \to\ 0$ quando
-$x_Y \to 1$. Pelo painel $a$ vemos que apesar da existência de uma anticorrelação entre $\Dtau$
-e $x_Y$, existe um espalhamento considerável. Dividimos nossa amostra em classes de $\varphi$ e
-parece não haver dependência (painel $b$). Nos painéis $c$ e $d$ exploramos a relação $\Dtau$ e
-$\varphi$. $\Dtau$ não parece haver dependência com $\varphi$ mas quando dividimos a amostra em
-classes de $x_y$ vemos que se confirma a anticorrelação.
+vemos as distribuições de pontos nos planos \Dtau-($x_Y$,$\phi$), e nos $b$ e $d$ vemos as medianas
+para diferentes {\em bins} da variável cruzada, isto é, distribuição contra $x_Y$ com os pontos
+divididos em {\em bins} de $\varphi$ e distribuição contra $\varphi$ em {\em bins} de $x_Y$. É clara
+a tendência de $\Dtau\ \to\ 0$ quando $x_Y \to 1$. Pelo painel $a$ vemos que apesar da existência de
+uma anticorrelação entre $\Dtau$ e $x_Y$, existe um espalhamento considerável. Dividimos nossa
+amostra em {\em bins} de $\varphi$ e parece não haver dependência (painel $b$). Nos painéis $c$ e
+$d$ exploramos a relação $\Dtau$ e $\varphi$. $\Dtau$ não parece haver dependência com $\varphi$ mas
+quando dividimos a amostra em {\em bins} de $x_y$ vemos que se confirma a anticorrelação.
 
 Repetimos esse mesmo experimento para $\Rtau$ na Fig. \ref{fig:Rtau}. Observando a mediana parece
 que $\Rtau \to 1$ quando $x_Y \to 1$, com uma $\Rtau \to 3 \sim 4$ quando $x_Y \to 0$. Vemos pelo
 painel $d$ que a anticorrelação com $x_Y$ segue, mas olhando o $b$ vemos que parece haver um pequeno
-afastamento entre as medianas da distribuição quando dividimos nessas classes de $\varphi$. Esse
+afastamento entre as medianas da distribuição quando dividimos nessas {\em bins} de $\varphi$. Esse
 resultado não é evidente quando olhamos o painel $c$. Quando fazemos o mesmo gráfico para as
 galáxias do \SDSS esse resultado é muito mais evidente (Figs. \ref{fig:DtauSDSS} e
-\ref{fig:RtauSDSS}), aparecendo uma correlação entre $\Rtau$. Em primeira estância creio que isso se
-deve ao poder da estatística dos dados do \SDSS. Nosso estudo com valores integrados peca por
-estatística, pois temos apenas 184 pontos.
+\ref{fig:RtauSDSS}), aparecendo uma correlação entre $\Rtau$. Em primeira estância acreditamos que
+isso se deve ao poder da estatística dos dados do \SDSS. Nosso estudo com valores integrados peca
+por estatística, pois temos apenas 184 pontos.
 
 \begin{figure}
 	\centering
@@ -115,9 +116,9 @@ estatística, pois temos apenas 184 pontos.
 	{\emph{Painel a}: $\Dtau$ versus $x_Y$ para nossa amostra. Os contornos definem
 $1\sigma$, $2\sigma$ e $3\sigma$ da distribuição. As linhas marcam a mediana (linha contínua) e os
 5,16,64,95 percentis (linhas tracejadas). \emph{Painel b}: as medianas da mesma distribuição
-quando dividimos nossa amostra em classes de $\varphi$. Os intervalos são criados para que contenham
+quando dividimos nossa amostra em {\em bins} de $\varphi$. Os intervalos são criados para que contenham
 praticamente o mesmo número de pontos. \emph{Painel c}: igual ao $a$ mas versos
-$\varphi$. \emph{Painel d}: igual ao $b$ mas com a amostra dividida em classes de $x_Y$.}
+$\varphi$. \emph{Painel d}: igual ao $b$ mas com a amostra dividida em {\em bins} de $x_Y$.}
 	\label{fig:Dtau}
 \end{figure}
 
@@ -164,14 +165,16 @@ populações jovens são atenuadas de maneira mais intensa que o meio interestel
 levar em conta que existe algum tipo de relação entre a razão entre os coeficientes seja afetada
 diretamente pelo ângulo de inclinação da galáxia. Apesar de aqui estarmos utilizando $t_{SF} = 32$
 milhões de anos, tanto na tese de Marielli quanto no artigo de \citet{Charlot.Fall.2000a} são
-consideradas jovens todas as populações com idade menor que 10 milhões de anos. A interpretação da
+consideradas jovens todas as populações com idade menor que 10 milhões de anos.
+
+Podemos ver uma representação visual do modelo na Fig. \ref{fig:model}. A interpretação da
 influência de $\varphi$ foi relacionada a diferença entre geometria das regiões \Hii e a da galáxia.
 As estrelas jovens, assim como as velhas, possuem atenuações semelhantes a do ISM dos discos
 galáticos, mas as populações jovens possuem também a poeira de suas {\em birth clouds}. Ou seja, se
-modelarmos as regiões \Hii como esfericamente simétricas, o coeficiente de extinção não
-deve se alterar quando mudamos a linha de visada entre o observador e a galáxia. Já para o ISM
-parece se alterar bastante, portanto a razão entre os coeficientes deve se alterar no mesmo passo
-que a inclinação se altera. Na Fig. \ref{fig:model} fica melhor explicado.
+modelarmos as regiões \Hii como esfericamente simétricas, o coeficiente de extinção não deve se
+alterar quando mudamos a linha de visada entre o observador e a galáxia. Já para o ISM parece se
+alterar bastante, portanto a razão entre os coeficientes deve se alterar no mesmo passo que a
+inclinação se altera.
 
 \begin{figure}
 	\includegraphics[width=0.99\textwidth]{figuras/Hiiregion_model.pdf}
@@ -212,31 +215,10 @@ $\tauBC$, além de trazer uma interpretação para o real significado de $\tauVS
 	\label{eq:tauISM}
 \end{eqnarray}
 
-\section{Próximos passos}
-\label{sec:difextin:nextsteps}
-
-Ainda temos muito mais a fazer nessa direção. Ainda temos que comparar este modelo com os dados
-para posteriormente podermos discutir as diferenças entre a aplicação deste modelo de extinção
-diferencial para galáxias integradas e para perfis radiais (e consequentemente, para zonas também).
-
-\subsection{Comparação com os dados.}
-\label{sec:difextin:nextsteps:comp}
-
-O primeiro passo no sentido da comparação deste modelo proposto com os dados é identificando as
-nossas variáveis $\Dtau$ e $\Rtau$ no contexto da Fig. \ref{fig:model}:
-\begin{eqnarray}
-	\Dtau &=& (1 - \alpha x_Y) \tauBC \\
-	\label{eq:DtauxY}
-	\Rtau &=& \frac{\varphi^{-1} \tauISM + \alpha \tauBC}{\varphi^{-1} \tauISM + \alpha x_Y \tauBC}
-\equiv \frac{1 + \alpha \varphi \rho}{1 + \alpha \varphi x_Y \rho}
-	\label{eq:RtauxY}
-\end{eqnarray}
-\noindent onde $\rho = \frac{\tauBC}{\tauISM}$. 
-
 Pelo histogram dessas variávis (Fig. \ref{fig:tauBCISM}) vemos que o cenário de extinção diferencial
 persiste, com valores característicos (mediana) para $\tauBC$ de 0.39 e de $\tauISM$ 0.08. A razão
 entre as medianas (médias) resulta em 4.9 (3.8). A mediana da razão nos leva a um valor um pouco
-mais baixo, 3.43, mas há espalhamento muito grande nesta variável (devido aos valores de $\tauBC$ e
+menor (3.43) mas há espalhamento muito grande nesta variável (devido aos valores de $\tauBC$ e
 $\tauISM$ que passam por zero). 
 
 \begin{figure}
@@ -250,20 +232,11 @@ histogramas deste trabalho: média, mediana, desvio padrão, máximo e mínimo.}
 	\label{fig:tauBCISM}
 \end{figure}
 
-\subsection{Perfis radiais vs. propriedades integradas}
-\label{sec:difextin:nextsteps:SDSSvsCALIFA}
+\section{Próximos passos}
+\label{sec:difextin:nextsteps}
 
-Espectrografia de campo integrado está mudando a forma com que nós lidamos com os desafios atuais em
-astrofísica. Os dados de IFS do CALIFA nos possibilitam calcular como as propriedades físicas se
-alteram dentro de uma galáxia. Ao estudar as populações estelares quando observamos uma região de
-uma galáxia, ao invés de uma galáxia inteira, estamos olhando diferentes estágios de evolução
-química e formação estelar, inclusive com uma diferença muito maior entre os coeficientes de
-extinção dentro da mesma galáxia. As galáxias do \CAL estão dentro do mesmo intervalo de redshift de
-forma que todas aproveitem o campo inteiro de observação, dessa forma, zonas possuem diâmetros
-variando entre 200pc a 1kpc. Quando temos valores integrados, estamos olhando valores que
-representam uma galáxia inteira (portanto uma ``soma'' de tudo o que acontece no bojo e no disco).
-
-%\subsubsection{$\Dtau}
-
+Ainda temos muito mais a fazer nessa direção. Ainda temos que comparar este modelo com os dados
+para posteriormente podermos discutir as diferenças entre a aplicação deste modelo de extinção
+diferencial para galáxias integradas e para perfis radiais (e consequentemente, para zonas também).
 
 % End of this chapter

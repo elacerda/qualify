@@ -638,6 +638,7 @@ if __name__ == '__main__':
         text = True, 
         OLS = True,
         pos_y = 0.98, 
+        c = 'r',
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
  
@@ -647,7 +648,7 @@ if __name__ == '__main__':
     xlabel = r'$\log\ \tau_V^{\star}(R)$'
     ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
     xran = [-1.5, 0.5]
-    yran = [-3.5, 0]
+    yran = [-4, 0.5]
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
@@ -668,7 +669,7 @@ if __name__ == '__main__':
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xlabel = r'$\log\ \tau_V^{\mathrm{neb}}(R)$'
     xran = [-1.5, 0.5]
-    yran = [-3.5, 0]
+    yran = [-4, 0.5]
     x = np.ma.log10(H.tau_V_neb__Trg[iT])
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
@@ -687,7 +688,7 @@ if __name__ == '__main__':
     ax.yaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
  
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.125)
     f.savefig('PseudoSKR_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
@@ -754,6 +755,7 @@ if __name__ == '__main__':
         text = True,
         OLS = True, 
         pos_y = 0.98, 
+        c = 'r',
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
 
@@ -770,6 +772,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -793,6 +796,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -815,6 +819,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -838,6 +843,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -859,6 +865,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
@@ -883,6 +890,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -906,6 +914,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(H.RbinIni, 3)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -930,6 +939,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -953,7 +963,7 @@ if __name__ == '__main__':
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.yaxis.set_major_locator(MaxNLocator(4))
 
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.15, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.075)
     f.savefig('DeltapSKR_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
@@ -1011,7 +1021,8 @@ if __name__ == '__main__':
         rms = True, 
         text = True,
         OLS = True, 
-        pos_y = 0.98, 
+        pos_y = 0.98,
+        c = 'r', 
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
 
@@ -1041,6 +1052,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1062,6 +1074,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1084,6 +1097,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1107,6 +1121,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1128,6 +1143,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
@@ -1150,6 +1166,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1173,6 +1190,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(H.RbinIni, 3)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1197,6 +1215,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1220,7 +1239,7 @@ if __name__ == '__main__':
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.yaxis.set_major_locator(MaxNLocator(4))
 
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.15, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.075)
     f.savefig('DeltapSKR_noOH_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
     
@@ -1280,6 +1299,7 @@ if __name__ == '__main__':
         text = True,
         OLS = True, 
         pos_y = 0.98, 
+        c = 'r',        
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
 
@@ -1309,6 +1329,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1330,6 +1351,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1352,6 +1374,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1375,6 +1398,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1396,6 +1420,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
@@ -1418,6 +1443,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(0,1)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1441,6 +1467,7 @@ if __name__ == '__main__':
     xlabel = props_label__r[i_prop]
     ax.set_xlim(H.RbinIni, 3)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = H.Rbin__r[H.Rbin__r > 0.7], **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1465,6 +1492,7 @@ if __name__ == '__main__':
     x = props__r[i_prop]
     xlabel = props_label__r[i_prop]
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    plot_text_ax(ax, '%s)' % chr(ord('a') + (i_prop - 1)), 0.01, 0.99, 16, 'top', 'left', 'k')
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     rs = C.runstats(xm.compressed(), ym.compressed(), xbin = (np.asarray(tickpos)+0.5)[:-1] , **default_rs_kwargs)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
@@ -1488,7 +1516,7 @@ if __name__ == '__main__':
     plt.setp(ax.get_yticklabels(), visible = False)
     ax.yaxis.set_major_locator(MaxNLocator(4))
 
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.15, top = 0.92, wspace = 0., hspace = .35, right = 0.95, left = 0.075)
     f.savefig('DeltapSKR_noMcorSD_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 
@@ -1510,7 +1538,8 @@ if __name__ == '__main__':
         rms = True, 
         text = True, 
         OLS = True,
-        pos_y = 0.98, 
+        pos_y = 0.98,
+        c = 'r',         
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
  
@@ -1518,10 +1547,10 @@ if __name__ == '__main__':
     print a, a_OH, b, b_OH
     x = (a * np.ma.log10(H.tau_V__Trg[iT]) + a_OH * (H.logO3N2_M13__Trg[iT] - 8.69) + b_OH + b)
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6) 
-    xlabel = r'$\Delta_1$'
+    xlabel = r'$\log\ \Sigma_{SFR}^\star(\tau_V^\star, Z_{\mathrm{gas}})$'
     ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
-    xran = [-3.5, 0]
-    yran = [-3.5, 0]
+    xran = [-3, 0]
+    yran = [-3, 0]
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
     density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     kw_text = dict(pos_x = 0.01, pos_y = 0.01, fs = 15, va = 'bottom', ha = 'left', c = 'k')
@@ -1536,13 +1565,19 @@ if __name__ == '__main__':
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.set_xticks([-2.5, -1.5, -.5])
+    ax.set_xticklabels([-2.5, -1.5, -.5])
+    ax.set_yticks([-2.5, -1.5, -.5])
+    ax.set_yticklabels([-2.5, -1.5, -.5])
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
+    # ax.yaxis.set_major_locator(MaxNLocator(4))
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
  
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-    xlabel = r'$\Delta_2$'
-    xran = [-3.5, 0]
-    yran = [-3.5, 0]
+    xlabel = r'$\log\ \Sigma_{SFR}^\star(\tau_V^\star, \mu_\star)$'
+    xran = [-3, 0]
+    yran = [-3, 0]
     x = (a * np.ma.log10(H.tau_V__Trg[iT]) + a_McorSD * np.ma.log10(H.McorSD__Trg[iT]) + b_McorSD + b)
     print a, a_McorSD, b, b_McorSD
     xm, ym = C.ma_mask_xyz(x = x, y=y, mask = mask__rg) 
@@ -1552,17 +1587,24 @@ if __name__ == '__main__':
     ax.scatter(xm, ym, marker = 'o', s = 10, edgecolor = 'none', c = '0.8', alpha = 0.45)
     ax.set_xlim(xran)
     ax.set_ylim(yran)
+    #ax.set_yticks([-2.5, -1.5, -.5])
     rs = C.runstats(xm.compressed(), ym.compressed(), **default_rs_kwargs)
     ax.plot(rs.xS, rs.yS, 'k-', lw = 2)
     ax.set_xlabel(xlabel) 
     for i, p in enumerate(rs.xPrc):
         ax.plot(rs.xPrcS[i], rs.yPrcS[i], 'k--', lw = 2.)
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
+    ax.set_xticks([-2.5, -1.5, -.5])
+    ax.set_xticklabels([-2.5, -1.5, -.5])
+    ax.set_yticks([-2.5, -1.5, -.5])
+    ax.set_yticklabels([-2.5, -1.5, -.5])
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # ax.xaxis.set_major_locator(MaxNLocator(4))
+    # ax.yaxis.set_major_locator(MaxNLocator(4))
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     plt.setp(ax.get_yticklabels(), visible = False)
  
-    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.1)
+    f.subplots_adjust(bottom = 0.2, top = 0.92, wspace = 0, right = 0.95, left = 0.125)
     f.savefig('PseudoSKR_noscat_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
 

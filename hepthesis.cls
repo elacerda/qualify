@@ -749,7 +749,6 @@
   \ignorespacesafterend%
 }
 
-
 %% ``Thesis''-prefixed duplicate commands and environments (deprecated)
 \newcommand{\thesistypeout}{\typeout{hepthesis: thesis- prefix commands are deprecated}}
 \newenvironment{thesistable}{\thesistypeout\table}{\endtable\ignorespacesafterend}

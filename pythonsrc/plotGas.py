@@ -1497,7 +1497,7 @@ if __name__ == '__main__':
     rs_kwargs = default_rs_kwargs.copy()
     sc_kwargs = default_sc_kwargs.copy()
     default_histo_kwargs = {} #dict(range = xrange) 
-    xlabel = r'$\tau_{\mathrm{dep}}$ [Gyr]'
+    xlabel = r'$t_{\mathrm{dep}}$ [Gyr]'
     
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], BR_SigmaGas__rg, mask = mask__rg)
