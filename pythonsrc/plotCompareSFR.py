@@ -384,25 +384,27 @@ if __name__ == '__main__':
             bins = (30,30)
             scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
             density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
-            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+            tmp=ols_kwargs.copy()
+            tmp['fs'] = 10
+            a[iT], b[iT], sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **tmp)
             b2[iT] = (ym - xm).mean()
             Rs[iT], _ = st.spearmanr(xm.compressed(), ym.compressed())
             Rp[iT], _ = st.pearsonr(xm.compressed(), ym.compressed())        
             Y2 = xm + b2[iT]
             Yrms = (ym - Y2).std()
-            ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
+            #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
             if b2[iT] >= 0:
                 txt = r'y = x + %.2f (rms:%.3f)' % (b2[iT], Yrms)
             else:
                 txt = r'y = x - %.2f (rms:%.3f)' % (-1. * b2[iT], Yrms)
             C.debug_var(args.debug, y_hold_x = txt)
-            plot_text_ax(ax, txt, 0.96, 0.09, 12, 'bottom', 'right', color = 'b')
+            #plot_text_ax(ax, txt, 0.96, 0.09, 10, 'bottom', 'right', color = 'b')
             txt = '%.2f Myr' % (age / 1e6)
-            plot_text_ax(ax, txt, 0.05, 0.96, 12, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.96, 10, 'top', 'left')
             txt = '%.4f' % (Rs[iT])
-            plot_text_ax(ax, txt, 0.05, 0.89, 12, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.90, 10, 'top', 'left')
             txt = '%.4f' % (Rp[iT])
-            plot_text_ax(ax, txt, 0.05, 0.84, 12, 'top', 'left')
+            plot_text_ax(ax, txt, 0.05, 0.84, 10, 'top', 'left')
             ax.set_xlim(xran)
             ax.set_ylim(yran)
             ax.plot(ax.get_xlim(), ax.get_xlim(), ls = "--", c = ".3")
@@ -775,10 +777,10 @@ if __name__ == '__main__':
 
     from matplotlib.pyplot import MaxNLocator
     f = plt.figure()
-    NRows = 3
+    NRows = 2
     NCols = 2
     grid_shape = (NRows, NCols)
-    f.set_size_inches(NCols * 4, NRows * 4 - 2)
+    f.set_size_inches(NCols * 4, NRows * 4)
     iT = 11
     tSF = tSF__T[iT]
     txt_suptitle = r'$\mathrm{Correlac\c\~ao\ da\ taxa\ de\ formac\c\~ao\ estelar}$'
@@ -802,43 +804,47 @@ if __name__ == '__main__':
     y_pos = Rs_aSFRSD[iT]
     arrow_size_x = 0.2
     arrow_size_y = 0.15
-    ax.plot(x_pos, y_pos, color='k', marker='*', markersize = 10, markeredgecolor='k')
-    
+    ax.plot(x_pos, y_pos, color='k', marker='*', markersize = 10, markeredgecolor='k')    
     bins = (30, 30)
     cmap = 'Blues'
-    ax = plt.subplot2grid(grid_shape, loc = (1,0))
-    xlabel = r'$\log\ SFR_\star(t_\star)\ [M_\odot yr^{-1}]$' 
-    ylabel = r'$\log\ SFR_{neb}\ [M_\odot yr^{-1}]$'
-    x = np.ma.log10(SFR__Tg[iT])
-    y = np.ma.log10(SFR_Ha__g)
-    mask__g = mask_zones_iT(iT, H, args, maskRadiusOk__g, gals_slice__g)
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
-    age = tSF__T[iT]
-    C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
-    #print 'SFR x SFR_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())        
-    xran = [-6, 0]
-    yran = [-6, 0]
-    h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    X, Y = np.meshgrid(xedges, yedges)
-    im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-    ax.set_xlim(xran)
-    ax.set_ylim(yran)
-    #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    b2 = (ym.compressed() - xm.compressed()).mean()
-    Y2 = xm.compressed() + b2
-    Yrms = (ym.compressed() - Y2).std()
-    ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
-    #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
-    txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
-    plot_text_ax(ax, txt, ols_kwargs['pos_x'], ols_kwargs['pos_y'] + ols_kwargs['fs'] / 100., ols_kwargs['fs'], 'bottom', 'right', color = 'b')
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
-    ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
+    
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # ax = plt.subplot2grid(grid_shape, loc = (1,0))
+    # xlabel = r'$\log\ SFR_\star(t_\star)\ [M_\odot yr^{-1}]$' 
+    # ylabel = r'$\log\ SFR_{neb}\ [M_\odot yr^{-1}]$'
+    # x = np.ma.log10(SFR__Tg[iT])
+    # y = np.ma.log10(SFR_Ha__g)
+    # mask__g = mask_zones_iT(iT, H, args, maskRadiusOk__g, gals_slice__g)
+    # xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
+    # age = tSF__T[iT]
+    # C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
+    # #print 'SFR x SFR_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())        
+    # xran = [-6, 0]
+    # yran = [-6, 0]
+    # #h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    # #X, Y = np.meshgrid(xedges, yedges)
+    # #im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    # density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    # ax.set_xlim(xran)
+    # ax.set_ylim(yran)
+    # scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
+    # a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    # b2 = (ym.compressed() - xm.compressed()).mean()
+    # Y2 = xm.compressed() + b2
+    # Yrms = (ym.compressed() - Y2).std()
+    # ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
+    # #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
+    # txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
+    # #plot_text_ax(ax, txt, ols_kwargs['pos_x'], ols_kwargs['pos_y']+0.08, ols_kwargs['fs'], 'bottom', 'right', color = 'b')
+    # plot_text_ax(ax, txt, 1 - ols_kwargs['pos_x'], 1 - (ols_kwargs['pos_y']), ols_kwargs['fs'], 'top', 'left', color = 'b')
+    # ax.set_xlabel(xlabel)
+    # ax.set_ylabel(ylabel)
+    # ax.xaxis.set_major_locator(MaxNLocator(4))
+    # ax.yaxis.set_major_locator(MaxNLocator(4))
+    # ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
         
-    ax = plt.subplot2grid(grid_shape, loc = (1,1))
+    ax = plt.subplot2grid(grid_shape, loc = (1,0))
     xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star)\ [M_\odot yr^{-1} kpc^{-2}]$' 
     ylabel = r'$\log\ \Sigma_{SFR}^{neb}\ [M_\odot yr^{-1} kpc^{-2}]$' 
     x = np.ma.log10(SFRSD__Tg[iT] * 1e6)
@@ -847,46 +853,51 @@ if __name__ == '__main__':
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__g)
     age = tSF__T[iT]
     C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
-    #print 'SFRSD x SFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())
+    print 'SFRSD x SFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), len(x) - xm.mask.sum())
     xran = [-4, 0.5]
     yran = [-4, 0.5]
     ax.set_xlim(xran)
     ax.set_ylim(yran)
-    h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    X, Y = np.meshgrid(xedges, yedges)
-    im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-    #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
+    #h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    #X, Y = np.meshgrid(xedges, yedges)
+    #im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
     a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     b2 = (ym.compressed() - xm.compressed()).mean()
     Y2 = xm.compressed() + b2
     Yrms = (ym.compressed() - Y2).std()
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
+    ax.set_title(r'zonas')
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
-    plot_text_ax(ax, txt, ols_kwargs['pos_x'], ols_kwargs['pos_y'] + ols_kwargs['fs'] / 100., ols_kwargs['fs'], 'bottom', 'right', color = 'b')
+    plot_text_ax(ax, txt, 1 - ols_kwargs['pos_x'], 1 - (ols_kwargs['pos_y']), ols_kwargs['fs'], 'top', 'left', color = 'b')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
-        
-    ax = plt.subplot2grid(grid_shape, loc = (2,0))
-    xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
-    ylabel = r'$\log\ \Sigma_{SFR}^{neb}(R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
+         
+    ax = plt.subplot2grid(grid_shape, loc = (1,1))
+    #xlabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
+    #ylabel = r'$\log\ \Sigma_{SFR}^{neb}(R)\ [M_\odot yr^{-1} kpc^{-2}]$' 
     x = np.ma.log10(aSFRSD__Trg[iT] * 1e6)
     y = np.ma.log10(aSFRSD_Ha__Trg[iT] * 1e6)
     mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
     xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
     age = tSF__T[iT]
+    ax.set_title(r'$bins$ radiais')
     C.debug_var(args.debug, masked = xm.mask.sum(), not_masked = len(x) - xm.mask.sum(), total = len(x))
+    print 'aSFRSD x aSFRSD_Ha Age: %.2f Myr: masked %d points of %d (total: %d)' % (age / 1e6, xm.mask.sum(), len(x), xm.count())
     xran = [-4, 0.5]
     yran = [-4, 0.5]
-    h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    X, Y = np.meshgrid(xedges, yedges)
-    im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    #h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    #X, Y = np.meshgrid(xedges, yedges)
+    #im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
     ax.set_xlim(xran)
     ax.set_ylim(yran)
-    #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
+    scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.4)
     a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
     b2 = (ym.compressed() - xm.compressed()).mean()
     Y2 = xm.compressed() + b2
@@ -894,44 +905,48 @@ if __name__ == '__main__':
     ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
     #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
     txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
-    plot_text_ax(ax, txt, ols_kwargs['pos_x'], ols_kwargs['pos_y'] + ols_kwargs['fs'] / 100., ols_kwargs['fs'], 'bottom', 'right', color = 'b')
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
+    plot_text_ax(ax, txt, 1 - ols_kwargs['pos_x'], 1 - (ols_kwargs['pos_y']), ols_kwargs['fs'], 'top', 'left', color = 'b')
+    #ax.set_xlabel(xlabel)
+    #ax.set_ylabel(ylabel)
+    plt.setp(ax.get_yticklabels(), visible = False)
     ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
+    #ax.yaxis.set_major_locator(MaxNLocator(4))
     ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
 
-    ax = plt.subplot2grid(grid_shape, loc = (2,1))
-    xlabel = r'$\log\ \frac{\Sigma_{SFR}^\star(R)}{\Sigma_{SFR}^\star(@1HLR)}$'
-    ylabel = r'$\log\ \frac{\Sigma_{SFR}^{neb}(R)}{\Sigma_{SFR}^{neb}(@1HLR)}$' 
-    aSFRSD_norm__rg = H.aSFRSD__Trg[iT] / H.aSFRSD_oneHLR__Tg[iT]
-    aSFRSD_Ha_norm__rg = H.aSFRSD_Ha__Trg[iT] / H.aSFRSD_Ha_oneHLR__Tg[iT]
-    xran = [-1.5, 1.5]
-    yran = [-1.5, 1.5]
-    ax.set_xlim(xran)
-    ax.set_ylim(yran)
-    x = np.ma.log10(aSFRSD_norm__rg)
-    y = np.ma.log10(aSFRSD_Ha_norm__rg)
-    mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
-    xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
-    h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
-    X, Y = np.meshgrid(xedges, yedges)
-    im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
-    #scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.6)
-    a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
-    b2 = (ym.compressed() - xm.compressed()).mean()
-    Y2 = xm.compressed() + b2
-    Yrms = (ym.compressed() - Y2).std()
-    ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
-    #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
-    txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
-    plot_text_ax(ax, txt, ols_kwargs['pos_x'], ols_kwargs['pos_y'] + ols_kwargs['fs'] / 100., ols_kwargs['fs'], 'bottom', 'right', color = 'b')
-    ax.set_xlabel(xlabel)
-    ax.set_ylabel(ylabel)
-    ax.xaxis.set_major_locator(MaxNLocator(4))
-    ax.yaxis.set_major_locator(MaxNLocator(4))
-    ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # ax = plt.subplot2grid(grid_shape, loc = (2,1))
+    # xlabel = r'$\log\ \frac{\Sigma_{SFR}^\star(R)}{\Sigma_{SFR}^\star(@1HLR)}$'
+    # ylabel = r'$\log\ \frac{\Sigma_{SFR}^{neb}(R)}{\Sigma_{SFR}^{neb}(@1HLR)}$' 
+    # aSFRSD_norm__rg = H.aSFRSD__Trg[iT] / H.aSFRSD_oneHLR__Tg[iT]
+    # aSFRSD_Ha_norm__rg = H.aSFRSD_Ha__Trg[iT] / H.aSFRSD_Ha_oneHLR__Tg[iT]
+    # xran = [-2, 2]
+    # yran = [-2, 2]
+    # ax.set_xlim(xran)
+    # ax.set_ylim(yran)
+    # x = np.ma.log10(aSFRSD_norm__rg)
+    # y = np.ma.log10(aSFRSD_Ha_norm__rg)
+    # mask__rg = mask_radius_iT(iT, H, args, maskRadiusOk__rg, gals_slice__rg)
+    # xm, ym = C.ma_mask_xyz(x, y, mask = mask__rg)
+    # #h, xedges, yedges = np.histogram2d(xm.compressed(), ym.compressed(), bins = bins, range = [xran, yran])
+    # #X, Y = np.meshgrid(xedges, yedges)
+    # #im = ax.pcolormesh(X, Y, h.T, cmap = cmap)
+    # density_contour(xm.compressed(), ym.compressed(), bins[0], bins[1], ax, range = [xran, yran], colors = [ 'b', 'y', 'r' ])
+    # scat = ax.scatter(xm, ym, c = 'black', marker = 'o', s = 0.3, edgecolor = 'none', alpha = 0.6)
+    # a, b, sigma_a, sigma_b = plotOLSbisectorAxis(ax, xm.compressed(), ym.compressed(), **ols_kwargs)
+    # b2 = (ym.compressed() - xm.compressed()).mean()
+    # Y2 = xm.compressed() + b2
+    # Yrms = (ym.compressed() - Y2).std()
+    # ax.plot(ax.get_xlim(), np.asarray(ax.get_xlim()) + b2, c = 'b', ls = '--', lw = 2)
+    # #ax.plot(xm, Y2, c = 'b', ls = '--', lw = 0.5)
+    # txt = r'(1.000, %.3f, %.3f)' % (b2, Yrms)
+    # plot_text_ax(ax, txt, 1 - ols_kwargs['pos_x'], 1 - (ols_kwargs['pos_y']), ols_kwargs['fs'], 'top', 'left', color = 'b')
+    # ax.set_xlabel(xlabel)
+    # ax.set_ylabel(ylabel)
+    # ax.xaxis.set_major_locator(MaxNLocator(4))
+    # ax.yaxis.set_major_locator(MaxNLocator(4))
+    # ax.plot(ax.get_xlim(), ax.get_xlim(), 'k--', lw = 2)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 
-    f.subplots_adjust(hspace = 0.3, wspace = 0.35, right = 0.95, bottom = 0.08, top = 0.95)
+    f.subplots_adjust(hspace = 0.35, wspace = 0., right = 0.95, bottom = 0.10, top = 0.92)
     f.savefig('Rs_allSFR.pdf')
     plt.close(f)
