@@ -38,8 +38,7 @@ realizarmos uma comparação com os resultados para a amostra do DR1 \citep{Huse
 Durante esse trabalho notamos que os resíduos reduziram sensivelmente desde a última versão. Esta
 mesma análise nos ajudou a melhorar a máscara de remoção de linhas telúricas\footnote{Linhas
 provenientes de fenômenos que ocorrem na Terra.} dos espectros. Também verificamos que os erros
-relacionados aos espectros observados possuem uma distribuição muito próxima a uma gaussiana. Todas
-os dados presentes nesse trabalho receberam o mesmo pré-processamento detalhado neste artigo.
+relacionados aos espectros observados possuem uma distribuição muito próxima a uma gaussiana.
 
 \section{Definição da amostra deste trabalho}
 \label{sec:amostra:definicao}
@@ -78,8 +77,8 @@ Z_\star}$;
 0.05$);
   \item $\tauV$ e $\tauVN$ maiores que 0.05;
   \item mais do que cinco zonas contribuindo para o cálculo dos perfis radiais;
-  \item distância ao núcleo maior que 70\% do raio que contém metade da luz ({\em half-light radius}
-  - HLR).
+  \item distância ao núcleo maior que 70\% do raio que contém metade da luz ({\em half-light
+ radius} - HLR) e menor que 3 HLR.
 \end{itemize}
 \noindent O que aqui chamamos de população jovem discutiremos um pouco mais adiante, na Sec.
 \ref{sec:synvsneb:SFR}. A última imposição é feita para que não haja contaminação por zonas
@@ -93,7 +92,7 @@ intervalo do histograma é 1) de algumas propriedades de modo que evidencie os e
 que forma nossa amostra. Em vermelho temos as 226176 regiões em 305 galáxias e, em azul, as 16479
 zonas de 184 galáxias (19 Sa, 38 Sb, 59 Sbc, 55 Sc e 13 Sd). É notável que nossa seleção busca zonas
 mais densas e mais jovens (maior fração de populações jovens diminuindo a idade média). O corte mais
-brusco em nossa amostra é devido a baixa relação sinal-ruído da linha de \oIII ($(S/N)_{\oIII} < 3$)
+brusco em nossa amostra é devido a baixa relação sinal-ruído da linha de \oIII ($S/N_{\oIII} < 3$)
 em 91142 zonas.
 \begin{figure}
 	\centering
@@ -101,10 +100,11 @@ em 91142 zonas.
 	\caption[Histogramas: densidade superficial de massa, idade média, fração de populações jovens e
 	relação axial.] 
 	{Histogramas da densidade superficial de massa ({\em painel a}), idade média das populações
-estelares ({\em painel b}), fração de populações jovens ({\em painel c}) e relação axial ({\em
-painel d}). Em vermelho temos a distribuição de valores de 226176 regiões em 305 galáxias e, em
-azul, a de 16525 zonas de 184 galáxias resultantes da seleção. Em cada gráfico temos os valores da
-média, mediana, desvio padrão, máximo e mínimo de cada distribuição.}
+estelares ({\em painel b}), fração em luz proveniente de populações jovens ($x_Y \equiv x_Y(t_\star <
+31.62$ milhões de anos, {\em painel c}) e relação axial ({\em painel d}). Em vermelho temos a
+distribuição de valores de 226176 regiões em 305 galáxias e, em azul, a de 16479 zonas de 184
+galáxias resultantes da seleção. Em cada gráfico temos os valores da média, mediana, desvio padrão,
+máximo e mínimo de cada distribuição.}
 	\label{fig:histosample}
 \end{figure}
 
@@ -115,8 +115,8 @@ Com tipos morfológicos variando entre Sa e Sd, massas estelares entre $10^9$ e 
 e populações estelares com idades médias entre $10^8$ e $10^{10}$ anos, podemos ver na Fig.
 \ref{fig:amostraMorf} que as galáxias se ordenam de forma interessante quando agrupadas por tipo
 morfológico, anticorrelacionando com a idade média estelar e a massa estelar ($M_\star$ e $t_\star$)
-e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y (t_\star <
-32 \times 10^6$ anos)). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja,
+e correlacionando com a fração de luz proveniente das população jovens ($x_Y \equiv x_Y(t_\star <
+31.62$ milhões de anos)). Cada galáxia contribui com um ponto em cada painel deste gráfico, ou seja,
 são propriedades integradas. Os intervalos entre primeiro e terceiro quartil quase não se sobrepõem
 quando analisamos as classes morfológicas por idade média.
 
@@ -130,15 +130,13 @@ morfológicas, o que realmente acontece.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/sample_realsample_maskradius_integrated.pdf}
-	\caption[Classificação por morfologia.]
-	{Algumas propriedades separadas em classes morfológicas. Massa estelar ({\em painel a}), idade
-estelar média ({\em painel b}), fração de luz proveniente das população jovens ({\em painel c}, $x_Y
-\equiv x_Y(t_\star < 32 \times 10^6$ anos)$) e inclinação ({\em painel d}) de 305 galáxias espirais
-da amostra observada do CALIFA. No primeiro painel, temos o número de galáxias dentro de cada classe
-morfológica. Cada caixa tem altura definida pelo primeiro e terceiro quartil da distribuição dentro
-de um tipo morfológico. Uma faixa preta marca a mediana e uma estrela a média. Em cada caixa, a
-linha pontilhada vertical se estende mostrando o intervalo de $3\sigma$. Valores que ficam fora do
-intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
+	\caption[Classificação por morfologia]
+	{Valores integrados das mesmas propriedades da Fig.\ \ref{fig:histosample} para as 184
+galáxias da amostra, separadas em classes morfológicas. No primeiro painel, temos o número de
+galáxias dentro de cada classe morfológica. Cada caixa tem altura definida pelo primeiro e terceiro
+quartil da distribuição dentro de um tipo morfológico. Uma faixa preta marca a mediana e uma
+estrela a média. Em cada caixa, a linha pontilhada vertical se estende mostrando o intervalo de
+$3\sigma$. Valores que ficam fora do intervalo de $3\sigma$ são marcados por uma cruz vermelha.}
 	\label{fig:amostraMorf}
 \end{figure}
 
@@ -167,9 +165,9 @@ Também mostram que algumas propriedades, como idade estelar média, extinção 
 superficial de massa estelar são bem representados pelo seus valores medidas a 1 HLR.
 
 Escolhemos utilizar perfis radiais em anéis elípticos neste trabalho, calculando a média entre todas
-as zonas não mascaradas dentro de cana anel. Como um exemplo, podemos observar na Fig.
-\ref{fig:K0140xYRadProf} três exemplos de mapas e perfis radiais ($x_Y$, $\tauVS$ e $\tauVN$) da
-galáxia NGC1667 (objeto CALIFA 140). Em destaque (azul) temos o valor integrado para a galáxia.
+as zonas não mascaradas dentro de cana anel em cada galáxia. Como um exemplo, podemos observar na
+Fig.\ \ref{fig:K0140xYRadProf} três exemplos de mapas e perfis radiais ($x_Y$, $\tauVS$ e $\tauVN$)
+da galáxia NGC1667 (objeto CALIFA 140). Em destaque (azul) temos o valor integrado para a galáxia.
 Dentro de nosso trabalho utilizamos as medidas em zonas, em perfis radiais e quando necessário,
 integradas (resolvendo para o disco ou para a galáxia completa), nos possibilitando portanto
 verificar diferenças nestes tipos de abordagens.
@@ -177,7 +175,7 @@ verificar diferenças nestes tipos de abordagens.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/K0140_xY_radialProfile_realsample.pdf}
-	\caption[Imagem e exemplos de mapas e perfis radiais.]
+	\caption[Imagem e exemplos de mapas e perfis radiais]
 	{Imagem do \SDSS da galáxia NGC1667 (CALIFA 140). Em cada fileira aparece o mapa e o perfil radial
 da fração de luz proveniente das populações jovens ($x_Y$ - \emph{primeira fileira}), do
 coeficiente de extinção resultante da síntese de populações estelares ($\tauVS$ - \emph{segunda
@@ -189,22 +187,23 @@ radial (linha preta contínua).}
 	\label{fig:K0140xYRadProf}
 \end{figure}
 
-O perfil radial (entre 0.7 e 3 HLR) médio das principais propriedades utilizadas neste trabalho
-podem ser vistas na Fig.\ \ref{fig:RadProfProps} juntamente com seus histogramas na Fig.
-\ref{fig:HistoRadProfProps}. Elas são muito importantes em todos os aspectos que abordaremos:
-formação estelar, poeira e a conversão de densidade superficial de poeira em densidade superficial
-de gás em discos de galáxias espirais. Podemos ver que existem alguns gradientes negativos (crescem
-de fora para dentro) bem definidos de densidade superficial da taxa de formação estelar
-($\Sigma_{\mathrm{SFR}}$), a metalicidade nebular, ($\log O/H$), densidade superficial de massa
-estelar ($\mu_\star$). Outras propriedades parecem não variar muito dentro do disco. Alguns perfis
-mudam de tendência ao passar de 2 HLR, mas vale ressaltar que na maioria das distribuições, os
-pontos acima de 2 HLR ultrapassam $1\sigma$ da distribuição. Embora não seja tão forte, existe um
-gradiente positivo na fração em luz de populações jovens.
+O perfil radial médio das principais propriedades utilizadas neste trabalho podem ser vistas na
+Fig.\ \ref{fig:RadProfProps} juntamente com seus histogramas na Fig. \ref{fig:HistoRadProfProps}.
+Note que estamos apenas colocando os pontoa onde o reaio esteja entre 0.7 e 3 HLR. Elas são muito
+importantes em todos os aspectos que abordaremos: formação estelar, poeira e a conversão de
+densidade superficial de poeira em densidade superficial de gás em discos de galáxias espirais.
+Podemos ver que existem alguns gradientes negativos (crescem de fora para dentro) bem definidos de
+densidade superficial da taxa de formação estelar ($\Sigma_{\mathrm{SFR}}$), a metalicidade nebular,
+($\log O/H$), densidade superficial de massa estelar ($\mu_\star$). Outras propriedades parecem não
+variar muito dentro do disco. Alguns perfis mudam de tendência ao passar de 2 HLR, mas vale
+ressaltar que na maioria das distribuições, os pontos acima de 2 HLR ultrapassam $1\sigma$ da
+distribuição. Embora não seja tão forte, existe um gradiente positivo na fração em luz de populações
+jovens.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{figuras/props_R.pdf}
-	\caption[Perfis radiais das propriedades físicas.]
+	\caption[Perfis radiais das propriedades físicas]
 	{Perfis radiais médios (entre 0.7 e 3 HLR) das principais propriedades físicas abordadas neste
 trabalho. Densidade superficial da taxa de formação estelar detectada por \Halpha e pela síntese
 ({\em painéis a e b}), idade média das populações estelares ({\em painel c}), metalicidade nebular
@@ -219,7 +218,7 @@ marcam a mediana (linha contínua) e os 5, 16, 64, 95 percentis (linhas tracejad
 \begin{figure}
 	\centering
 	\includegraphics[width=0.99\textwidth]{figuras/histo_props_R.pdf}
-	\caption[Histogramas dos perfis radiais das propriedades físicas.]
+	\caption[Histogramas dos perfis radiais das propriedades físicas]
 	{Histogramas normalizados de todas as propriedades físicas da Fig.\ \ref{fig:RadProfProps}. Os
 valores no canto superior direito marcam a média, mediana, desvio padrão, máximo e mínimo das
 distribuições.}

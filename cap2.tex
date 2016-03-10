@@ -44,25 +44,26 @@ feito (DR3).
 \begin{figure}
 	\centering
 	\includegraphics[scale=0.6]{figuras/K0012-zone0-Hb.pdf}
-	\caption[Exemplo de ajuste de linha de emissão.]
+	\caption[Exemplo de ajuste de linha de emissão]
 	{Espectro na região da linha de \Hbeta em emissão para a zona central da galáxia UGC00148 (objeto
-CALIFA 12) juntamente com o melhor ajuste. Em destaque a amplitude (A), o comprimento de onda
-central (x) e o desvio padrão neste ajuste (\sigma).}
+CALIFA 12) juntamente com o melhor ajuste utilizando uma gaussiana. Em destaque a amplitude (A), o
+comprimento de onda central (x) e o desvio padrão neste ajuste (\sigma).}
 	\label{fig:rgbline}
 \end{figure}
 
 Feitas as medidas, temos o arcabouço para calcularmos várias propriedades nebulares. Escrevemos um
 objeto em \pyt (cujo nome titula esta seção) que, além de organizar os resultados provenientes do
-programa de medida das linhas de emissão, também calcula a abundância de oxigênio, índice que
-usamos como metalicidade nebular ($\log$ (O/H)), o coeficiente de extinção para as regiões nebulares
-($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada cálculo. Esse
-objeto foi adicionado ao \pycasso\footnote{{\em Python CALIFA Stellar Synthesys Organizer} - 
+programa de medida das linhas de emissão, também calcula a abundância de oxigênio nebular, índice
+que usamos como metalicidade nebular ($\log\ O/H$), o coeficiente de extinção para as regiões
+nebulares ($\tauVN$), larguras equivalentes das linhas, assim como os erros propagados em cada
+cálculo. Esse objeto foi adicionado ao \pycasso\footnote{{\em Python CALIFA Stellar Synthesys
+Organizer} -
 \href{http://minerva.ufsc.br/~andre/PyCASSO-0.9.3/intro.html}
-{http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html}} \citep{CidFernandes.etal.2013a}
-para que os demais membros do projeto possam utilizá-lo. Nele também encontram-se as medidas dos
-fluxos em diversas linhas de emissão, a posição central das linhas medidas, amplitudes, desvios
-padrão, coeficientes para reconstrução do contínuo em cada linha de emissão, os erros nestas
-medidas, além das propriedades mencionadas anteriormente e seus erros propagados.
+{http://minerva.ufsc.br/$\sim$andre/PyCASSO-0.9.3/intro.html}} \citep{CidFernandes.etal.2013a} para
+que os demais membros do projeto possam utilizá-lo. Nele também encontram-se as medidas dos fluxos
+em diversas linhas de emissão, a posição central das linhas medidas, amplitudes, desvios padrão,
+coeficientes para reconstrução do contínuo em cada linha de emissão, os erros nestas medidas, além
+das propriedades mencionadas anteriormente e seus erros propagados.
 
 \subsection{Extinção estimada através do decremento de Balmer}
 \label{sec:emline:datacube:tauvneb}
@@ -105,9 +106,9 @@ densidade e a temperatura. Usamos aqui esse valor como constante e igual a $2.86
 	\tauVN = 2.886\ \ln \left( \frac{F_{\Halpha}^{obs}/F_{\Hbeta}^{obs}}{2.86} \right).
 \end{equation}
 
-Como veremos mais adiante (Sec.\ \ref{sec:synvsneb:tauv}, Fig.\ \ref{fig:HistoRadProfProps} - {\em
-painel i}) $\tauVN$ varia tipicamente entre 0.6 e 0.65 (média e mediana) nas regiões aqui estudadas.
-O erro propagado para $\tauVN$ é:
+Como veremos mais adiante $\tauVN$ varia tipicamente entre 0.6 e 0.65 (média e mediana) nas regiões aqui
+estudadas (Sec.\ \ref{sec:synvsneb:tauv} e também Fig.\ \ref{fig:HistoRadProfProps}
+- {\em painel i}). O erro propagado para $\tauVN$ é:
 \begin{eqnarray}
 	\tauVN &\equiv& \tauVN(F_{\Halpha}^{obs}, F_{\Hbeta}^{obs}) \\
 	\epsilon (\tauVN) &=& \sqrt{\left(\del{\tauVN}{F_{\Halpha}^{obs}}\right)^2 \
@@ -132,28 +133,30 @@ incerteza em $\tauVN$ por:
 \subsection{Metalicidade Nebular}
 \label{sec:emline:datacube:Zneb}
 
-Todos os elementos, além do hidrogênio e do hélio, são considerados metais em astrofísica.
-Um método direto para medir a abundância de oxigênio é através do calculo da temperatura eletrônica
-das regiões \Hii. Este método necessita a medida da linha de [O\thinspace\textsc{iii}] $\lambda
-4363$\xspace que é muito fraca e quase impossível de ser detectada em regiões com alta metalicidade.
-Os indicadores de metalicidade nebular geralmente são baseados em métodos de linhas fortes
-\citep[\emph{strong-line methods}; ][]{Pagel.etal.1979a}, principalmente os que utilizam as razões
-das linhas de \OIII e \NII buscando correlações com a abundância relativa de oxigênio. As calibrações
-destes indicadores que estão sendo utilizadas pelo CALIFA foram feitas por \citet[][M13 daqui em
-diante]{Marino.etal.2013a} de forma empírica utilizando medidas de temperatura eletrônica de 603
-regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas por \citet{Sanchez.etal.2013a}.
-O indicador que estamos utilizando para esse projeto é aquele que calibra a fração relativa de
-oxigênio utilizando a razão entre as linhas de \oIII e \nII. A parametrização encontrada pelos
-autores foi:
+Todos os elementos, além do hidrogênio e do hélio, são considerados metais em astrofísica. O cálculo
+dos indicadores de metalicidade nebular geralmente é baseado em algum método empírico indireto que
+utiliza linhas fortes \citep[\emph{strong-line methods}; ][]{Pagel.etal.1979a}. Dentre estes, os
+mais utilizados são aqueles que exploram razões das linhas de \OIII e \NII buscando correlações com
+a abundância relativa de oxigênio nebular. Essa abundância também pode ser calculada diretamente
+utilizando os coeficientes de emissão dos íons de $O$ e $H$ e medidas de algumas linhas observadas.
+Esses coeficientes são dependentes da temperatura eletrônica e da densidade, que geralmente
+dependem de medidas de linhas muito fracas que só podem ser observadas em regiões \Hii. As
+calibrações destes indicadores de metalicidade nebular que estão sendo utilizadas pelo CALIFA foram
+feitas por \citet[][M13 daqui em diante]{Marino.etal.2013a} de forma empírica utilizando medidas de
+temperatura eletrônica de 603 regiões \Hii e mais medidas nebulares de 3423 regiões \Hii mapeadas
+por \citet{Sanchez.etal.2013a}. O indicador que estamos utilizando para esse projeto é aquele que
+calibra a fração relativa de oxigênio utilizando a razão entre as linhas de \oIII e \nII. A
+parametrização encontrada pelos autores foi:
 \begin{equation}
-	12 + \log \textrm{(O/H)} = 8.533[\pm0.012] - 0.214[\pm0.012]\times \textrm{O3N2}
+	12 + \log (O/H) = 8.533[\pm0.012] - 0.214[\pm0.012]\times \textrm{O3N2}
 \end{equation}
 \noindent onde O3N2 vem da razão entre os fluxos intrínsecos de \oIII, \Hbeta, \nII e \Halpha:
 \begin{equation}
 	\textrm{O3N2}\ \equiv\ \log \left(\frac{\OIII}{\Hbeta} \times \frac{\Halpha}{\NII}\right). 
 \end{equation}
 A Fig.\ \ref{fig:Marino2013_O3N2} mostra o resultado da calibração por M13. As regiões estudadas
-nesse trabalho possuem abundâncias relativas de oxigênio nebular em torno de $0.6\ (O/H)_\odot$.
+nesse trabalho possuem abundâncias relativas de oxigênio nebular com média (mediana) $0.60\
+(O/H)_\odot$ ($0.58\ (O/H)_\odot$).
 
 \begin{figure}
 	\centering
@@ -223,7 +226,7 @@ cb.set_label('R [HLR]')
 plt.axis([-0.6, 0.3, -1.5, 1])
 f.savefig('%s-BPT.pdf' % K.califaID)
 	\end{python}
-	\caption[Exemplo de programa utilizando o EmLinesDataCube.]
+	\caption[Exemplo de programa utilizando o EmLinesDataCube]
 	{Exemplo de programa utilizando os fluxos de \Halpha, \Hbeta, \OIII e \NII 
 para construção de um gráfico BPT utilizando o objeto \emldc juntamente com o \pycasso.}
 	\label{fig:BPTprog}
@@ -233,7 +236,7 @@ para construção de um gráfico BPT utilizando o objeto \emldc juntamente com o
 	\centering
 	%\includegraphics[scale=0.8, trim=2cm 13cm 2cm 3cm, clip]{figuras/O3N2_CALIFA.pdf}
 	\includegraphics[scale=0.6]{figuras/K0277-BPT.pdf}
-	\caption[Diagrama BPT da galáxia NGC2916.]
+	\caption[Diagrama BPT da galáxia NGC2916]
 	{Diagrama BPT para as regiões com $S/N > 3$ nas linhas \Hbeta, \OIII, \Halpha e \NII, da galáxia
 NGC2916 (objeto CALIFA 277) produzida por um programa como o do exemplo da Fig.\ \ref{fig:BPTprog}.
 As cores marcam a distância ao centro da galáxia em unidades do raio que contém metade da luz (HLR). As
@@ -271,15 +274,15 @@ Função de Massa Inicial ({\em Initial Mass Function} - IMF):
 \noindent Para obter $\Lambda$ nos falta saber como a massa em estrelas cresce no tempo, ou seja,
 saber como a SFR varia no tempo:
 \begin{equation}
-	\mathrm{d}\mathrm{M}(t) &=& \mathrm{SFR}(t)\ \mathrm{d}t \\
+	\mathrm{d}\mathrm{M}(t)\ =\ \mathrm{SFR}(t)\ \mathrm{d}t
 	\label{eq:dM_t}
 \end{equation}
 
-Integrando \eqref{eq:dLambda} dentro do tempo do Universo ($T_U\ \sim$ 14 bilhões de anos) teremos
-hoje um total de luz:
+Utilizando \eqref{eq:dM_t} em \eqref{eq:dLambda} e integrando dentro do tempo do Universo ($T_U\
+\sim$ 14 bilhões de anos) teremos hoje um total de luz:
 \begin{eqnarray}
-	\Lambda = \Lambda(t = T_U) &=& \int_0^{T_U} l(t)\ \textrm{d}\textrm{M}(t) \\
-	\Lambda(T_U) &=& \int_0^{T_U} \mathrm{SFR}(t)\ l(t)\ \textrm{d}t
+	\Lambda(t = T_U) &=& \int_0^{T_U} l(t)\ \textrm{d}\textrm{M}(t) \\
+	&=& \int_0^{T_U} \mathrm{SFR}(t)\ l(t)\ \textrm{d}t
 	\label{eq:Lambda}
 \end{eqnarray}
 \noindent Assumindo o caso B de recombinação do hidrogênio, um em cada 2.226 fótons
@@ -290,15 +293,15 @@ muito em função da temperatura e da densidade nas regiões \Hii. Portanto:
 	\label{eq:LHa_recomb_theory}
 \end{equation}
 \noindent onde $\mathrm{Q}_H$ é a taxa de fótons H-ionizantes. Em todo este processo assume-se que
-nenhuma radiação ionizante escapa da nuvem e, apesar de $\mathrm{L}(\Halpha)$ estar corrigido por
+nenhuma radiação ionizante escapa da nuvem e, apesar de $\LHalpha$ estar corrigido por
 extinção, também assume-se que a poeira não absorve muito os fótons com $h\nu\ > 13.6$ eV.
 Escrevemos $dQ_H$ como a equação \eqref{eq:dLambda}.
 \begin{equation}
 	Q_H(t)\ =\ \int dQ_H = \int q_H(t)\ \mathrm{d}\mathrm{M}(t) 
 	\label{eq:QH_t}
 \end{equation}
-\noindent Nas equações acima, $q_H$ (que assume o mesmo papel de $l(t)$ em \eqref{eq:dLambda}) é a
-taxa de fótons H-ionizantes por unidade de massa formada. Considerando os fótons que possam ionizar
+\noindent Nas equações acima, $q_H$ (que assume o mesmo papel de $l(t)$ na Eq.\ \ref{eq:dLambda}) é
+a taxa de fótons H-ionizantes por unidade de massa formada. Considerando os fótons que possam ionizar
 o hidrogênio ($h\nu\ \geq\ 13.6$ eV ou $\lambda\ \leq\ 912\AA$) escrevemos:
 \begin{equation}
 	q_H(t) = \int_0^{912\AA} \frac{l_\lambda\ \lambda}{h c} d\lambda.
@@ -316,7 +319,7 @@ obtemos o número de fótons H-ionizantes produzidos pelas fontes que emitem a l
 \end{equation}
 
 Utilizamos a base de populações estelares de \citet{BC03a} com as isócronas de Padova 2000,
-juntamente com a IMF de \citet{Salpeter.1955a}. Neste caso, podemos ver na Fig. \ref{fig:Nh_qh} a
+juntamente com a IMF de \citet{Salpeter.1955a}. Neste caso, podemos ver na Fig.\ \ref{fig:Nh_qh} a
 evolução temporal de $\mathcal{N}_H$ em valores absolutos (painel superior esquerdo) e relativamente
 ao total de $\mathcal{N}_H$ (painel superior direito). Em \citet[Fig. 2b]{CidFernandes.etal.2011a}
 nós podemos ver a evolução temporal de $q_H$ sob todas as idades e metalicidades\footnote{Naquele
