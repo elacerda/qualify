@@ -163,6 +163,57 @@ if __name__ == '__main__':
     Area_GAL__g = (H.Mcor_GAL__g / H.McorSD_GAL__g)
     dustdim = 0.2 # md / rhod
 
+    axial_ratio = 0.13
+    axial_ratio_sq = axial_ratio ** 2.0
+    
+    # There is 2 galaxies with ba < 0.14. Those galaxies will assume mu = 0
+    mu_GAL = np.ma.where(H.ba_GAL__g < 0.14, 0.05, ((H.ba_GAL__g ** 2.0 - axial_ratio_sq) / (1 - axial_ratio_sq)) ** 0.5)
+    
+    alpha = 1.
+    
+    # zones
+    mu_GAL__g = H.reply_arr_by_zones(mu_GAL)
+    D_tau__g = np.ma.masked_array(H.tau_V_neb__g - H.tau_V__Tg[iT], mask = mask__g)
+    R_tau__g = np.ma.masked_array(H.tau_V_neb__g / H.tau_V__Tg[iT], mask = mask__g)
+    aux = 1. - (alpha * H.x_Y__Tg[iT])
+    tau_BC__g = np.ma.masked_array(D_tau__g / aux, mask = mask__g)
+    tau_ISM__g = np.ma.masked_array(mu_GAL__g * (H.tau_V__Tg[iT] - (alpha * H.x_Y__Tg[iT] * H.tau_V_neb__g)) / aux, mask = mask__g)
+    rho__g = np.ma.masked_array(tau_BC__g / tau_ISM__g, mask = mask__g)
+    D_tau_xY__g = np.ma.masked_array(aux * tau_BC__g, mask = mask__g)
+    tau_O__g = np.ma.masked_array(tau_ISM__g / mu_GAL__g, mask = mask__g)
+    tau_Y__g = np.ma.masked_array(tau_O__g + alpha * tau_BC__g, mask = mask__g)
+    aux = mu_GAL__g * alpha * rho__g
+    R_tau_xY__g = np.ma.masked_array((1 + aux) / (1 + H.x_Y__Tg[iT] * aux), mask = mask__g)
+
+    # radial bins (HLR)
+    mu_GAL__rg = H.reply_arr_by_radius(mu_GAL)
+    D_tau__rg = np.ma.masked_array(H.tau_V_neb__Trg[iT] - H.tau_V__Trg[iT], mask = mask__rg)
+    R_tau__rg = np.ma.masked_array(H.tau_V_neb__Trg[iT] / H.tau_V__Trg[iT], mask = mask__rg)
+    aux = 1. - (alpha * H.x_Y__Trg[iT])
+    tau_BC__rg = np.ma.masked_array(D_tau__rg / aux, mask = mask__rg)
+    tau_ISM__rg = np.ma.masked_array(mu_GAL__rg * (H.tau_V__Trg[iT] - (alpha * H.x_Y__Trg[iT] * H.tau_V_neb__Trg[iT])) / aux, mask = mask__rg)
+    rho__rg = np.ma.masked_array(tau_BC__rg / tau_ISM__rg, mask = mask__rg)
+    D_tau_xY__rg = np.ma.masked_array(aux * tau_BC__rg, mask = mask__rg)
+    tau_O__rg = np.ma.masked_array(tau_ISM__rg / mu_GAL__rg, mask = mask__rg)
+    tau_Y__rg = np.ma.masked_array(tau_O__rg + alpha * tau_BC__rg, mask = mask__rg)
+    aux = mu_GAL__rg * alpha * rho__rg
+    R_tau_xY__rg = np.ma.masked_array((1 + aux) / (1 + H.x_Y__Trg[iT] * aux), mask = mask__rg)
+ 
+    # integrated
+    integrated_D_tau = np.ma.masked_array(H.integrated_tau_V_neb__g - H.integrated_tau_V__g, mask = mask_GAL__g)
+    integrated_R_tau = np.ma.masked_array(H.integrated_tau_V_neb__g / H.integrated_tau_V__g, mask = mask_GAL__g)
+    aux = 1. - (alpha * H.integrated_x_Y__Tg[iT])
+    aux2 = (alpha * H.integrated_x_Y__Tg[iT] * H.integrated_tau_V_neb__g)
+    integrated_tau_BC = np.ma.masked_array(integrated_D_tau / aux, mask = mask_GAL__g)
+    integrated_tau_ISM = np.ma.masked_array(mu_GAL * (H.integrated_tau_V__g - aux2) / aux, mask = mask_GAL__g)
+    integrated_rho = np.ma.masked_array(integrated_tau_BC / integrated_tau_ISM, mask = mask_GAL__g)
+    integrated_D_tau_xY = np.ma.masked_array(aux * integrated_tau_BC, mask = mask_GAL__g)
+    integrated_tau_O = np.ma.masked_array(integrated_tau_ISM / mu_GAL, mask = mask_GAL__g)
+    integrated_tau_Y = np.ma.masked_array(integrated_tau_O + alpha * integrated_tau_BC, mask = mask_GAL__g)
+    aux = mu_GAL * alpha * integrated_rho
+    integrated_R_tau_xY = np.ma.masked_array((1 + aux) / (1 + H.integrated_x_Y__Tg[iT] * aux), mask = mask_GAL__g)
+
+
     gasnames = [ 'BRTauVStar', 'BRTauVNeb', 'SKSFRSDStar', 'SKSFRSDHa' ]
     gas_dict = {}
     
@@ -304,6 +355,7 @@ if __name__ == '__main__':
     BR_integrated_DGR_up[~aux_mask] = DGR_conv_lim_sup * 10**np.polyval(p, aux)
     BR_integrated_DGR_down[~aux_mask] = DGR_conv_lim_inf * 10**np.polyval(p, aux)
     BR_integrated_DGR[~aux_mask] = DGR_cte * 10**np.polyval(p, aux)
+    
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # p = np.array([1.87, -6.98])
     # BR_OHBrinch__g = np.ma.masked_all((H.logO3N2_M13__g.shape))
@@ -326,6 +378,36 @@ if __name__ == '__main__':
     # BR_integrated_DGR = DGR_cte * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
     # BR_integrated_DGR_up = DGR_conv_lim_sup * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
     # BR_integrated_DGR_down = DGR_conv_lim_inf * (10 ** (BR_integrated_OHBrinch - 12) * OHSunBrinch_inv)
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    
+    #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
+    # tau_V_tot__g = tau_BC__g + tau_ISM__g
+    # tau_V_tot__rg = tau_BC__rg + tau_ISM__rg
+    # integrated_tau_V_tot = integrated_tau_BC + integrated_tau_ISM
+    # BR_SigmaGas_up__g = dustdim * tau_V_tot__g / BR_DGR_up__g
+    # BR_SigmaGas_up__rg = dustdim * tau_V_tot__rg / BR_DGR_up__rg
+    # BR_SigmaGas_Ha_up__g = dustdim * H.tau_V_neb__g / BR_DGR_up__g
+    # BR_SigmaGas_Ha_up__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_up__rg
+    # BR_SigmaGas_down__g = dustdim * tau_V_tot__g / BR_DGR_down__g
+    # BR_SigmaGas_down__rg = dustdim * tau_V_tot__rg / BR_DGR_down__rg
+    # BR_SigmaGas_Ha_down__g = dustdim * H.tau_V_neb__g / BR_DGR_down__g
+    # BR_SigmaGas_Ha_down__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR_down__rg
+    # BR_SigmaGas__g = dustdim * tau_V_tot__g / BR_DGR__g
+    # BR_SigmaGas__rg = dustdim * tau_V_tot__rg / BR_DGR__rg
+    # BR_SigmaGas_Ha__g = dustdim * H.tau_V_neb__g / BR_DGR__g
+    # BR_SigmaGas_Ha__rg = dustdim * H.tau_V_neb__Trg[iT] / BR_DGR__rg
+    # BR_SigmaGas_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_oneHLR__g
+    # BR_SigmaGas_up_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_up_oneHLR__g
+    # BR_SigmaGas_down_oneHLR__g = dustdim * H.tau_V_oneHLR__Tg[iT] / BR_DGR_down_oneHLR__g
+    # BR_SigmaGas_Ha_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_oneHLR__g
+    # BR_SigmaGas_Ha_up_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_up_oneHLR__g
+    # BR_SigmaGas_Ha_down_oneHLR__g = dustdim * H.tau_V_neb_oneHLR__Tg[iT] / BR_DGR_down_oneHLR__g
+    # BR_integrated_SigmaGas = dustdim * integrated_tau_V_tot / BR_integrated_DGR
+    # BR_integrated_SigmaGas_up = dustdim * integrated_tau_V_tot / BR_integrated_DGR_up
+    # BR_integrated_SigmaGas_down = dustdim * integrated_tau_V_tot / BR_integrated_DGR_down
+    # BR_integrated_SigmaGas_Ha = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR
+    # BR_integrated_SigmaGas_Ha_up = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_up
+    # BR_integrated_SigmaGas_Ha_down = dustdim * H.integrated_tau_V_neb__g / BR_integrated_DGR_down
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     BR_SigmaGas_up__g = dustdim * H.tau_V__Tg[iT] / BR_DGR_up__g
     BR_SigmaGas_up__rg = dustdim * H.tau_V__Trg[iT] / BR_DGR_up__rg
@@ -588,16 +670,16 @@ if __name__ == '__main__':
           
 #    with PdfPages(output) as pdf:
 
-    ##########################
-    ##########################
-    ##########################
+   #########################
+   #########################
+   #########################
     f = plt.figure()
     f.set_size_inches((4,4))
     ax = f.gca()
     rs_kwargs = default_rs_kwargs.copy()
     sc_kwargs = default_sc_kwargs.copy()
     rs_kwargs.update(dict(xbin = H.Rbin__r[H.Rbin__r > 0.7]))
-    
+     
     xran = [minR, H.RbinFin]
     yran = [0, 0.02]
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
@@ -622,7 +704,7 @@ if __name__ == '__main__':
     f.subplots_adjust(left = 0.25, right = 0.95, top = 0.95, bottom = 0.15)
     f.savefig('DGR_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ######### PAGE 1 #########
     ##########################
@@ -636,7 +718,7 @@ if __name__ == '__main__':
     rs_kwargs = default_rs_kwargs.copy()
     sc_kwargs = default_sc_kwargs.copy()
     rs_kwargs.update(dict(xbin = H.Rbin__r[H.Rbin__r > 0.7]))
-     
+      
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
     # xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_DGR__rg, mask = mask__rg)
@@ -667,10 +749,10 @@ if __name__ == '__main__':
     # #ax.grid()
     # #plt.setp(ax.get_xticklabels(), visible = False)
     #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
-      
+       
     #ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     #ax = plt.subplot2grid(grid_shape, loc = (0, 1))
-
+ 
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas__rg), mask = mask__rg) 
     rs_BR_SigmaGas = runstats(xm.compressed(), ym.compressed(), **rs_kwargs)
     xm, yup = C.ma_mask_xyz(x = H.Rtoplot(), y = np.ma.log10(BR_SigmaGas_up__rg), mask = mask__rg) 
@@ -707,7 +789,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'R [HLR]')
     #plt.setp(ax.get_xticklabels(), visible = False)
     ax.set_ylabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
-     
+      
     #ax = plt.subplot2grid(grid_shape, loc = (2, 0))
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xm, ym = C.ma_mask_xyz(x = H.Rtoplot(), y = BR_f_gas__rg, mask = mask__rg) 
@@ -745,7 +827,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'R [HLR]')
     ax.set_ylabel(r'$f_{\mathrm{gas}}$')
     #ax.grid()
-    
+     
 #EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE
 #     ax = plt.subplot2grid(grid_shape, loc = (0, NCols - 2), rowspan = NRows)
 #     ax.set_axis_off()
@@ -786,11 +868,11 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.1, right = 0.95, top = 0.95, bottom = 0.2)
     f.savefig('gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ##########################
     ##########################
-
+ 
     NRows = 2
     NCols = 4
     f = plt.figure()
@@ -813,7 +895,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     x = BR_SigmaGas_Ha__rg
     mask_aux = (mask__rg | x.mask)
@@ -825,7 +907,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
     x = SK_SigmaGas__rg
     mask_aux = (mask__rg | x.mask)
@@ -837,7 +919,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
     x = SK_SigmaGas_Ha__rg
     mask_aux = (mask__rg | x.mask)
@@ -849,7 +931,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$\log\ \Sigma_{\mathrm{gas}}$ [M${}_\odot$ pc${}^{-2}$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     xrange = [0, 1]
     default_histo_kwargs = dict(range = xrange) 
     ax = plt.subplot2grid(grid_shape, loc = (1, 0))
@@ -863,7 +945,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     x = BR_f_gas_Ha__rg
     mask_aux = (mask__rg | x.mask)
@@ -875,7 +957,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (1, 2))
     x = SK_f_gas__rg
     mask_aux = (mask__rg | x.mask)
@@ -887,7 +969,7 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (1, 3))
     x = SK_f_gas_Ha__rg
     mask_aux = (mask__rg | x.mask)
@@ -899,11 +981,11 @@ if __name__ == '__main__':
     ax.set_xlabel(r'$f_{\mathrm{gas}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-    
+     
     f.subplots_adjust(hspace = 0.35, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
     f.savefig('Histo_Gas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ######### PAGE 2 #########
     ##########################
@@ -950,7 +1032,7 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.1, right = 0.95, top = 0.95)
     f.savefig('propGas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     NRows = 3
     NCols = 3
     f = plt.figure()
@@ -981,7 +1063,7 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
     f.savefig('Histo_propGas_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ######### PAGE 3 #########
     ##########################
@@ -1042,7 +1124,7 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
     f.savefig('props_DGR_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ######### PAGE 4 #########
     ##########################
@@ -1113,7 +1195,7 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
     f.savefig('props_SigmaGas_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ##########################
     ######### PAGE 5 #########
     ##########################
@@ -1184,7 +1266,7 @@ if __name__ == '__main__':
     f.subplots_adjust(hspace = 0.3, wspace = 0, left = 0.1, right = 0.95, top = 0.95)
     f.savefig('props_fGas_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-    
+     
     ##########################
     ##########################
     ##########################
@@ -1230,10 +1312,10 @@ if __name__ == '__main__':
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
     ax.set_ylim(yran)
-    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.set_xlabel(r'$\ln\ \frac{1}{f_{\mathrm{gas}}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (0, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas__rg)
@@ -1256,7 +1338,7 @@ if __name__ == '__main__':
     ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     x = np.ma.log(1./BR_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
@@ -1275,10 +1357,10 @@ if __name__ == '__main__':
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
     ax.set_ylim(yran)
-    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.set_xlabel(r'$\ln\ \frac{1}{f_{\mathrm{gas}}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (0, 3))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas_Ha__rg)
@@ -1301,7 +1383,7 @@ if __name__ == '__main__':
     ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     x = np.ma.log(1./SK_f_gas__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
@@ -1320,10 +1402,10 @@ if __name__ == '__main__':
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
     ax.set_ylim(yran)
-    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.set_xlabel(r'$\ln\ \frac{1}{f_{\mathrm{gas}}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (1, 2))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = np.ma.log10(10 ** xdict['v'] + SK_SigmaGas__rg)
@@ -1346,7 +1428,7 @@ if __name__ == '__main__':
     ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     x = np.ma.log(1./SK_f_gas_Ha__rg)
     _, ydict = H.get_plot_dict(iT, -1, 'logO3N2M13R')
@@ -1365,10 +1447,10 @@ if __name__ == '__main__':
     #plotOLSbisectorAxis(ax, rs.OLS_slope, rs.OLS_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     #ax.set_ylabel(r'$\frac{O/H}{(O/H)_\odot}$')
     ax.set_ylim(yran)
-    ax.set_xlabel(r'$\ln\ f_{\mathrm{gas}}$')
+    ax.set_xlabel(r'$\ln\ \frac{1}{f_{\mathrm{gas}}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (1, 3))
     _, xdict = H.get_plot_dict(iT, -1, 'logMcorSDR')
     x = np.ma.log10(10 ** xdict['v'] + BR_SigmaGas_Ha__rg)
@@ -1391,11 +1473,11 @@ if __name__ == '__main__':
     ax.set_ylabel(r'$\log\ y_{eff}$ [$(O/H)_\odot$]')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     ax.yaxis.set_major_locator(MaxNLocator(4))    
-    
+     
     f.subplots_adjust(hspace = 0.3, wspace = 0.35, left = 0.15, right = 0.95, top = 0.95, bottom = 0.1)
     f.savefig('simplemodel_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     default_rs_kwargs = dict(smooth = True, sigma = 1.2, debug = True, frac = 0.08, gs_prc = True, poly1d = True)
     mpl.rcParams['font.size'] = 20
     mpl.rcParams['axes.labelsize'] = 16
@@ -1404,7 +1486,7 @@ if __name__ == '__main__':
     mpl.rcParams['ytick.labelsize'] = 16 
     mpl.rcParams['font.family'] = 'serif'
     mpl.rcParams['font.serif'] = 'Times New Roman'
-    
+     
     ############################################################
     bins = (30,30)
     NCols = 2
@@ -1426,7 +1508,7 @@ if __name__ == '__main__':
         pos_y = 0.98, 
         kwargs_plot = dict(c = 'r', ls = '--', lw = 2, label = '')),
     )
- 
+  
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     x = np.ma.log10(BR_SigmaGas__rg)
     y = np.ma.log10(H.aSFRSD__Trg[iT] * 1e6)
@@ -1451,7 +1533,7 @@ if __name__ == '__main__':
     plotOLSbisectorAxis(ax, rs.poly1d_median_slope, rs.poly1d_median_intercept, x_rms = xm.compressed(), y_rms = ym.compressed(), **ols_kwargs)
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
- 
+  
     xlabel = r'$\log\ \Sigma_{\mathrm{gas}}(R)\ [M_\odot pc^{-2}]$'
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     ylabel = r'$\log\ \Sigma_{SFR}^\star(t_\star, R)\ [M_\odot yr^{-1} kpc^{-2}]$'
@@ -1476,15 +1558,15 @@ if __name__ == '__main__':
     ax.xaxis.set_major_locator(MaxNLocator(4, prune = 'upper'))
     ax.yaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
- 
+  
     f.subplots_adjust(bottom = 0.2, top = 0.9, wspace = 0, right = 0.95, left = 0.1)
     f.savefig('KS_%.2fMyr%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
-
+ 
     ############################################################
     ############################################################
     ############################################################
-    
+     
     NRows = 2
     NCols = 2
     f = plt.figure()
@@ -1498,7 +1580,7 @@ if __name__ == '__main__':
     sc_kwargs = default_sc_kwargs.copy()
     default_histo_kwargs = {} #dict(range = xrange) 
     xlabel = r'$t_{\mathrm{dep}}$ [Gyr]'
-    
+     
     ax = plt.subplot2grid(grid_shape, loc = (0, 0))
     xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], BR_SigmaGas__rg, mask = mask__rg)
     x = ym/xm * 1e-9
@@ -1508,7 +1590,7 @@ if __name__ == '__main__':
     ax.set_title(r'BR13 $\tau_V^\star$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (0, 1))
     xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], BR_SigmaGas_Ha__rg, mask = mask__rg)
     x = ym/xm * 1e-9
@@ -1518,7 +1600,7 @@ if __name__ == '__main__':
     ax.set_title(r'BR13 $\tau_V^{\mathrm{neb}}$')
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (1, 0))
     xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], SK_SigmaGas__rg, mask = mask__rg)
     x = ym/xm * 1e-9
@@ -1529,7 +1611,7 @@ if __name__ == '__main__':
     ax.set_xlabel(xlabel)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     ax = plt.subplot2grid(grid_shape, loc = (1, 1))
     xm, ym = C.ma_mask_xyz(H.aSFRSD__Trg[iT], SK_SigmaGas_Ha__rg, mask = mask__rg)
     x = ym/xm * 1e-9
@@ -1540,7 +1622,7 @@ if __name__ == '__main__':
     ax.set_xlabel(xlabel)
     ax.xaxis.set_major_locator(MaxNLocator(4))
     plt.setp(ax.get_yticklabels(), visible = False)
-
+ 
     f.subplots_adjust(hspace = 0.3, wspace = 0.3, left = 0.05, right = 0.95, top = 0.95)
     f.savefig('Histo_tDep_R_%.2fMyr_%s%s' % ((tSF/1e6), basename(h5file).replace('SFR_', '').replace('.h5', ''), fnamesuffix))
     plt.close(f)
@@ -1548,3 +1630,58 @@ if __name__ == '__main__':
     ############################################################
     ############################################################
     ############################################################
+    galName = 'K0140'
+    galaxyImgFile = '/Users/lacerda/CALIFA/images/K0140.jpg'
+    
+    iGal = H.califaIDs_all.tolist().index(galName)
+    K = C.read_one_cube(galName, EL = True, GP = True, v_run = 'last', debug = True)
+    pa, ba = K.getEllipseParams()
+    K.setGeometry(pa, ba)
+    f_gas__z = H.get_prop_gal(np.ma.masked_array(BR_f_gas__g, mask = mask__g), galName)
+    f_gas_Ha__z = H.get_prop_gal(np.ma.masked_array(BR_f_gas_Ha__g, mask = mask__g), galName)
+    
+    extensive = False
+    surface_density = False
+    cmap = 'viridis'
+    from CALIFAUtils.plots import DrawHLRCircleInSDSSImage, DrawHLRCircle
+    f_gas__yx = K.zoneToYX(f_gas__z, extensive = extensive, surface_density = surface_density)
+
+    f = plt.figure()
+    NCols = 2
+    NRows = 1
+    page_size_inches = [10, 5]
+    f.set_size_inches(page_size_inches)
+    f.set_dpi(100)
+    grid_shape = (NRows, NCols)
+
+    ax = plt.subplot2grid(grid_shape, (0, 0))
+    ax.set_axis_on()
+    galimg = plt.imread(galaxyImgFile)[::-1, :, :]
+    plt.setp(ax.get_xticklabels(), visible = False)
+    plt.setp(ax.get_yticklabels(), visible = False)
+    ax.set_xlabel(galName, labelpad = 20)
+    ax.imshow(galimg, origin = 'lower')
+    DrawHLRCircleInSDSSImage(ax, K.HLR_pix, pa, ba)
+    
+    ax = plt.subplot2grid(grid_shape, (0, 1))
+    ax.set_axis_on()
+    #ax.set_title(r'$\mathrm{frac\c\~ao\ de\ luz\ provenientes\ de\ populac\c\~oes\ jovens}$ ($x_Y$)', y = 1.08)
+    vmin = 0
+    vmax = f_gas__yx.max()
+    im = ax.imshow(f_gas__yx, vmin = vmin, vmax = vmax, cmap = cmap, 
+                   origin = 'lower', interpolation = 'nearest', 
+                   aspect = 'auto')
+    DrawHLRCircle(ax, K, color = 'black', lw = 2.5)
+    ax.set_xlim(0, 65)
+    ax.set_ylim(-5, 70)
+    ylabel = r'$f_{\mathrm{gas}}$'
+    ax.set_title(ylabel, y = 1.02)
+    ax.xaxis.set_major_locator(MaxNLocator(5))
+    ax.yaxis.set_major_locator(MaxNLocator(5))
+    ax.grid()
+    cb = f.colorbar(ax = ax, mappable = im)
+    cb.ax.yaxis.set_major_locator(MaxNLocator(5))
+
+    f.subplots_adjust(left = 0.03, bottom = 0.15, right = 0.95, hspace = 0.3, wspace = 0.15, top = 0.9)
+    f.savefig('%s_f_gas%s' % (galName, fnamesuffix), transparent=True)
+    plt.close(f)
